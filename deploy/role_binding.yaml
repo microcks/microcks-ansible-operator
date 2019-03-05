@@ -1,0 +1,11 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: microcks-ansible-operator
+subjects:
+- kind: ServiceAccount
+  name: microcks-ansible-operator
+roleRef:
+  kind: Role
+  name: microcks-ansible-operator
+  apiGroup: rbac.authorization.k8s.io
