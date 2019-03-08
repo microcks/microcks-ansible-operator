@@ -15,9 +15,8 @@ spec:
       serviceAccountName: microcks-ansible-operator
       containers:
         - name: microcks-ansible-operator
-          # Replace this with the built image name
-          image: "{{ REPLACE_IMAGE }}"
-          imagePullPolicy: "{{ pull_policy|default('Always') }}"
+          image: quay.io/lbroudoux/microcks-ansible-operator
+          imagePullPolicy: Always
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
