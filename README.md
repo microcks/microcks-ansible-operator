@@ -1,2 +1,2 @@
 # microcks-ansible-operator
-Kubernetes Operator for easy setup and management of Microcks installs
+Kubernetes Operator for easy setup and management of Microcks installs (using Ansible undercover ;-)
