@@ -1,2 +1,26 @@
 ---
 # tasks file for microcks
+#- name: ensure-microcks-config
+#  k8s:
+#    state: present
+#    definition: "{{ lookup('template', '/opt/ansible/k8s/microcks-config.yml') | from_yaml  }}"
+
+- name: ensure-microcks-deployment
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/microcks-deployment.yml') | from_yaml  }}"
+
+- name: ensure-microcks-service
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/microcks-service.yml') | from_yaml  }}"
+
+- name: ensure-postman-runtime-deployment
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/postman-runtime-deployment.yml') | from_yaml  }}"
+
+- name: ensure-postman-runtime-service
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/postman-runtime-service.yml') | from_yaml  }}"
