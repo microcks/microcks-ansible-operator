@@ -1,7 +1,0 @@
-apiVersion: microcks.github.io/v1alpha1
-kind: Microcks
-metadata:
-  name: example-microcks
-spec:
-  # Add fields here
-  size: 3
