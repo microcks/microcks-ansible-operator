@@ -1,0 +1,85 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: "{{name}}"
+  namespace: '{{ meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    container: spring
+    group: microcks
+spec:
+  replicas: "{{microcks.replicas}}"
+  selector: 
+    matchLabels:  
+      app: "{{name}}"
+      deployment: "{{name}}"
+      container: spring
+      group: microcks
+  template:
+    metadata:
+      labels:
+        app: "{{name}}"
+        deployment: "{{name}}"
+        container: spring
+        group: microcks
+    spec:
+      containers:
+      - name: spring
+        image: "microcks/microcks-postman-runtime:{{version}}"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        env:
+          - name: JAVA_OPTIONS
+            value: ""
+          - name: SPRING_PROFILES_ACTIVE
+            value: prod
+          - name: SPRING_DATA_MONGODB_URI
+            value: mongodb://${SPRING_DATA_MONGODB_USER}:${SPRING_DATA_MONGODB_PASSWORD}@{{name}}-mongodb:27017/${SPRING_DATA_MONGODB_DATABASE}
+          - name: SPRING_DATA_MONGODB_USER
+            valueFrom:
+              secretKeyRef:
+                key: username
+                name: "{{name}}-mongodb-connection"
+          - name: SPRING_DATA_MONGODB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: "{{name}}-mongodb-connection"
+          - name: SPRING_DATA_MONGODB_DATABASE
+            value: "{{name}}"
+          - name: POSTMAN_RUNNER_URL
+            value: http://{{name}}-postman-runtime:8080
+          - name: TEST_CALLBACK_URL
+            value: http://{{name}}:8080
+          - name: KEYCLOAK_URL
+            value: http://{{keycloak.url}}/auth
+        livenessProbe:
+          httpGet:
+            path: "/api/health"
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 15
+          timeoutSeconds: 3
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: "/api/health"
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 20
+          timeoutSeconds: 3
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        volumeMounts:
+          - name: "{{name}}-config"
+            mountPath: "/deployments/config"
+        terminationMessagePath: "/dev/termination-log"
+      volumes:
+        - name: "{{name}}-config"
+          configMap:
+            name: "{{name}}-config"
