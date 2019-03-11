@@ -1,0 +1,21 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: "{{name}}-keycloak"
+  namespace: '{{ meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    container: keycloak
+    group: microcks
+spec:
+  ports:
+    - name: keycloak
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+  sessionAffinity: None
+  selector:
+    app: "{{name}}"
+    container: keycloak
+    group: microcks

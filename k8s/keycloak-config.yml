@@ -109,24 +109,3 @@ data:
       ],
       "keycloakVersion": "3.4.0.Final"
     }
----
-kind: Secret
-apiVersion: v1
-metadata:
-  name: "{{name}}-keycloak-admin"
-  namespace: '{{ meta.namespace }}'
-  labels:
-    app: "{{name}}"
-    container: keycloak
-    group: microcks
-type: kubernetes.io/basic-auth
-stringData:
-  username: admin
-  postgresUsername: user
-  #username: admin{{ lookup('password', '/dev/null length=5 chars=ascii_letters') }}
-  #postgresUsername: user{{ lookup('password', '/dev/null length=5 chars=ascii_letters') }}
-data:
-  password: {{ 'password' | b64encode | quote }}
-  postgresPassword: {{ 'password' | b64encode | quote }}
-  #password: {{ lookup('password', '/dev/null length=32 chars=ascii_letters') | b64encode | quote }}
-  #postgresPassword: {{ lookup('password', '/dev/null length=32 chars=ascii_letters') | b64encode | quote }}

@@ -80,6 +80,6 @@ spec:
             mountPath: "/deployments/config"
         terminationMessagePath: "/dev/termination-log"
       volumes:
-        - name: "{{name}}-config"
-          configMap:
-            name: "{{name}}-config"
+      - name: "{{name}}-config"
+        configMap:
+          name: "{{name}}-config"

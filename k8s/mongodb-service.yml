@@ -9,11 +9,10 @@ metadata:
     group: microcks
 spec:
   ports:
-  - name: mongodb
-    protocol: TCP
-    port: 27017
-    targetPort: 27017
-    nodePort: 0
+    - name: mongodb
+      protocol: TCP
+      port: 27017
+      targetPort: 27017
   selector:
     app: "{{name}}"
     container: mongodb

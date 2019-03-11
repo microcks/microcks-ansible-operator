@@ -1,7 +1,7 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: "{name}}-mongodb"
+  name: "{{name}}-mongodb"
   namespace: '{{ meta.namespace }}'
   labels:
     app: "{{name}}"
@@ -12,6 +12,12 @@ spec:
   strategy:
     type: Recreate
   replicas: 1
+  selector: 
+    matchLabels:  
+      app: "{{name}}"
+      deploymentconfig: mongodb
+      container: mongodb
+      group: microcks
   template:
     metadata:
       labels:
@@ -70,14 +76,12 @@ spec:
         securityContext:
           capabilities: {}
           privileged: false
-      volumes:
-      - name: "{{name}}-mongodb-data"
-        {% if mongodb.persistent %}
-        persistentVolumeClaim:
-          claimName: "{{name}}-mongodb"
-        {% else %}
-        emptyDir:
-          medium: ''
-        {% endif %}
       restartPolicy: Always
       dnsPolicy: ClusterFirst
+      volumes:
+      - name: "{{name}}-mongodb-data"
+        {% if mongodb.persistent %}persistentVolumeClaim:
+          claimName: "{{name}}-mongodb"
+        {% else %}emptyDir:
+          medium: ''
+        {% endif %}
