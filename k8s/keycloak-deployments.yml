@@ -158,10 +158,10 @@ spec:
             mountPath: "/var/lib/pgsql/data"
       volumes:
       - name: "{{name}}-keycloak-postgresql-data"
-        {{- if .Values.persistence.enable }}
+        {% if keycloak.persistent.enable %}
         persistentVolumeClaim:
           claimName: "{{name}}-keycloak-postgresql"
-        {{- else }}
+        {% else %}
         emptyDir:
           medium: ''
-        {{- end }}
+        {% endif %}

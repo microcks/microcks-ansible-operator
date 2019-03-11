@@ -1,0 +1,15 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: "{{name}}-keycloak-postgresql"
+  namespace: '{{ meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    container: keycloak-postgresql
+    group: microcks
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: "{{keycloak.volume_size}}"

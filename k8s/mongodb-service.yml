@@ -1,0 +1,22 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: "{{name}}-mongodb"
+  namespace: '{{ meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    container: mongodb
+    group: microcks
+spec:
+  ports:
+  - name: mongodb
+    protocol: TCP
+    port: 27017
+    targetPort: 27017
+    nodePort: 0
+  selector:
+    app: "{{name}}"
+    container: mongodb
+    group: microcks
+  type: ClusterIP
+  sessionAffinity: None

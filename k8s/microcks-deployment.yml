@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: spring
-        image: "microcks/microcks-postman-runtime:{{version}}"
+        image: "microcks/microcks:{{version}}"
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

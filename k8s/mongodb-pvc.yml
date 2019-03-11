@@ -1,0 +1,15 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: "{{name}}-mongodb"
+  namespace: '{{ meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    container: mongodb
+    group: microcks
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: "{{mongodb.volume_size}}"
