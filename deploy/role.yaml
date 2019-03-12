@@ -32,6 +32,12 @@ rules:
   verbs:
   - '*'
 - apiGroups:
+  - route.openshift.io
+  resources:
+  - routes
+  verbs:
+  - '*'
+- apiGroups:
   - monitoring.coreos.com
   resources:
   - servicemonitors

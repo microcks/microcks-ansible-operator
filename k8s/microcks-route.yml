@@ -1,0 +1,15 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: "{{name}}"
+  namespace: '{{ meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    group: microcks
+spec:
+  host: {{microcks.url}}
+  to:
+    name: {{name}}
+    kind: Service
+  port:
+    targetPort: spring

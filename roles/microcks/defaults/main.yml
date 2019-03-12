@@ -10,11 +10,11 @@ postman:
 keycloak:
   install: true
   persistent: true
-  volumeSize: 1Gi
+  volume_size: 1Gi
   url: keycloak.192.168.99.100.nip.io
   replicas: 1
 mongodb:
   install: true
   persistent: true
-  volumeSize: 2Gi
+  volume_size: 2Gi
   replicas: 1

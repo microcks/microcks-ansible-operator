@@ -1,127 +1,30 @@
 ---
 # tasks file for microcks
 
-- name: The Microcks ConfigMap object is present
-  k8s:
-    state: present
-    definition: "{{ lookup('template', '/opt/ansible/k8s/microcks-config.yml') | from_yaml  }}"
+# ======================================
+# Start with optional MongoDB components
+# ======================================
 
-- name: The Microcks Deployment is present
-  k8s:
-    state: present
-    definition: "{{ lookup('template', '/opt/ansible/k8s/microcks-deployment.yml') | from_yaml  }}"
+- name: Get an existing MongoDB Secret
+  k8s_facts:
+    api_version: v1
+    kind: Secret
+    name: "{{name}}-mongodb-connection"
+    namespace: '{{ meta.namespace }}'
+  register: mongodb_secret
 
-- name: The Microcks Service is present
-  k8s:
-    state: present
-    definition: "{{ lookup('template', '/opt/ansible/k8s/microcks-service.yml') | from_yaml  }}"
-
-- name: The Postman-runtime Deployment is present
-  k8s:
-    state: present
-    definition: "{{ lookup('template', '/opt/ansible/k8s/postman-runtime-deployment.yml') | from_yaml  }}"
-
-- name: The Postman-runtime Service is present
-  k8s:
-    state: present
-    definition: "{{ lookup('template', '/opt/ansible/k8s/postman-runtime-service.yml') | from_yaml  }}"
-
-# ============================
-# Optional Keycloak components
-# ============================
-
-- name: The Keycloak ConfigMap is present
-  when: keycloak.install == true
-  k8s:
-    state: present
-    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-config.yml') | from_yaml  }}"
-
-- name: The Keycloak ConfigMap is absent
-  when: keycloak.install == false
-  k8s:
-    state: absent
-    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-config.yml') | from_yaml  }}"
-
-- name: The Keycloak Secret is present
-  when: keycloak.install == true
+- name: The MongoDB Secret is present
+  when: mongodb_secret.resources|length == 0
   k8s:
     state: present
     force: False
-    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-secret.yml') | from_yaml  }}"
-
-- name: The Keycloak Secret is absent
-  when: keycloak.install == false
-  k8s:
-    state: absent
-    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-secret.yml') | from_yaml  }}"
-
-- name: The Keycloak PVC is present
-  when: keycloak.install == true and keycloak.persistent == true
-  k8s:
-    state: present
-    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-pvc.yml') | from_yaml  }}"
-
-- name: The Keycloak Deployment is present
-  when: keycloak.install == true
-  k8s:
-    state: present
-    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-deployment.yml') | from_yaml  }}"
-
-- name: The Keycloak Deployment is absent
-  when: keycloak.install == false
-  k8s:
-    state: absent
-    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-deployment.yml') | from_yaml  }}"
-
-- name: The Keycloak PostgreSQL Deployment is present
-  when: keycloak.install == true
-  k8s:
-    state: present
-    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-postgres-deployment.yml') | from_yaml  }}"
-
-- name: The Keycloak PostgreSQL Deployment is absent
-  when: keycloak.install == false
-  k8s:
-    state: absent
-    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-postgres-deployment.yml') | from_yaml  }}"
-
-- name: The Keycloak Service is present
-  when: keycloak.install == true
-  k8s:
-    state: present
-    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-service.yml') | from_yaml  }}"
-
-- name: The Keycloak Service is absent
-  when: keycloak.install == false
-  k8s:
-    state: absent
-    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-service.yml') | from_yaml  }}"
-
-- name: The Keycloak PostgreSQL Service is present
-  when: keycloak.install == true
-  k8s:
-    state: present
-    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-postgres-service.yml') | from_yaml  }}"
-
-- name: The Keycloak PostgreSQL Service is absent
-  when: keycloak.install == false
-  k8s:
-    state: absent
-    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-postgres-service.yml') | from_yaml  }}"
-
-# ============================
-# Optional MongoDB components
-# ============================
-
-- name: The MongoDB Secret is present
-  k8s:
-    state: present
     definition: "{{ lookup('template', '/opt/ansible/k8s/mongodb-secret.yml') | from_yaml  }}"
 
 - name: The MongoDB PVC is present
   when: mongodb.install == true and mongodb.persistent == true
   k8s:
     state: present
+    force: False
     definition: "{{ lookup('template', '/opt/ansible/k8s/mongodb-pvc.yml') | from_yaml  }}"
 
 - name: The MongoDB Deployment is present
@@ -147,3 +50,141 @@
   k8s:
     state: absent
     definition: "{{ lookup('template', '/opt/ansible/k8s/mongodb-service.yml') | from_yaml  }}"
+
+# ======================================
+# Next deal with optional Keycloak components
+# ======================================
+
+- name: The Keycloak PVC is present
+  when: keycloak.install == true and keycloak.persistent == true
+  k8s:
+    state: present
+    force: False
+    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-pvc.yml') | from_yaml  }}"
+
+- name: The Keycloak PostgreSQL Deployment is present
+  when: keycloak.install == true
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-postgres-deployment.yml') | from_yaml  }}"
+
+- name: The Keycloak PostgreSQL Deployment is absent
+  when: keycloak.install == false
+  k8s:
+    state: absent
+    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-postgres-deployment.yml') | from_yaml  }}"
+
+- name: The Keycloak PostgreSQL Service is present
+  when: keycloak.install == true
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-postgres-service.yml') | from_yaml  }}"
+
+- name: The Keycloak PostgreSQL Service is absent
+  when: keycloak.install == false
+  k8s:
+    state: absent
+    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-postgres-service.yml') | from_yaml  }}"
+
+- name: The Keycloak ConfigMap is present
+  when: keycloak.install == true
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-config.yml') | from_yaml  }}"
+
+- name: The Keycloak ConfigMap is absent
+  when: keycloak.install == false
+  k8s:
+    state: absent
+    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-config.yml') | from_yaml  }}"
+
+- name: Get an existing Keycloak Secret
+  k8s_facts:
+    api_version: v1
+    kind: Secret
+    name: "{{name}}-keycloak-admin"
+    namespace: '{{ meta.namespace }}'
+  register: keycloak_secret
+
+- name: The Keycloak Secret is present
+  when: keycloak.install == true and keycloak_secret.resources|length == 0
+  k8s:
+    state: present
+    force: False
+    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-secret.yml') | from_yaml  }}"
+
+- name: The Keycloak Secret is absent
+  when: keycloak.install == false
+  k8s:
+    state: absent
+    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-secret.yml') | from_yaml  }}"
+
+- name: The Keycloak Deployment is present
+  when: keycloak.install == true
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-deployment.yml') | from_yaml  }}"
+
+- name: The Keycloak Deployment is absent
+  when: keycloak.install == false
+  k8s:
+    state: absent
+    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-deployment.yml') | from_yaml  }}"
+
+- name: The Keycloak Service is present
+  when: keycloak.install == true
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-service.yml') | from_yaml  }}"
+
+- name: The Keycloak Service is absent
+  when: keycloak.install == false
+  k8s:
+    state: absent
+    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-service.yml') | from_yaml  }}"
+
+- name: The Keycloak Route is present
+  when: keycloak.install == true
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-route.yml') | from_yaml  }}"
+
+- name: The Keycloak Route is absent
+  when: keycloak.install == false
+  k8s:
+    state: absent
+    definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-route.yml') | from_yaml  }}"
+
+# ======================================
+# Finish with pure Microcks components
+# ======================================
+
+- name: The Microcks ConfigMap object is present
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/microcks-config.yml') | from_yaml  }}"
+
+- name: The Microcks Deployment is present
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/microcks-deployment.yml') | from_yaml  }}"
+
+- name: The Microcks Service is present
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/microcks-service.yml') | from_yaml  }}"
+
+- name: The Microcks Route is present
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/microcks-route.yml') | from_yaml  }}"
+
+- name: The Postman-runtime Deployment is present
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/postman-runtime-deployment.yml') | from_yaml  }}"
+
+- name: The Postman-runtime Service is present
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/postman-runtime-service.yml') | from_yaml  }}"

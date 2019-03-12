@@ -1,0 +1,15 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: "{{name}}-keycloak"
+  namespace: '{{ meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    group: microcks
+spec:
+  host: {{keycloak.url}}
+  to:
+    name: "{{name}}-keycloak"
+    kind: Service
+  port:
+    targetPort: keycloak
