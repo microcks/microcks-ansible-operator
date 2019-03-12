@@ -1,6 +1,10 @@
 ---
 # tasks file for microcks
 
+- name: Get information about the cluster
+  set_fact:
+    api_groups: "{{ lookup('k8s', cluster_info='api_groups') }}"
+
 # ======================================
 # Start with optional MongoDB components
 # ======================================
@@ -144,13 +148,13 @@
     definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-service.yml') | from_yaml  }}"
 
 - name: The Keycloak Route is present
-  when: keycloak.install == true
+  when: keycloak.install == true and 'route.openshift.io' in api_groups
   k8s:
     state: present
     definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-route.yml') | from_yaml  }}"
 
 - name: The Keycloak Route is absent
-  when: keycloak.install == false
+  when: keycloak.install == false and 'route.openshift.io' in api_groups
   k8s:
     state: absent
     definition: "{{ lookup('template', '/opt/ansible/k8s/keycloak-route.yml') | from_yaml  }}"
@@ -175,9 +179,16 @@
     definition: "{{ lookup('template', '/opt/ansible/k8s/microcks-service.yml') | from_yaml  }}"
 
 - name: The Microcks Route is present
+  when: "'route.openshift.io' in api_groups"
   k8s:
     state: present
     definition: "{{ lookup('template', '/opt/ansible/k8s/microcks-route.yml') | from_yaml  }}"
+
+- name: The Microcks Ingress is present
+  when: "'route.openshift.io' not in api_groups"
+  k8s:
+    state: present
+    definition: "{{ lookup('template', '/opt/ansible/k8s/microcks-ingress.yml') | from_yaml  }}"
 
 - name: The Postman-runtime Deployment is present
   k8s:

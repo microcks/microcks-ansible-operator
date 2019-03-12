@@ -13,8 +13,12 @@ spec:
     replicas: 2
   keycloak:
     install: true
+    persistent: true
+    volumeSize: 1Gi
     url: keycloak.192.168.99.100.nip.io
     replicas: 1
   mongodb:
     install: true
+    persistent: true
+    volumeSize: 2Gi
     replicas: 1

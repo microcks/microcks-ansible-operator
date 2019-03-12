@@ -1,0 +1,17 @@
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: "{{name}}-keycloak"
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+  labels:
+    app: "{{name}}"
+    group: microcks
+spec:
+  rules:
+  - host: "{{keycloak.url}}"
+    http:
+      paths:
+      - backend:
+          serviceName: "{{name}}-keycloak"
+          servicePort: 8080
