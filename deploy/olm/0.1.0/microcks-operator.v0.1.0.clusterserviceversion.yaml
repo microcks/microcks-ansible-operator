@@ -21,7 +21,7 @@ metadata:
             "name": "my-microcksinstall",
             "version": "0.7.1",
             "microcks": {
-              "replicas": 2,
+              "replicas": 2
             },
             "postman": {
               "replicas": 2
@@ -33,7 +33,7 @@ metadata:
             },
             "mongodb": {
               "install": true,
-              "persistent": true
+              "persistent": true,
               "volumeSize": "2Gi"
             }
           }
