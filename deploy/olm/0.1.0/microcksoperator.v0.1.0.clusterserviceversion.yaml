@@ -1,13 +1,13 @@
 apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
-  name: microcks-operator.v0.0.1
+  name: microcks-operator.v0.1.0
   namespace: REPLACE_NAMESPACE
   annotations:
     categories: "Mocking & Testing"
     certified: "false"
-    containerImage: quay.io/lbroudoux/microcks-ansible-operator:latest
-    createdAt: 2019-03-11
+    containerImage: quay.io/microcks/microcks-ansible-operator:latest
+    createdAt: 2019-03-14
     support: microcks.github.io
     alm-examples: |-
       [
@@ -145,7 +145,7 @@ spec:
               serviceAccountName: microcks-ansible-operator
               containers:
                 - name: microcks-ansible-operator
-                  image: quay.io/lbroudoux/microcks-ansible-operator
+                  image: quay.io/microcks/microcks-ansible-operator
                   imagePullPolicy: Always
                   env:
                     - name: WATCH_NAMESPACE
@@ -165,3 +165,30 @@ spec:
       kind: MicrocksInstall
       displayName: MicrocksInstall
       description: Represents a Microcks installation
+      resources:
+        - kind: Service
+          name: ''
+          version: v1
+        - kind: Deployment
+          name: ''
+          version: v1
+        - kind: Pod
+          name: ''
+          version: v1
+        - kind: ConfigMap
+          name: ''
+          version: v1
+        - kind: Secret
+          name: ''
+          version: v1
+      specDescriptors:
+        - description: Name of your MicrocksInstall
+          displayName: Name
+          path: name
+          x-descriptors:
+            - 'urn:alm:descriptor:com.tectonic.ui:label'
+        - description: Version of Microcks to install
+          displayName: Version
+          path: version
+          x-descriptors:
+            - 'urn:alm:descriptor:com.tectonic.ui:label'
