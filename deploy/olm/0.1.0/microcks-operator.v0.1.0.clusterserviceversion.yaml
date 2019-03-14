@@ -181,6 +181,9 @@ spec:
         - kind: Secret
           name: ''
           version: v1
+        - kind: PersistentVolumeClaim
+          name: ''
+          version: v1
       specDescriptors:
         - description: Name of your MicrocksInstall
           displayName: Name

@@ -1,4 +1,4 @@
 packageName: microcks
 channels:
 - name: alpha
-  currentCSV: micrcoks-operator.v0.1.0
+  currentCSV: microks-operator.v0.1.0
