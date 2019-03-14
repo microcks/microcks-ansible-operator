@@ -54,7 +54,10 @@ spec:
           - name: TEST_CALLBACK_URL
             value: http://{{name}}:8080
           - name: KEYCLOAK_URL
-            value: http://{{keycloak.url}}/auth
+            value: https://{{keycloak.url|default(keycloak_url)}}/auth
+        resources:
+          limits:
+            memory: 512Mi
         livenessProbe:
           httpGet:
             path: "/api/health"

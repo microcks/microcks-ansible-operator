@@ -5,9 +5,9 @@
   set_fact:
     api_groups: "{{ lookup('k8s', cluster_info='api_groups') }}"
 
-# ======================================
+# ================================================================
 # Start with optional MongoDB components
-# ======================================
+# ================================================================
 
 - name: Get an existing MongoDB Secret
   k8s_facts:
@@ -41,9 +41,50 @@
     state: "{{ 'present' if mongodb.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'mongodb-service.yml') | from_yaml  }}"
 
-# ======================================
+
+# ================================================================
+# We have to determine routes before proceeding with configuration
+# ================================================================
+
+- name: The Microcks Route is present if OpenShift
+  when: "'route.openshift.io' in api_groups"
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'microcks-route.yml') | from_yaml  }}"
+
+- name: The Microcks Ingress is present if Kubernetes
+  when: "'route.openshift.io' not in api_groups"
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'microcks-ingress.yml') | from_yaml  }}"
+
+- name: Get the existing Microcks Route
+  when: "'url' not in microcks and 'route.openshift.io' in api_groups"
+  k8s_facts:
+    api_version: route.openshift.io/v1
+    kind: Route
+    name: "{{name}}"
+    namespace: '{{ meta.namespace }}'
+  register: microcks_route
+
+- name: Get the existing Microcks Ingress
+  when: "'url' not in microcks and 'route.openshift.io' not in api_groups"
+  k8s_facts:
+    api_version: extensions/v1beta1
+    kind: Ingress
+    name: "{{name}}"
+    namespace: '{{ meta.namespace }}'
+  register: microcks_ingress
+
+- name: Define microcks_url from default Route or Ingress
+  when: "'url' not in microcks"
+  set_fact:
+    microcks_url: "{{ (microcks_route.resources|first).spec.host if microcks_route is defined else ((microcks_ingress.resources|first).spec.rules|first).host }}"
+
+
+# ================================================================
 # Next deal with optional Keycloak components
-# ======================================
+# ================================================================
 
 - name: The Keycloak PVC is present
   when: keycloak.install|bool and keycloak.persistent|bool
@@ -82,16 +123,6 @@
     force: False
     definition: "{{ lookup('template', 'keycloak-secret.yml') | from_yaml  }}"
 
-- name: The Keycloak Deployment is present if keycloak.install == true
-  k8s:
-    state: "{{ 'present' if keycloak.install|bool else 'absent' }}"
-    definition: "{{ lookup('template', 'keycloak-deployment.yml') | from_yaml  }}"
-
-- name: The Keycloak Service is present if keycloak.install == true
-  k8s:
-    state: "{{ 'present' if keycloak.install|bool else 'absent' }}"
-    definition: "{{ lookup('template', 'keycloak-service.yml') | from_yaml  }}"
-
 - name: The Keycloak Route is present if keycloak.install == true and OpenShift
   when: keycloak.install == true and 'route.openshift.io' in api_groups
   k8s:
@@ -104,9 +135,43 @@
     state: "{{ 'present' if keycloak.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'keycloak-ingree.yml') | from_yaml  }}"
 
-# ======================================
+- name: Get the existing Keycloak Route
+  when: "keycloak.install == true and 'url' not in keycloak and 'route.openshift.io' in api_groups"
+  k8s_facts:
+    api_version: route.openshift.io/v1
+    kind: Route
+    name: "{{name}}-keycloak"
+    namespace: '{{ meta.namespace }}'
+  register: keycloak_route
+
+- name: Get the existing Keycloak Ingress
+  when: "keycloak.install == true and 'url' not in keycloak and 'route.openshift.io' not in api_groups"
+  k8s_facts:
+    api_version: extensions/v1beta1
+    kind: Ingress
+    name: "{{name}}-keycloak"
+    namespace: '{{ meta.namespace }}'
+  register: keycloak_ingress
+
+- name: Define keycloak_url from default Route or Ingress
+  when: "keycloak.install == true and 'url' not in keycloak"
+  set_fact:
+    keycloak_url: "{{ (keycloak_route.resources|first).spec.host if keycloak_route is defined else ((keycloak_ingress.resources|first).spec.rules|first).host }}"
+
+- name: The Keycloak Deployment is present if keycloak.install == true
+  k8s:
+    state: "{{ 'present' if keycloak.install|bool else 'absent' }}"
+    definition: "{{ lookup('template', 'keycloak-deployment.yml') | from_yaml  }}"
+
+- name: The Keycloak Service is present if keycloak.install == true
+  k8s:
+    state: "{{ 'present' if keycloak.install|bool else 'absent' }}"
+    definition: "{{ lookup('template', 'keycloak-service.yml') | from_yaml  }}"
+
+
+# ================================================================
 # Finish with pure Microcks components
-# ======================================
+# ================================================================
 
 - name: The Microcks ConfigMap object is present
   k8s:
@@ -122,18 +187,6 @@
   k8s:
     state: present
     definition: "{{ lookup('template', 'microcks-service.yml') | from_yaml  }}"
-
-- name: The Microcks Route is present if OpenShift
-  when: "'route.openshift.io' in api_groups"
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'microcks-route.yml') | from_yaml  }}"
-
-- name: The Microcks Ingress is present if Kubernetes
-  when: "'route.openshift.io' not in api_groups"
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'microcks-ingress.yml') | from_yaml  }}"
 
 - name: The Postman-runtime Deployment is present
   k8s:

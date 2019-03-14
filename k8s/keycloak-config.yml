@@ -91,7 +91,7 @@ data:
             "+"
           ],
           "redirectUris": [
-            "http://{{microcks.url}}/*"
+            "https://{{microcks.url|default(microcks_url)}}/*"
           ]
         },
         {

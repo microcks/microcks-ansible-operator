@@ -4,14 +4,14 @@ name: microcks
 version: "0.7.1"
 microcks: 
   replicas: 2
-  url: microcks.192.168.99.100.nip.io
+  #url: microcks.192.168.99.100.nip.io
 postman:
   replicas: 2
 keycloak:
   install: true
   persistent: true
   volume_size: 1Gi
-  url: keycloak.192.168.99.100.nip.io
+  #url: keycloak.192.168.99.100.nip.io
   replicas: 1
 mongodb:
   install: true
