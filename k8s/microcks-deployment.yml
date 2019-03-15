@@ -8,7 +8,7 @@ metadata:
     container: spring
     group: microcks
 spec:
-  replicas: "{{microcks.replicas}}"
+  replicas: {{microcks.replicas|int}}
   selector: 
     matchLabels:  
       app: "{{name}}"

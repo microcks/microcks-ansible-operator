@@ -133,7 +133,8 @@
   when: keycloak.install == true and 'route.openshift.io' not in api_groups
   k8s:
     state: "{{ 'present' if keycloak.install|bool else 'absent' }}"
-    definition: "{{ lookup('template', 'keycloak-ingree.yml') | from_yaml  }}"
+    namespace: '{{ meta.namespace }}'
+    definition: "{{ lookup('template', 'keycloak-ingress.yml') | from_yaml  }}"
 
 - name: Get the existing Keycloak Route
   when: "keycloak.install == true and 'url' not in keycloak and 'route.openshift.io' in api_groups"

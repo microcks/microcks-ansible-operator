@@ -8,7 +8,7 @@ metadata:
     container: postman-runtime
     group: microcks
 spec:
-  replicas: "{{postman.replicas}}"
+  replicas: {{postman.replicas|int}}
   selector: 
     matchLabels:  
       app: "{{name}}"
