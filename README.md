@@ -4,7 +4,67 @@ Kubernetes Operator for easy setup and management of Microcks installs (using An
 
 ## Usage
 
+Once operator is up and running into your Kubernetes namespace, you just have to create a `MicrocksInstall` Custom Resource Definition (CRD). This CRD simply describe the properties of the Microcks installation you want to have in your cluster. A `MicrocksInstall`CRD is made of 5 different sections that may be used for describing your setup :
+* Global part is mandatory and contain attributes like `name` of your install and `version` of Microcks to use,
+* `microcks` part is mandatory and contain attributes like the number of `replicas` and the access `url` if you want some customizations, 
+* `postman` part is mandatory for the number of `replicas`
+* `keycloak` part is optional and allows to specifiy if you want a new install or reuse an existing instance,
+* `mongodb` part is optional and allows to specifiy if you want a new install or reuse an existing instance.
+
+### Minimalist CRD
+
+Here's below a minimalistic `MicrocksInstall` CRD that I use on my OpenShift cluster. This let all the defaults applies (see below for details).
+
+```yaml
+apiVersion: microcks.github.io/v1alpha1
+kind: MicrocksInstall
+metadata:
+  name: my-microcksinstall
+spec:
+  name: my-microcksinstall
+  version: "0.7.1"
+  microcks: 
+    replicas: 1
+  postman:
+    replicas: 2
+```
+
+> This form can only be used on OpenShift as vanilla Kubernetes will need more informations to customize `Ingress` resources.
+
+### Complete CRD
+
+Here's now a complete `MicrocksInstall` CRD that I use - for example - on Minikube for testing vanilla Kubernetes support. This one adds the `url` attributes that are mandatory on vanilla Kubernetes.
+
+```yaml
+apiVersion: microcks.github.io/v1alpha1
+kind: MicrocksInstall
+metadata:
+  name: my-microcksinstall-minikube
+spec:
+  name: my-microcksinstall-minikube
+  version: "0.7.1"
+  microcks: 
+    replicas: 1
+    url: microcks.192.168.99.100.nip.io
+  postman:
+    replicas: 2
+  keycloak:
+    install: true
+    persistent: true
+    volumeSize: 1Gi
+    url: keycloak.192.168.99.100.nip.io
+    replicas: 1
+  mongodb:
+    install: true
+    persistent: true
+    volumeSize: 2Gi
+    replicas: 1
+```
+
+
 ### MicrocksInstall details
+
+The table below describe all the fields of the `MicrocksInstall` CRD, provdiing informations on what's mandatory and what's optional as well as default values.
 
 | Section       | Property      | Description   |
 | ------------- | ------------- | ------------- |
@@ -63,3 +123,7 @@ microcks-ansible-operator-f58b97548-qj26l   1/1       Running   0          3m
 Now just create a `MicrocksInstall` CRD!
 
 ### Via OLM add-on
+
+Operator Lyfecycle Manager shoud be installed on your cluster firts. Please follow this [guideline](https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/install/install.md) to know how to proceed.
+
+Resources can be found into the `/deploy/olm` directory of this repo. You may want to use the `install.sh` script for creating CSV and subscriptions within your target namespace.

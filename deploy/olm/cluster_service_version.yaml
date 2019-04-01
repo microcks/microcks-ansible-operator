@@ -4,11 +4,14 @@ metadata:
   name: microcks-operator.v0.0.1
   namespace: REPLACE_NAMESPACE
   annotations:
-    categories: "Mocking & Testing"
+    capabilities: Basic Install
+    categories: "Integration & Delivery"
+    description: "Open Source mocking and testing platform for API and microservices"
     certified: "false"
     containerImage: quay.io/lbroudoux/microcks-ansible-operator:latest
-    createdAt: 2019-03-11
+    createdAt: 2019-04-01T09:01:00Z
     support: microcks.github.io
+    repository: https://github.com/microcks/microcks-ansible-operator
     alm-examples: |-
       [
         {
@@ -41,14 +44,14 @@ metadata:
       ]
 spec:
   displayName: microcks-operator
+  version: 0.2.0
   description: >
     Microcks is an open source project those goal is to provide a platform for referencing, deploying mocks and allow contract-testing of Services and APIs. It can also be considered as a Service Virtualization solution because it will allow you to provide fake API or Service implementation before development being actually done. It supports both REST API and SOAP WebServices and perfectly integrates into an iterative,contract-first delivery process.
     
     Microcks tries not reinventing the wheel and let you capitalize on already known tools of standards. It supports OpenAPI Specification 3.x out-of-the-box and can also relies on popular tools like [SoapUI](http://www.soapui.com) or [Postman](http://www.getpostman.io) to edit your API request / response samples as well as your test scripts.
     
     * **Create/Destroy**: Easily launch Microcks installations for your kubernetes namespace.
-  keywords: ['mocking', 'testing']
-  version: 0.0.1
+  keywords: ['mock', 'test', 'API', 'microservice']
   maintainers:
   - name: lbroudoux
     email: microcksio@googlegroups.com
@@ -77,7 +80,7 @@ spec:
   - type: MultiNamespace
     supported: false
   - type: AllNamespaces
-    supported: true
+    supported: false
   install:
     strategy: deployment
     spec:
@@ -118,6 +121,12 @@ spec:
           verbs:
           - '*'
         - apiGroups:
+          - route.openshift.io
+          resources:
+          - routes/custom-host
+          verbs:
+          - create
+        - apiGroups:
           - monitoring.coreos.com
           resources:
           - servicemonitors
@@ -145,13 +154,13 @@ spec:
               serviceAccountName: microcks-ansible-operator
               containers:
                 - name: microcks-ansible-operator
-                  image: quay.io/lbroudoux/microcks-ansible-operator
+                  image: quay.io/lbroudoux/microcks-ansible-operator:latest
                   imagePullPolicy: Always
                   env:
                     - name: WATCH_NAMESPACE
                       valueFrom:
                         fieldRef:
-                          fieldPath: metadata.namespace
+                          fieldPath: metadata.annotations['olm.targetNamespaces']
                     - name: POD_NAME
                       valueFrom:
                         fieldRef:
@@ -165,3 +174,33 @@ spec:
       kind: MicrocksInstall
       displayName: MicrocksInstall
       description: Represents a Microcks installation
+      resources:
+        - kind: Service
+          name: ''
+          version: v1
+        - kind: Deployment
+          name: ''
+          version: v1
+        - kind: Pod
+          name: ''
+          version: v1
+        - kind: ConfigMap
+          name: ''
+          version: v1
+        - kind: Secret
+          name: ''
+          version: v1
+        - kind: PersistentVolumeClaim
+          name: ''
+          version: v1
+      specDescriptors:
+        - description: Name of your MicrocksInstall
+          displayName: Name
+          path: name
+          x-descriptors:
+            - 'urn:alm:descriptor:com.tectonic.ui:label'
+        - description: Version of Microcks to install
+          displayName: Version
+          path: version
+          x-descriptors:
+            - 'urn:alm:descriptor:com.tectonic.ui:label'
