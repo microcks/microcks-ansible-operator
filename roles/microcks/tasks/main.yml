@@ -52,6 +52,42 @@
     state: present
     definition: "{{ lookup('template', 'microcks-route.yml') | from_yaml  }}"
 
+- name: The Microks Ingress certs key is present if Kubernetes
+  stat: 
+    path: microcks-ingress.key
+  register: microcks_ingress_certs
+
+- name: The Microks Ingress certs are generated if Kubernetes
+  when: "'route.openshift.io' not in api_groups and microcks_ingress_certs.stat.exists == False"
+  command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout microcks-ingress.key -out microcks-ingress.crt -subj "/CN={{microcks.url}}/O={{microcks.url}}"
+
+- name: Get an existing Microcks Ingress Secret
+  k8s_facts:
+    api_version: v1
+    kind: Secret
+    name: "{{name}}-microcks-ingress-secret"
+    namespace: '{{ meta.namespace }}'
+  register: microcks_ingress_secret
+
+- name: The Microcks Ingress secret is present if Kubernetes
+  when: "'route.openshift.io' not in api_groups and microcks_ingress_secret.resources|length == 0"
+  k8s:
+    state: present
+    force: False
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: "{{name}}-microcks-ingress-secret"
+        namespace: '{{ meta.namespace }}'
+        labels:
+          app: "{{name}}"
+          group: microcks
+      type: Opaque
+      stringData:
+        tls.key: "{{ lookup('file', 'microcks-ingress.key') }}"
+        tls.crt: "{{ lookup('file', 'microcks-ingress.crt') }}"
+
 - name: The Microcks Ingress is present if Kubernetes
   when: "'route.openshift.io' not in api_groups"
   k8s:
@@ -128,6 +164,42 @@
   k8s:
     state: "{{ 'present' if keycloak.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'keycloak-route.yml') | from_yaml  }}"
+
+- name: The Kaycloak Ingress certs key is present if keycloak.install == true and Kubernetes
+  stat: 
+    path: keycloak-ingress.key
+  register: keycloak_ingress_certs
+
+- name: The Keycloak Ingress certs are generated if keycloak.install == true and Kubernetes
+  when: keycloak.install == true and 'route.openshift.io' not in api_groups and keycloak_ingress_certs.stat.exists == False
+  command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout keycloak-ingress.key -out keycloak-ingress.crt -subj "/CN={{keycloak.url}}/O={{keycloak.url}}"
+
+- name: Get an existing Kaycloak Ingress Secret
+  k8s_facts:
+    api_version: v1
+    kind: Secret
+    name: "{{name}}-keycloak-ingress-secret"
+    namespace: '{{ meta.namespace }}'
+  register: keycloak_ingress_secret
+
+- name: The Keycloak Ingress secret is present if keycloak.install == true and Kubernetes
+  when: keycloak.install == true and 'route.openshift.io' not in api_groups and keycloak_ingress_secret.resources|length == 0
+  k8s:
+    state: present
+    force: False
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: "{{name}}-keycloak-ingress-secret"
+        namespace: '{{ meta.namespace }}'
+        labels:
+          app: "{{name}}"
+          group: microcks
+      type: Opaque
+      stringData:
+        tls.key: "{{ lookup('file', 'keycloak-ingress.key') }}"
+        tls.crt: "{{ lookup('file', 'keycloak-ingress.crt') }}"
 
 - name: The Keycloak Ingress is present if keycloak.install == true and Kubernetes
   when: keycloak.install == true and 'route.openshift.io' not in api_groups

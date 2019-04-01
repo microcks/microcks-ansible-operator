@@ -9,6 +9,10 @@ metadata:
     app: "{{name}}"
     group: microcks
 spec:
+  tls:
+  - hosts:
+    - "{{microcks.url}}"
+    secretName: "{{name}}-microcks-ingress-secret"
   rules:
   - host: "{{microcks.url}}"
     http:

@@ -2,12 +2,17 @@ kind: Ingress
 apiVersion: extensions/v1beta1
 metadata:
   name: "{{name}}-keycloak"
+  namespace: '{{ meta.namespace }}'
   annotations:
     ingress.kubernetes.io/rewrite-target: /
   labels:
     app: "{{name}}"
     group: microcks
 spec:
+  tls:
+  - hosts:
+    - "{{keycloak.url}}"
+    secretName: "{{name}}-keycloak-ingress-secret"
   rules:
   - host: "{{keycloak.url}}"
     http:
