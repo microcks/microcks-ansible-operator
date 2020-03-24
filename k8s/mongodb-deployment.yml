@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: mongodb
-        image: centos/mongodb-32-centos7:latest
+        image: centos/mongodb-34-centos7:latest
         ports:
         - containerPort: 27017
           protocol: TCP

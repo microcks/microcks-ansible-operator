@@ -8,6 +8,11 @@ metadata:
     container: spring
     group: microcks
 data:
+  features.properties: |-
+    features.feature.repository-filter.enabled={{features.repositoryFilter.enabled|default(features.repository_filter.enabled) | bool | lower}}
+    features.feature.repository-filter.label-key={{features.repositoryFilter.labelKey|default(features.repository_filter.label_key)}}
+    features.feature.repository-filter.label-label={{features.repositoryFilter.labelLabel|default(features.repository_filter.label_label)}}
+    features.feature.repository-filter.label-list={{features.repositoryFilter.labelList|default(features.repository_filter.label_list)}}
   application.properties: |-
     # Application configuration properties
     tests-callback.url=http://{{name}}:8080

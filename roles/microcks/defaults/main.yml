@@ -1,7 +1,7 @@
 ---
 # defaults specification file for microcks installation
 name: microcks
-version: "0.7.1"
+version: "0.9.0"
 microcks: 
   replicas: 2
   #url: microcks.192.168.99.100.nip.io
@@ -18,3 +18,9 @@ mongodb:
   persistent: true
   volume_size: 2Gi
   replicas: 1
+features:
+  repository_filter:
+    enabled: false
+    label_key: domain
+    label_label: Domain
+    label_list: domain,status

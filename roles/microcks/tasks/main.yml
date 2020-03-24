@@ -115,7 +115,7 @@
 - name: Define microcks_url from default Route or Ingress
   when: "'url' not in microcks"
   set_fact:
-    microcks_url: "{{ (microcks_route.resources|first).spec.host if microcks_route is defined else ((microcks_ingress.resources|first).spec.rules|first).host }}"
+    microcks_url: "{{ (microcks_route.resources|first).spec.host if microcks_route is defined else ((microcks_ingress.resources|first).spec.rules|first).host }}"
 
 
 # ================================================================
