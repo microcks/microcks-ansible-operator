@@ -127,3 +127,68 @@ Now just create a `MicrocksInstall` CRD!
 Operator Lyfecycle Manager shoud be installed on your cluster firts. Please follow this [guideline](https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/install/install.md) to know how to proceed.
 
 Resources can be found into the `/deploy/olm` directory of this repo. You may want to use the `install.sh` script for creating CSV and subscriptions within your target namespace.
+
+## Local tests
+
+This Operator has been developed and tested using operator-sdk v0.16.0 and ansible 2.9.1
+
+```
+$ operator-sdk version
+operator-sdk version: "v0.16.0", commit: "55f1446c5f472e7d8e308dcdf36d0d7fc44fc4fd", go version: "go1.14 darwin/amd64"
+
+$ ansible --version
+ansible 2.9.1
+  config file = None
+  configured module search path = ['/Users/lbroudou/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/local/Cellar/ansible/2.9.1/libexec/lib/python3.7/site-packages/ansible
+  executable location = /usr/local/bin/ansible
+  python version = 3.7.5 (default, Nov  1 2019, 02:16:32) [Clang 11.0.0 (clang-1100.0.33.8)]
+```
+
+Ansible-runner module is requried for local testing. You can install and set it up with following commands:
+
+```
+$ /usr/local/Cellar/ansible/2.9.1/libexec/bin/pip install ansible-runner-http openshift 
+[...]
+$ ln -s /usr/local/Cellar/ansible/2.9.1/libexec/bin/ansible-runner /usr/local/bin/ansible-runner
+
+$ ansible-runner --version
+1.4.5
+```
+
+Once done, local tests are possible using the following command:
+
+```
+$ operator-sdk run --local
+INFO[0000] Running the operator locally in namespace microcks. 
+{"level":"info","ts":1585060926.0604842,"logger":"cmd","msg":"Go Version: go1.14"}
+{"level":"info","ts":1585060926.060529,"logger":"cmd","msg":"Go OS/Arch: darwin/amd64"}
+{"level":"info","ts":1585060926.060534,"logger":"cmd","msg":"Version of operator-sdk: v0.16.0"}
+{"level":"info","ts":1585060926.063453,"logger":"cmd","msg":"Watching single namespace.","Namespace":"microcks"}
+{"level":"info","ts":1585060928.423823,"logger":"controller-runtime.metrics","msg":"metrics server is starting to listen","addr":"0.0.0.0:8383"}
+{"level":"info","ts":1585060928.424896,"logger":"watches","msg":"Environment variable not set; using default value","envVar":"WORKER_MICROCKSINSTALL_MICROCKS_GITHUB_IO","default":1}
+{"level":"info","ts":1585060928.4249249,"logger":"watches","msg":"Environment variable not set; using default value","envVar":"ANSIBLE_VERBOSITY_MICROCKSINSTALL_MICROCKS_GITHUB_IO","default":2}
+{"level":"info","ts":1585060928.42496,"logger":"cmd","msg":"Environment variable not set; using default value","Namespace":"microcks","envVar":"ANSIBLE_DEBUG_LOGS","ANSIBLE_DEBUG_LOGS":false}
+{"level":"info","ts":1585060928.424971,"logger":"ansible-controller","msg":"Watching resource","Options.Group":"microcks.github.io","Options.Version":"v1alpha1","Options.Kind":"MicrocksInstall"}
+{"level":"info","ts":1585060928.4250722,"logger":"leader","msg":"Trying to become the leader."}
+{"level":"info","ts":1585060928.425101,"logger":"leader","msg":"Skipping leader election; not running in a cluster."}
+{"level":"info","ts":1585060932.8614569,"logger":"metrics","msg":"Skipping metrics Service creation; not running in a cluster."}
+{"level":"info","ts":1585060935.078951,"logger":"proxy","msg":"Starting to serve","Address":"127.0.0.1:8888"}
+{"level":"info","ts":1585060935.079112,"logger":"controller-runtime.manager","msg":"starting metrics server","path":"/metrics"}
+{"level":"info","ts":1585060935.079189,"logger":"controller-runtime.controller","msg":"Starting EventSource","controller":"microcksinstall-controller","source":"kind source: microcks.github.io/v1alpha1, Kind=MicrocksInstall"}
+{"level":"info","ts":1585060935.183991,"logger":"controller-runtime.controller","msg":"Starting Controller","controller":"microcksinstall-controller"}
+{"level":"info","ts":1585060935.184026,"logger":"controller-runtime.controller","msg":"Starting workers","controller":"microcksinstall-controller","worker count":1}
+{"level":"info","ts":1585060938.4777331,"logger":"proxy","msg":"Skipping cache lookup","resource":{"IsResourceRequest":false,"Path":"/version","Verb":"get","APIPrefix":"","APIGroup":"","APIVersion":"","Namespace":"","Resource":"","Subresource":"","Name":"","Parts":null}}
+{"level":"info","ts":1585060938.5031219,"logger":"proxy","msg":"Skipping cache lookup","resource":{"IsResourceRequest":false,"Path":"/version/openshift","Verb":"get","APIPrefix":"","APIGroup":"","APIVersion":"","Namespace":"","Resource":"","Subresource":"","Name":"","Parts":null}}
+{"level":"info","ts":1585060938.522412,"logger":"proxy","msg":"Skipping cache lookup","resource":{"IsResourceRequest":false,"Path":"/apis","Verb":"get","APIPrefix":"","APIGroup":"","APIVersion":"","Namespace":"","Resource":"","Subresource":"","Name":"","Parts":null}}
+{"level":"info","ts":1585060938.5421581,"logger":"proxy","msg":"Skipping cache lookup","resource":{"IsResourceRequest":false,"Path":"/apis","Verb":"get","APIPrefix":"","APIGroup":"","APIVersion":"","Namespace":"","Resource":"","Subresource":"","Name":"","Parts":null}}
+{"level":"info","ts":1585060938.587947,"logger":"logging_event_handler","msg":"[playbook task]","name":"microcks","namespace":"microcks","gvk":"microcks.github.io/v1alpha1, Kind=MicrocksInstall","event_type":"playbook_on_task_start","job":"3916589616287113937","EventData.Name":"microcks : Get an existing MongoDB Secret"}
+
+--------------------------- Ansible Task StdOut -------------------------------
+
+TASK [microcks : Get an existing MongoDB Secret] *******************************
+task path: /Users/lbroudou/Development/github/microcks-ansible-operator/roles/microcks/tasks/main.yml:12
+
+-------------------------------------------------------------------------------
+[...]
+```

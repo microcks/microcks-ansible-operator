@@ -2,4 +2,4 @@
 - version: v1alpha1
   group: microcks.github.io
   kind: MicrocksInstall
-  role: /opt/ansible/roles/microcks
+  playbook: playbook.yml

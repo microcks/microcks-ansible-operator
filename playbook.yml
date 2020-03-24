@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  gather_facts: no
+  collections:
+    - community.kubernetes
+    - operator_sdk.util
+
+  tasks:
+    - import_role:
+        name: "microcks"
