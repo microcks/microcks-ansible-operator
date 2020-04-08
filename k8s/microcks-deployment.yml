@@ -36,30 +36,17 @@ spec:
           - name: SPRING_PROFILES_ACTIVE
             value: prod
           - name: SPRING_DATA_MONGODB_URI
-            {% if 'uri' in mongodb %}value: mongodb://${SPRING_DATA_MONGODB_USER}:${SPRING_DATA_MONGODB_PASSWORD}@{{mongodb.uri}}/${SPRING_DATA_MONGODB_DATABASE}
-            {% else %}value: mongodb://${SPRING_DATA_MONGODB_USER}:${SPRING_DATA_MONGODB_PASSWORD}@{{name}}-mongodb:27017/${SPRING_DATA_MONGODB_DATABASE}
-            {% endif %}
-
+            value: mongodb://${SPRING_DATA_MONGODB_USER}:${SPRING_DATA_MONGODB_PASSWORD}@{{mongodb.uri|default(name ~ '-mongodb:27017')}}/${SPRING_DATA_MONGODB_DATABASE}
           - name: SPRING_DATA_MONGODB_USER
             valueFrom:
               secretKeyRef:
-                {% if mongodb.secret_ref is defined and 'username_key' in mongodb.secret_ref %}key: {{mongodb.secret_ref.username_key}}
-                {% else %}key: username
-                {% endif %}
-                {%- if mongodb.secret_ref is defined and 'secret' in mongodb.secret_ref %}name: {{mongodb.secret_ref.secret}}
-                {% else %}name: "{{name}}-mongodb-connection"
-                {% endif %}
-
+                key: {{mongodb.secret_ref.username_key|default('username')}}
+                name: {{mongodb.secret_ref.secret|default(name ~ '-mongodb-connection')}}
           - name: SPRING_DATA_MONGODB_PASSWORD
             valueFrom:
               secretKeyRef:
-                {% if mongodb.secret_ref is defined and 'password_key' in mongodb.secret_ref %}key: {{mongodb.secret_ref.password_key}}
-                {% else %}key: password
-                {% endif %}
-                {%- if mongodb.secret_ref is defined and 'secret' in mongodb.secret_ref -%}name: {{mongodb.secret_ref.secret}}
-                {% else %}name: "{{name}}-mongodb-connection"
-                {% endif %}
-
+                key: {{mongodb.secret_ref.password_key|default('password')}}
+                name: {{mongodb.secret_ref.secret|default(name ~ '-mongodb-connection')}}
           - name: SPRING_DATA_MONGODB_DATABASE
             value: "{{mongodb.database|default(name)}}"
           - name: POSTMAN_RUNNER_URL
