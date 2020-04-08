@@ -1,0 +1,25 @@
+apiVersion: microcks.github.io/v1alpha1
+kind: MicrocksInstall
+metadata:
+  name: microcks
+spec:
+  # Add fields here
+  name: microcks
+  version: "nightly"
+  microcks: 
+    replicas: 1
+  postman:
+    replicas: 1
+  keycloak:
+    install: true
+    persistent: true
+    volumeSize: 1Gi
+    replicas: 1
+  mongodb:
+    install: false
+    uri: mongodb:27017
+    database: sampledb
+    secretRef:
+      secret: mongodb
+      usernameKey: database-user
+      passwordKey: database-password

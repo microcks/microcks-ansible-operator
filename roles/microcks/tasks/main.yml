@@ -10,6 +10,7 @@
 # ================================================================
 
 - name: Get an existing MongoDB Secret
+  when: mongodb.secret_ref is not defined
   k8s_facts:
     api_version: v1
     kind: Secret
@@ -18,7 +19,7 @@
   register: mongodb_secret
 
 - name: The MongoDB Secret is present
-  when: mongodb_secret.resources|length == 0
+  when: mongodb_secret.resources is defined and mongodb_secret.resources|length == 0
   k8s:
     state: present
     force: False
@@ -32,11 +33,13 @@
     definition: "{{ lookup('template', 'mongodb-pvc.yml') | from_yaml  }}"
 
 - name: The MongoDB Deployment is present if mongodb.install == true
+  when: mongodb.install|bool
   k8s:
     state: "{{ 'present' if mongodb.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'mongodb-deployment.yml') | from_yaml  }}"
 
 - name: The MongoDB Service is present if mongodb.install == true
+  when: mongodb.install|bool
   k8s:
     state: "{{ 'present' if mongodb.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'mongodb-service.yml') | from_yaml  }}"
@@ -165,7 +168,7 @@
     state: "{{ 'present' if keycloak.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'keycloak-route.yml') | from_yaml  }}"
 
-- name: The Kaycloak Ingress certs key is present if keycloak.install == true and Kubernetes
+- name: The Keycloak Ingress certs key is present if keycloak.install == true and Kubernetes
   stat: 
     path: keycloak-ingress.key
   register: keycloak_ingress_certs
@@ -174,7 +177,7 @@
   when: keycloak.install == true and 'route.openshift.io' not in api_groups and keycloak_ingress_certs.stat.exists == False
   command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout keycloak-ingress.key -out keycloak-ingress.crt -subj "/CN={{keycloak.url}}/O={{keycloak.url}}"
 
-- name: Get an existing Kaycloak Ingress Secret
+- name: Get an existing Keycloak Ingress Secret
   k8s_facts:
     api_version: v1
     kind: Secret

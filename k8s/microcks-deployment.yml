@@ -36,19 +36,32 @@ spec:
           - name: SPRING_PROFILES_ACTIVE
             value: prod
           - name: SPRING_DATA_MONGODB_URI
-            value: mongodb://${SPRING_DATA_MONGODB_USER}:${SPRING_DATA_MONGODB_PASSWORD}@{{name}}-mongodb:27017/${SPRING_DATA_MONGODB_DATABASE}
+            {% if 'uri' in mongodb %}value: mongodb://${SPRING_DATA_MONGODB_USER}:${SPRING_DATA_MONGODB_PASSWORD}@{{mongodb.uri}}/${SPRING_DATA_MONGODB_DATABASE}
+            {% else %}value: mongodb://${SPRING_DATA_MONGODB_USER}:${SPRING_DATA_MONGODB_PASSWORD}@{{name}}-mongodb:27017/${SPRING_DATA_MONGODB_DATABASE}
+            {% endif %}
+
           - name: SPRING_DATA_MONGODB_USER
             valueFrom:
               secretKeyRef:
-                key: username
-                name: "{{name}}-mongodb-connection"
+                {% if 'username_key' in mongodb.secret_ref %}key: {{mongodb.secret_ref.username_key}}
+                {% else %}key: username
+                {% endif %}
+                {%- if 'secret' in mongodb.secret_ref %}name: {{mongodb.secret_ref.secret}}
+                {% else %}name: "{{name}}-mongodb-connection"
+                {% endif %}
+
           - name: SPRING_DATA_MONGODB_PASSWORD
             valueFrom:
               secretKeyRef:
-                key: password
-                name: "{{name}}-mongodb-connection"
+                {% if 'password_key' in mongodb.secret_ref %}key: {{mongodb.secret_ref.password_key}}
+                {% else %}key: password
+                {% endif %}
+                {%- if 'secret' in mongodb.secret_ref -%}name: {{mongodb.secret_ref.secret}}
+                {% else %}name: "{{name}}-mongodb-connection"
+                {% endif %}
+
           - name: SPRING_DATA_MONGODB_DATABASE
-            value: "{{name}}"
+            value: "{{mongodb.database|default(name)}}"
           - name: POSTMAN_RUNNER_URL
             value: http://{{name}}-postman-runtime:8080
           - name: TEST_CALLBACK_URL
