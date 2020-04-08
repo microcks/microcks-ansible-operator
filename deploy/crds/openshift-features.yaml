@@ -1,0 +1,28 @@
+apiVersion: microcks.github.io/v1alpha1
+kind: MicrocksInstall
+metadata:
+  name: microcks
+spec:
+  # Add fields here
+  name: microcks
+  version: "nightly"
+  microcks: 
+    replicas: 1
+  postman:
+    replicas: 1
+  keycloak:
+    install: true
+    persistent: true
+    volumeSize: 1Gi
+    replicas: 1
+  mongodb:
+    install: true
+    persistent: true
+    volumeSize: 2Gi
+    replicas: 1
+  features:
+    repositoryFilter:
+      enabled: true
+      labelKey: app
+      labelLabel: Application
+      labelList: app,status
