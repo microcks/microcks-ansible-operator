@@ -12,7 +12,7 @@ spec:
   tls:
   - hosts:
     - "{{keycloak.url}}"
-    secretName: "{{name}}-keycloak-ingress-secret"
+    secretName: {{keycloak.ingress_secret_ref|default(name ~ "-keycloak-ingress-secret")}}
   rules:
   - host: "{{keycloak.url}}"
     http:

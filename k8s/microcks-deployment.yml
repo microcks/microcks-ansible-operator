@@ -43,20 +43,20 @@ spec:
           - name: SPRING_DATA_MONGODB_USER
             valueFrom:
               secretKeyRef:
-                {% if 'username_key' in mongodb.secret_ref %}key: {{mongodb.secret_ref.username_key}}
+                {% if mongodb.secret_ref is defined and 'username_key' in mongodb.secret_ref %}key: {{mongodb.secret_ref.username_key}}
                 {% else %}key: username
                 {% endif %}
-                {%- if 'secret' in mongodb.secret_ref %}name: {{mongodb.secret_ref.secret}}
+                {%- if mongodb.secret_ref is defined and 'secret' in mongodb.secret_ref %}name: {{mongodb.secret_ref.secret}}
                 {% else %}name: "{{name}}-mongodb-connection"
                 {% endif %}
 
           - name: SPRING_DATA_MONGODB_PASSWORD
             valueFrom:
               secretKeyRef:
-                {% if 'password_key' in mongodb.secret_ref %}key: {{mongodb.secret_ref.password_key}}
+                {% if mongodb.secret_ref is defined and 'password_key' in mongodb.secret_ref %}key: {{mongodb.secret_ref.password_key}}
                 {% else %}key: password
                 {% endif %}
-                {%- if 'secret' in mongodb.secret_ref -%}name: {{mongodb.secret_ref.secret}}
+                {%- if mongodb.secret_ref is defined and 'secret' in mongodb.secret_ref -%}name: {{mongodb.secret_ref.secret}}
                 {% else %}name: "{{name}}-mongodb-connection"
                 {% endif %}
 

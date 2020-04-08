@@ -1,0 +1,22 @@
+apiVersion: microcks.github.io/v1alpha1
+kind: MicrocksInstall
+metadata:
+  name: microcks
+spec:
+  # Add fields here
+  name: microcks
+  version: "nightly"
+  microcks: 
+    replicas: 1
+    url: microcks.192.168.64.6.nip.io
+  postman:
+    replicas: 1
+    url: microcks-keycloak.192.168.64.6.nip.io
+  keycloak:
+    install: true
+    persistent: true
+    volumeSize: 1Gi
+  mongodb:
+    install: true
+    persistent: true
+    volumeSize: 2Gi
