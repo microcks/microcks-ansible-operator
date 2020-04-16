@@ -4,12 +4,13 @@ Kubernetes Operator for easy setup and management of Microcks installs (using An
 
 ## Usage
 
-Once operator is up and running into your Kubernetes namespace, you just have to create a `MicrocksInstall` Custom Resource Definition (CRD). This CRD simply describe the properties of the Microcks installation you want to have in your cluster. A `MicrocksInstall`CRD is made of 5 different sections that may be used for describing your setup :
+Once operator is up and running into your Kubernetes namespace, you just have to create a `MicrocksInstall` Custom Resource Definition (CRD). This CRD simply describe the properties of the Microcks installation you want to have in your cluster. A `MicrocksInstall`CRD is made of 6 different sections that may be used for describing your setup :
 * Global part is mandatory and contain attributes like `name` of your install and `version` of Microcks to use,
 * `microcks` part is mandatory and contain attributes like the number of `replicas` and the access `url` if you want some customizations, 
 * `postman` part is mandatory for the number of `replicas`
 * `keycloak` part is optional and allows to specifiy if you want a new install or reuse an existing instance,
 * `mongodb` part is optional and allows to specifiy if you want a new install or reuse an existing instance.
+* `features` part is optional and allowd to enable and configure opt-in features of Microcks.
 
 ### Minimalist CRD
 
@@ -22,7 +23,7 @@ metadata:
   name: my-microcksinstall
 spec:
   name: my-microcksinstall
-  version: "0.7.1"
+  version: "0.9.0"
   microcks: 
     replicas: 1
   postman:
@@ -42,10 +43,11 @@ metadata:
   name: my-microcksinstall-minikube
 spec:
   name: my-microcksinstall-minikube
-  version: "0.7.1"
+  version: "0.9.0"
   microcks: 
     replicas: 1
     url: microcks.192.168.99.100.nip.io
+    ingressSecretRef: my-secret-for-microcks-ingress
   postman:
     replicas: 2
   keycloak:
@@ -53,12 +55,23 @@ spec:
     persistent: true
     volumeSize: 1Gi
     url: keycloak.192.168.99.100.nip.io
-    replicas: 1
+    ingressSecretRef: my-secret-for-keycloak-ingress
   mongodb:
     install: true
+    uri: mongodb:27017
+    database: sampledb
+    secretRef:
+      secret: mongodb
+      usernameKey: database-user
+      passwordKey: database-password
     persistent: true
     volumeSize: 2Gi
-    replicas: 1
+  features:
+    repositoryFilter:
+      enabled: true
+      labelKey: app
+      labelLabel: Application
+      labelList: app,status
 ```
 
 
@@ -66,20 +79,26 @@ spec:
 
 The table below describe all the fields of the `MicrocksInstall` CRD, provdiing informations on what's mandatory and what's optional as well as default values.
 
-| Section       | Property      | Description   |
-| ------------- | ------------- | ------------- |
-| `microcks`    | `replicas`    | **Optional**. The number of replicas for the Microcks main pod. Default is `2`. |
-| `microcks`    | `url`         | **Mandatory on Kube, Optional on OpenShift**. The URL to use for exposing `Ingress`. If missing on OpenShift, default URL schema handled by Router is used. | 
-| `postman`     | `replicas`    | **Optional**. The number of replicas for the Microcks Postman pod. Default is `2`. |
-| `keycloak`    | `install`     | **Optional**. Flag for Keycloak installation. Default is `true`. Set to `false` if you want to reuse an existing Keycloak instance. |
-| `keycloak`    | `persistent`  | **Optional**. Flag for Keycloak persistence. Default is `true`. Set to `false` if you want an ephemeral Keycloak installation. |
-| `keycloak`    | `volumeSize`  | **Optional**. Size of persistent volume claim for Keycloak. Default is `1Gi`. Not used if not persistent install asked. |
-| `keycloak`    | `url`         | **Mandatory on Kube if keycloak.install==true, Optional otherwise**. The URL of Keycloak install if it already exists on the one used for exposing Kaycloak `Ingress`. If missing on OpenShift, default URL schema handled by Router is used. | 
-| `keycloak`    | `replicas`    | **Optional**. The number of replicas for the Keycloak pod if install is requried. Default is `1`. **Operator do not manage any other value for now** |
-| `mongodb`     | `install`     | **Optional**. Flag for MongoDB installation. Default is `true`. Set to `false` if you want to reuse an existing MongoDB instance. |
-| `mongodb`     | `persistent`  | **Optional**. Flag for MongoDB persistence. Default is `true`. Set to `false` if you want an ephemeral MongoDB installation. |
-| `mongodb`     | `volumeSize`  | **Optional**. Size of persistent volume claim for MongoDB. Default is `2Gi`. Not used if not persistent install asked. |
-| `mongodb`     | `replicas`    | **Optional**. The number of replicas for the MongoDB pod if install is requried. Default is `1`. **Operator do not manage any other value for now** |
+| Section       | Property           | Description   |
+| ------------- | ------------------ | ------------- |
+| `microcks`    | `replicas`         | **Optional**. The number of replicas for the Microcks main pod. Default is `2`. |
+| `microcks`    | `url`              | **Mandatory on Kube, Optional on OpenShift**. The URL to use for exposing `Ingress`. If missing on OpenShift, default URL schema handled by Router is used. | 
+| `microcks`    | `ingressSecretRef` | **Optional on Kube, not used on OpenShift**. The name of a TLS Secret for securing `Ingress`. If missing on Kubernetes, self-signed certificate is generated. | 
+| `postman`     | `replicas`         | **Optional**. The number of replicas for the Microcks Postman pod. Default is `2`. |
+| `keycloak`    | `install`          | **Optional**. Flag for Keycloak installation. Default is `true`. Set to `false` if you want to reuse an existing Keycloak instance. |
+| `keycloak`    | `persistent`       | **Optional**. Flag for Keycloak persistence. Default is `true`. Set to `false` if you want an ephemeral Keycloak installation. |
+| `keycloak`    | `volumeSize`       | **Optional**. Size of persistent volume claim for Keycloak. Default is `1Gi`. Not used if not persistent install asked. |
+| `keycloak`    | `url`              | **Mandatory on Kube if keycloak.install==false, Optional otherwise**. The URL of Keycloak install if it already exists on the one used for exposing Keycloak `Ingress`. If missing on OpenShift, default URL schema handled by Router is used. | 
+| `keycloak`    | `ingressSecretRef` | **Optional on Kube, not used on OpenShift**. The name of a TLS Secret for securing `Ingress`. If missing on Kubernetes, self-signed certificate is generated. |  
+| `keycloak`    | `replicas`         | **Optional**. The number of replicas for the Keycloak pod if install is requried. Default is `1`. **Operator do not manage any other value for now** |
+| `mongodb`     | `install`          | **Optional**. Flag for MongoDB installation. Default is `true`. Set to `false` if you want to reuse an existing MongoDB instance. |
+| `mongodb`     | `uri`              | **Optional**. MongoDB URI in case you're reusing existing MongoDB instance. Mandatory if `install` is `false` |
+| `mongodb`     | `database`         | **Optional**. MongoDB database name in case you're reusing existing MongoDB instance. Useful if `install` is `false`. Default to `sampledb` |
+| `mongodb`     | `secretRef`        | **Optional**. Reference of a Secret containing credentials for connecting a provided MongoDB instance. Mandatory if `install` is `false` |
+| `mongodb`     | `persistent`       | **Optional**. Flag for MongoDB persistence. Default is `true`. Set to `false` if you want an ephemeral MongoDB installation. |
+| `mongodb`     | `volumeSize`       | **Optional**. Size of persistent volume claim for MongoDB. Default is `2Gi`. Not used if not persistent install asked. |
+| `mongodb`     | `replicas`         | **Optional**. The number of replicas for the MongoDB pod if install is requried. Default is `1`. **Operator do not manage any other value for now** |
+| `features`    | `repositoryFilter` | **Optional**. Feature allowing to filter API and services on main page. Must be explicitely `enabled`. See [Organizing repository](https://microcks.io/documentation/using/advanced/organizing/#master-level-filter) for more informations |
 
 ## Installation
 

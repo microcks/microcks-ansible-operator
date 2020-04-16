@@ -1,30 +1,103 @@
 - hosts: localhost
   gather_facts: no
   vars:
-    keycloak_url: http://keycloak
+    keycloak_url: keycloak
     meta:
       namespace: microcks-operator-test
+    mongodb:
+      install: false
+      #uri: mongodb:27017
+      #database: sampledb
+      secret_ref:
+        password_key: database-password
+        secret: microcks-mongodb
+        username_key: database-user
   pre_tasks:
     - debug:
         var: test
       vars:
-        test: "{{ lookup('template', './k8s/microcks-deployment.yml') | from_yaml  }}"
+        test: "{{ lookup('template', './k8s/microcks-deployment.yml') | from_yaml }}"
+        #test: "Good"
+        #test: "{{ lookup('template', './k8s/microcks-deployment.yml') | from_yaml  }}"
+        #test: "{{ lookup('k8s', verify_ssl='no', cluster_info='api_groups') }}"
+        #test: "{{ lookup('k8s', validate_certs='no', cluster_info='api_groups', api_key='eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJtaWNyb2NrcyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJtaWNyb2Nrcy1hbnNpYmxlLW9wZXJhdG9yLXRva2VuLXR6cXZxIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6Im1pY3JvY2tzLWFuc2libGUtb3BlcmF0b3IiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJjMWY4Njc3ZC0xNWJiLTExZWEtYjA0MC0xMjQ1NmRlMzMxNmYiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6bWljcm9ja3M6bWljcm9ja3MtYW5zaWJsZS1vcGVyYXRvciJ9.afi-lm5HRSzQebauUJNxTnZ2DraFV4cwFGuWrzy_umRwtGrkc_cwIKXC37xZ0WD2fPQ2KDH7yFgmtEYwQknvNCgA1dCemLfuXU13BYhh3tmX4b4NMHQdYGhGeARI6ExyVa1KMiJXo9wKqR39I9EhAKIP6daKWLT9l5kSg5OuGNCpLIy2Kjo_WpayVUuACNpbXiTbsvrbxQkI3o-fVHQd3Jkx7ts5BcMRnWVSlpDlTUCUXLcrR7JvdIz377IQyvruUw4dhxxG-EgOiaUEoasq8Ruc5d7zb2Y3uvxLcho9VDcvOyCNYjPgwNe2vdletgLaHSFFYayM4cmzYJ2-R3fWSw') }}"
+  
+    #- fail:
 
-    - fail:
+    # - name: Set watch namespace
+    #   set_fact:
+    #     watch_namespace: "{{ lookup('env','WATCH_NAMESPACE') }}"
 
-    - name: Get information about the cluster
-      set_fact:
-        api_groups: "{{ lookup('k8s', cluster_info='api_groups') }}"
+    # - name: Get microcks namespace
+    #   set_fact:
+    #     microcks_namespace: "{{ lookup('k8s', kind='Namespace', resource_name=watch_namespace) }}"
+    #     openshift_namespace: "{{ lookup('k8s', kind='Namespace', resource_name='openshift') }}"
 
-    - name: The Microcks Deployment is present
-      k8s:
-        state: present
-        definition: "{{ lookup('template', './k8s/microcks-deployment.yml') | from_yaml  }}"
+    # - name: Determine is openshift namespace
+    #   set_fact:
+    #     is_openshift : "{{ microcks_namespace.metadata.annotations['openshif.io/display-name'] is defined }}"
+    #     is_kubernetes : "{{ microcks_namespace.metadata.annotations['openshif.io/display-name'] is not defined }}"
+
+    # - debug:
+    #     var: is_openshift
+    #     var: is_kubernetes
+    #   vars:
+    #     res: ISOpenshift
+    #     res: ISKubernetes
+
+    # - name: Verify openshift namespace exists
+    #   assert:
+    #     that:
+    #       - 'lookup("k8s", kind="Namespace", resource_name="openshift") is defined'
+    #     msg: The openshift namespace must exist
+    
+    # - name: Verify api_groups exists
+    #   assert:
+    #     that:
+    #       - 'lookup("k8s", cluster_info="api_groups") is defined'
+    #     msg: The api_groups must exist
+
+    # - name: Get api_groups
+    #   set_fact:
+    #     api_groups: "{{ lookup('k8s', cluster_info='api_groups') }}"
+
+    # - debug:
+    #     var: api_groups
+    #   vars:
+    #     res: APIGroups
+
+    # - name: Get information about the cluster
+    #   set_fact:
+    #     api_groups: "{{ lookup('k8s', cluster_info='api_groups') }}"
+
+    # - name: Check openshift Namespace object
+    #   k8s_info:
+    #     api_version: v1
+    #     kind: Namespace
+    #     name: openshift
+    #   register: openshift_namespace
+
+    # - name: Get an existing Service object
+    #   k8s_info:
+    #     api_version: v1
+    #     kind: Service
+    #     name: node-js-sample
+    #     namespace: hello
+    #   register: nodejs_sample_service
+
+    # - name: Get information about the cluster
+    #   set_fact:
+    #     api_groups: "{{ lookup('k8s', cluster_info='api_groups') }}"
+
+    # - name: The Microcks Deployment is present
+    #   k8s:
+    #     state: present
+    #     definition: "{{ lookup('template', './k8s/microcks-deployment.yml') | from_yaml  }}"
       
-    - debug:
-        var: res
-      vars:
-        res: Result
+    # - debug:
+    #     var: res
+    #   vars:
+    #     res: Result
 
     - fail:
   roles:
