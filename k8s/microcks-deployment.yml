@@ -7,6 +7,15 @@ metadata:
     app: "{{name}}"
     container: spring
     group: microcks
+    app.kubernetes.io/name: microcks-webapp
+    app.kubernetes.io/instance: "microcks-webapp-{{name}}"
+    app.kubernetes.io/version: "{{version}}"
+    app.kubernetes.io/component: webapp
+    app.kubernetes.io/part-of: "{{name}}"
+    app.kubernetes.io/managed-by: microcks-operator
+    app.openshift.io/runtime: java
+  annotations:
+    app.openshift.io/connects-to: "{{name}}-mongodb-microcks,{{name}}-postman-runtime-microcks,{{name}}-keycloak-microcks"
 spec:
   replicas: {{microcks.replicas|int}}
   selector: 
@@ -25,7 +34,7 @@ spec:
     spec:
       containers:
       - name: spring
-        image: "microcks/microcks:{{version}}"
+        image: "quay.io/microcks/microcks:{{version}}"
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -55,6 +64,15 @@ spec:
             value: http://{{name}}:8080
           - name: KEYCLOAK_URL
             value: https://{{keycloak.url|default(keycloak_url)}}/auth
+          - name: KAFKA_BOOTSTRAP_SERVER
+            {%- if features.async.kafka.install %}
+            
+            value: "{{name}}-kafka-kafka-bootstrap:9092"
+            {%- else %}
+            
+            value: "{{features.async.kafka.url}}"
+            {% endif %}
+
         resources:
           limits:
             memory: 512Mi

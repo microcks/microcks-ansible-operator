@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{name}}-async-minon"
+  namespace: '{{ meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    container: async-minion
+    group: microcks
+    app.kubernetes.io/name: microcks-async-minion
+    app.kubernetes.io/instance: "microcks-async-minion-{{name}}"
+    app.kubernetes.io/version: "{{version}}"
+    app.kubernetes.io/component: async-minion
+    app.kubernetes.io/part-of: "{{name}}"
+    app.kubernetes.io/managed-by: microcks-operator
+    app.openshift.io/runtime: quarkus
+  annotations:
+    app.openshift.io/connects-to: "{{name}}-webapp-microcks"
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "{{name}}"
+      deploymentconfig: async-minion
+      container: async-minion
+      group: microcks
+  template:
+    metadata:
+      labels:
+        app: "{{name}}"
+        deploymentconfig: async-minion
+        container: async-minion
+        group: microcks
+    spec:
+      containers:
+      - name: async-minion
+        image: quay.io/microcks/microcks-async-minion:nightly
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: QUARKUS_PROFILE
+            value: kube
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: "/health/live"
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
+          periodSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: "/health/ready"
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+          timeoutSeconds: 2
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        volumeMounts:
+          - name: "{{name}}-async-minion-config"
+            mountPath: "/deployments/config"
+        terminationMessagePath: "/dev/termination-log"
+      volumes:
+        - name: "{{name}}-async-minion-config"
+          configMap:
+            name: "{{name}}-async-minion-config"

@@ -7,6 +7,15 @@ metadata:
     app: "{{name}}"
     container: keycloak
     group: microcks
+    app.kubernetes.io/name: microcks-keycloak
+    app.kubernetes.io/instance: "microcks-keycloak-{{name}}"
+    app.kubernetes.io/version: "{{version}}"
+    app.kubernetes.io/component: keycloak
+    app.kubernetes.io/part-of: "{{name}}"
+    app.kubernetes.io/managed-by: microcks-operator
+    app.openshift.io/runtime: sso
+  annotations:
+    app.openshift.io/connects-to: "{{name}}-keycloak-postgresql-microcks"
 spec:
   strategy:
     type: Recreate
@@ -27,7 +36,7 @@ spec:
     spec:
       containers:
       - name: keycloak-server
-        image: jboss/keycloak:4.8.3.Final
+        image: jboss/keycloak:10.0.1
         ports:
         - name: http
           containerPort: 8080

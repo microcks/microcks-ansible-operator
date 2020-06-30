@@ -95,7 +95,8 @@ data:
           ]
         },
         {
-          "name": "microcks-serviceaccount",
+          "name": "{{keycloak.serviceAccount|default(keycloak.service_account)}}",
+          "secret": "{{keycloak.serviceAccountCredentials|default(keycloak.service_account_credentials)}}",
           "enabled": true,
           "bearerOnly": false,
           "publicClient": false,

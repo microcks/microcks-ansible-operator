@@ -3,16 +3,18 @@
 name: microcks
 version: "0.9.0"
 microcks: 
-  replicas: 2
+  replicas: 1
   #url: microcks.192.168.99.100.nip.io
 postman:
-  replicas: 2
+  replicas: 1
 keycloak:
   install: true
   persistent: true
   volume_size: 1Gi
   #url: keycloak.192.168.99.100.nip.io
   replicas: 1
+  service_account: microcks-serviceaccount
+  service_account_credentials: ab54d329-e435-41ae-a900-ec6b3fe15c54
 mongodb:
   install: true
   persistent: true
@@ -24,3 +26,12 @@ features:
     label_key: domain
     label_label: Domain
     label_list: domain,status
+  async:
+    enabled: false
+    default_binding: KAFKA
+    default_frequency: 10
+    kafka:
+      install: true
+      #url: 192.168.99.100.nip.io
+      persistent: false
+      volume_size: 2Gi

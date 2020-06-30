@@ -7,6 +7,13 @@ metadata:
     app: "{{name}}"
     container: mongodb
     group: microcks
+    app.kubernetes.io/name: microcks-mongodb
+    app.kubernetes.io/instance: "microcks-mongodb-{{name}}"
+    app.kubernetes.io/version: "{{version}}"
+    app.kubernetes.io/component: mongodb
+    app.kubernetes.io/part-of: "{{name}}"
+    app.kubernetes.io/managed-by: microcks-operator
+    app.openshift.io/runtime: mongodb
   creationTimestamp:
 spec:
   strategy:

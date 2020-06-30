@@ -57,6 +57,13 @@ rules:
   - get
   - create
 - apiGroups:
+  - kafka.strimzi.io
+  resources:
+  - kafkas
+  - kafkatopics
+  verbs:
+  - '*'
+- apiGroups:
   - microcks.github.io
   resources:
   - '*'

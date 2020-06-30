@@ -1,0 +1,37 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: "{{name}}-async-minion-config"
+  namespace: '{{ meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    container: asybnc-minion
+    group: microcks
+data:
+  application.properties: |-
+    # Configuration file.
+    %kube.quarkus.http.port=8080
+
+    # Configure the log level.
+    %kube.quarkus.log.level=INFO
+    %kube.quarkus.log.console.level=INFO
+
+    # Access to Microcks API server.
+    %kube.io.github.microcks.minion.async.client.MicrocksAPIConnector/mp-rest/url=http://{{name}}:8080
+    %kube.microcks.serviceaccount={{ keycloak.serviceAccount|default(keycloak.service_account) }}
+    %kube.microcks.serviceaccount.credentials={{ keycloak.serviceAccountCredentials|default(keycloak.service_account_credentials) }}
+
+    # Access to Kafka broker.
+    {%- if features.async.kafka.install %}
+    
+    %kube.kafka.bootstrap.servers={{name}}-kafka-kafka-bootstrap:9092
+    %kube.mp.messaging.incoming.microcks-services-updates.bootstrap.servers={{name}}-kafka-kafka-bootstrap:9092
+    {%- else %}
+    
+    %kube.kafka.bootstrap.servers={{ features.async.kafka.url }}
+    %kube.mp.messaging.incoming.microcks-services-updates.bootstrap.servers={{ features.async.kafka.url }}
+    {% endif %}
+
+    # Configure the minion own behavioral properties.
+    %kube.minion.supported-bindings=KAFKA
+    %kube.minion.restricted-frequencies=30,10

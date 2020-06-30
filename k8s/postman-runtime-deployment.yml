@@ -7,6 +7,13 @@ metadata:
     app: "{{name}}"
     container: postman-runtime
     group: microcks
+    app.kubernetes.io/name: microcks-postman-runtime
+    app.kubernetes.io/instance: "microcks-postman-runtime-{{name}}"
+    app.kubernetes.io/version: "{{version}}"
+    app.kubernetes.io/component: postman-runtime
+    app.kubernetes.io/part-of: "{{name}}"
+    app.kubernetes.io/managed-by: microcks-operator
+    app.openshift.io/runtime: nodejs
 spec:
   replicas: {{postman.replicas|int}}
   selector: 
@@ -25,7 +32,7 @@ spec:
     spec:
       containers:
       - name: postman-runtime
-        image: microcks/microcks-postman-runtime:latest
+        image: quay.io/microcks/microcks-postman-runtime:latest
         ports:
         - containerPort: 3000
           protocol: TCP

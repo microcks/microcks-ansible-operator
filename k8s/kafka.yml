@@ -1,0 +1,44 @@
+kind: Kafka
+apiVersion: kafka.strimzi.io/v1beta1
+metadata:
+  name: "{{name}}-kafka"
+  namespace: '{{ meta.namespace }}'
+spec:
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+  kafka:
+    config:
+      log.message.format.version: "2.5"
+      offsets.topic.replication.factor: 1
+      transaction.state.log.min.isr: 1
+      transaction.state.log.replication.factor: 1
+    listeners:
+      plain: {}
+      tls: {}
+      external:
+        {% if 'url' not in features.async.kafka and 'route.openshift.io' in api_groups %}
+
+        type: route
+        {% endif %}
+        
+        {% if 'url' in features.async.kafka and 'route.openshift.io' not in api_groups %}
+        
+        type: ingress
+        authentication:
+          type: tls
+        configuration:
+          bootstrap:
+            host: "{{name}}-kafka.{{features.async.kafka.url}}"
+          brokers:
+          - broker: 0
+            host: "{{name}}-kafka-0.{{features.async.kafka.url}}"
+        {% endif %}
+
+    replicas: 1
+    storage:
+      type: ephemeral
+  zookeeper:
+    replicas: 1
+    storage:
+      type: ephemeral
