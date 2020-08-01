@@ -9,6 +9,7 @@ postman:
   replicas: 1
 keycloak:
   install: true
+  realm: microcks
   persistent: true
   volume_size: 1Gi
   #url: keycloak.192.168.99.100.nip.io
