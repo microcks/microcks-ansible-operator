@@ -5,7 +5,7 @@ metadata:
 spec:
   # Add fields here
   name: microcks
-  version: "nightly"
+  version: "1.0.0"
   microcks: 
     replicas: 1
     url: microcks-op.192.168.64.6.nip.io

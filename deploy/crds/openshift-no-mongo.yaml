@@ -5,7 +5,7 @@ metadata:
 spec:
   # Add fields here
   name: microcks
-  version: "nightly"
+  version: "1.0.0"
   microcks: 
     replicas: 1
   postman:
