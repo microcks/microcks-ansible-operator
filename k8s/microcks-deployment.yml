@@ -64,6 +64,8 @@ spec:
             value: http://{{name}}:8080
           - name: KEYCLOAK_URL
             value: https://{{keycloak.url|default(keycloak_url)}}/auth
+          - name: ASYNC_MINION_URL
+            value: http://{{name}}-async-minion:8080
           - name: KAFKA_BOOTSTRAP_SERVER
             {%- if features.async.kafka.install %}
             

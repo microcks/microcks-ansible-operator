@@ -302,3 +302,8 @@
   k8s:
     state: "{{ 'present' if features.async.enabled|bool else 'absent' }}"
     definition: "{{ lookup('template', 'async-minion-deployment.yml') | from_yaml  }}"
+
+- name: The Async-minion Service is present if features.async.enabled == true
+  k8s:
+    state: "{{ 'present' if features.async.enabled|bool else 'absent' }}"
+    definition: "{{ lookup('template', 'async-minion-service.yml') | from_yaml  }}"

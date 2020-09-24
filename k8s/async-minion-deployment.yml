@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{name}}-async-minon"
+  name: "{{name}}-async-minion"
   namespace: '{{ meta.namespace }}'
   labels:
     app: "{{name}}"
@@ -36,7 +36,7 @@ spec:
     spec:
       containers:
       - name: async-minion
-        image: quay.io/microcks/microcks-async-minion:nightly
+        image: quay.io/microcks/microcks-async-minion:{{version}}
         imagePullPolicy: IfNotPresent
         env:
           - name: QUARKUS_PROFILE

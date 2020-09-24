@@ -28,6 +28,7 @@ data:
     # Application configuration properties
     tests-callback.url=http://{{name}}:8080
     postman-runner.url=http://{{name}}-postman-runtime:8080
+    async-minion.url=http://{{name}}-async-minion:8080
 
     network.username=
     network.password=
