@@ -1,0 +1,21 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: "{{name}}-async-minion"
+  namespace: '{{ meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    container: async-minion
+    group: microcks
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      name: async-minion
+  type: ClusterIP
+  sessionAffinity: None
+  selector:
+    app: "{{name}}"
+    container: async-minion
+    group: microcks
