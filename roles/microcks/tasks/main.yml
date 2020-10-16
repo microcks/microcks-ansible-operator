@@ -5,6 +5,15 @@
   set_fact:
     api_groups: "{{ lookup('k8s', cluster_info='api_groups') }}"
 
+# Because we are passing through some yaml directly to Kubernetes resources, we have to retain the camelCase keys.
+# All CR parameters are converted to snake_case, but the original yaml is found in the special _microcks_github_io_microcksinstall param.
+# We need to copy that original yaml into our vars where appropriate to keep the camelCase.
+
+- name: Get the original CR as-is for the camelCase keys
+  set_fact:
+    current_cr: "{{ _microcks_github_io_microcksinstall }}"
+
+
 # ================================================================
 # Start with optional MongoDB components
 # ================================================================
@@ -61,8 +70,8 @@
     path: microcks-ingress.key
   register: microcks_ingress_certs
 
-- name: The Microks Ingress certs are generated if Kubernetes
-  when: "'route.openshift.io' not in api_groups and microcks_ingress_certs.stat is defined and microcks_ingress_certs.stat.exists == False"
+- name: The Microks Ingress certs are generated if Kubernetes and generate_cert
+  when: "'route.openshift.io' not in api_groups and microcks.generate_cert == True and microcks_ingress_certs.stat is defined and microcks_ingress_certs.stat.exists == False"
   command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout microcks-ingress.key -out microcks-ingress.crt -subj "/CN={{microcks.url}}/O={{microcks.url}}"
 
 - name: Get an existing Microcks Ingress Secret
@@ -74,8 +83,8 @@
     namespace: '{{ meta.namespace }}'
   register: microcks_ingress_secret
 
-- name: The Microcks Ingress secret is present if Kubernetes
-  when: "'route.openshift.io' not in api_groups and microcks_ingress_secret.resources is defined and microcks_ingress_secret.resources|length == 0"
+- name: The Microcks Ingress secret is present if Kubernetes and generate_cert
+  when: "'route.openshift.io' not in api_groups and microcks.generate_cert == True and microcks_ingress_secret.resources is defined and microcks_ingress_secret.resources|length == 0"
   k8s:
     state: present
     force: False
@@ -176,8 +185,8 @@
     path: keycloak-ingress.key
   register: keycloak_ingress_certs
 
-- name: The Keycloak Ingress certs are generated if keycloak.install == true and Kubernetes
-  when: keycloak.install == true and 'route.openshift.io' not in api_groups and keycloak_ingress_certs.stat is defined and keycloak_ingress_certs.stat.exists == False
+- name: The Keycloak Ingress certs are generated if keycloak.install == true and Kubernetes and generate_cert
+  when: keycloak.install == true and 'route.openshift.io' not in api_groups and keycloak.generate_cert == True and keycloak_ingress_certs.stat is defined and keycloak_ingress_certs.stat.exists == False
   command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout keycloak-ingress.key -out keycloak-ingress.crt -subj "/CN={{keycloak.url}}/O={{keycloak.url}}"
 
 - name: Get an existing Keycloak Ingress Secret
@@ -189,8 +198,8 @@
     namespace: '{{ meta.namespace }}'
   register: keycloak_ingress_secret
 
-- name: The Keycloak Ingress secret is present if keycloak.install == true and Kubernetes
-  when: keycloak.install == true and 'route.openshift.io' not in api_groups and keycloak_ingress_secret.resources is defined and keycloak_ingress_secret.resources|length == 0
+- name: The Keycloak Ingress secret is present if keycloak.install == true and Kubernetes and generate_cert
+  when: keycloak.install == true and 'route.openshift.io' not in api_groups and keycloak.generate_cert == True and keycloak_ingress_secret.resources is defined and keycloak_ingress_secret.resources|length == 0
   k8s:
     state: present
     force: False

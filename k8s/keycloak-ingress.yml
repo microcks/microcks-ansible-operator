@@ -5,6 +5,12 @@ metadata:
   namespace: '{{ meta.namespace }}'
   annotations:
     ingress.kubernetes.io/rewrite-target: /
+    {% if current_cr.spec.keycloak.ingressAnnotations is defined -%}
+    {% for key in current_cr.spec.keycloak.ingressAnnotations.keys() -%}
+    {{ key }}: {{ current_cr.spec.keycloak.ingressAnnotations[key] }}
+    {% endfor %}
+    {% endif %}
+    
   labels:
     app: "{{name}}"
     group: microcks
