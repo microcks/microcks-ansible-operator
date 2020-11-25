@@ -44,3 +44,7 @@ features:
       #url: 192.168.99.100.nip.io
       persistent: false
       volume_size: 2Gi
+    mqtt:
+      #url:
+      username: microcks
+      password: microcks

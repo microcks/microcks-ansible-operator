@@ -32,6 +32,14 @@ data:
     %kube.mp.messaging.incoming.microcks-services-updates.bootstrap.servers={{ features.async.kafka.url }}
     {% endif %}
 
+    {%- if features.async.mqtt.url is defined %}
+
+    # Access to MQTT broker.
+    %kube.mqtt.server={{ features.async.mqtt.url }}
+    %kube.mqtt.username={{ features.async.mqtt.username }}
+    %kube.mqtt.password={{ features.async.mqtt.password }}
+    {% endif %}
+
     # Configure the minion own behavioral properties.
-    %kube.minion.supported-bindings=KAFKA
+    %kube.minion.supported-bindings=KAFKA{% if features.async.mqtt.url is defined %},MQTT{% endif %}
     %kube.minion.restricted-frequencies=30,10

@@ -24,6 +24,11 @@ data:
     features.feature.async-api.endpoint-KAFKA={{features.async.kafka.url}}
     {% endif %}
 
+    {%- if features.async.mqtt.url is defined %}
+
+    features.feature.async-api.endpoint-MQTT={{features.async.mqtt.url}}
+    {% endif %}
+
   application.properties: |-
     # Application configuration properties
     tests-callback.url=http://{{name}}:8080
