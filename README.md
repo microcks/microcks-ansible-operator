@@ -2,15 +2,84 @@
 
 Kubernetes Operator for easy setup and management of Microcks installs (using Ansible undercover ;-)
 
+## Table of contents
+
+<!--ts-->
+   * [Installation](#installation)
+      * [Quick start](#quick-start)
+      * [Manual procedure](#manual-procedure)
+      * [Via OLM add-on](#via-olm-add-on)
+   * [Usage](#usage)
+      * [Minimalist CRD](#minimalist-crd)
+      * [Complete CRD](#complete-crd)
+      * [MicrocksInstall details](#microcksinstall-details)
+   * [Sample Custom Resources](#sample-custom-resources)
+   * [Local tests](#tests)
+<!--te-->
+
+## Installation
+### Quick start
+
+We provide simple shell scripts for quickly isntalling latest version of Microcks Operator on your OpenShift cluster or local Minikube.
+
+You can use `install-latest-on-minikube.sh` script to prepare your cluster with Strimzi installation, SSL passthrough configuration for accessing Kafka cluster, Microcks Operator and full Microcks install in a `microcks` namespace.
+
+After having logged in your OpenShift cluster with `oc login`, you can use `install-latest-on-openshift.sh` script for installation of Microckd Operator and full Microcks install in a `microcks` namespace of a prepared cluster (Strimzi operator should have been installed first).
+
+### Manual procedure
+
+For development or on bare OpenShift and Kubernetes clusters, without Operator Lifecycle Management (OLM).
+
+Start cloning this repos and then, optionnally, create a new project:
+
+```
+$ git clone https://github.com/microcks/microcks-ansible-operator.git
+$ cd microcks-ansible-operator/
+$ kubectl create namespace microcks
+```
+
+Then, from this repository root directory, create the specific CRDS and resources needed for Operator:
+
+```
+$ kubectl create -f deploy/crds/microcks_v1alpha1_microcksinstall_crd.yaml
+$ kubectl create -f deploy/service_account.yaml -n microcks 
+$ kubectl create -f deploy/role.yaml -n microcks
+$ kubectl create -f deploy/role_binding.yaml -n microcks
+```
+
+Finally, deploy the operator:
+
+```
+$ kubectl create -f deploy/operator.yaml -n microcks
+```
+
+Wait a minute or two and check everything is running:
+
+```
+$ kubectl get pods -n microcks                                  
+NAME                                        READY     STATUS    RESTARTS   AGE
+microcks-ansible-operator-f58b97548-qj26l   1/1       Running   0          3m
+```
+
+Now just create a `MicrocksInstall` CRD!
+
+### Via OLM add-on
+
+[Operator Lyfecycle Manager](https://github.com/operator-framework/operator-lifecycle-manager) shoud be installed on your cluster firts. Please follow this [guideline](https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/install/install.md) to know how to proceed.
+
+You can then use the [OperatorHub.io](https://operatorhub.io) catalog of Kubernetes Operators sourced from multiple providers. It offers you an alternative way to install stable versions of Microcks using the Microcks Operator. To install Microcksd from [OperatorHub.io](https://operatorhub.io), locate the *Microcks Operator* and follow the instructions provided.
+
+As an alternative, raw resources can also be found into the `/deploy/olm` directory of this repo. You may want to use the `install.sh` script for creating CSV and subscriptions within your target namespace.
+
 ## Usage
 
 Once operator is up and running into your Kubernetes namespace, you just have to create a `MicrocksInstall` Custom Resource Definition (CRD). This CRD simply describe the properties of the Microcks installation you want to have in your cluster. A `MicrocksInstall`CRD is made of 6 different sections that may be used for describing your setup :
 * Global part is mandatory and contain attributes like `name` of your install and `version` of Microcks to use,
-* `microcks` part is mandatory and contain attributes like the number of `replicas` and the access `url` if you want some customizations, 
-* `postman` part is mandatory for the number of `replicas`
-* `keycloak` part is optional and allows to specifiy if you want a new install or reuse an existing instance,
-* `mongodb` part is optional and allows to specifiy if you want a new install or reuse an existing instance.
-* `features` part is optional and allowd to enable and configure opt-in features of Microcks.
+* `microcks` part is optional and contain attributes like the number of `replicas` and the access `url` if you want some customizations, 
+* `postman` part is optional for the number of `replicas`
+* `keycloak` part is optional and allows to specifiy if you want a new install or reuse an existing instance. If not provided, Microcks will install its own Keycloak instance,
+* `mongodb` part is optional and allows to specifiy if you want a new install or reuse an existing instance. If not provided, Microcks will install its own MongoDB instance
+* `features` part is optional and allow to enable and configure opt-in features of Microcks.
 
 ### Minimalist CRD
 
@@ -25,7 +94,7 @@ spec:
   name: my-microcksinstall
   version: "1.0.0"
   microcks: 
-    replicas: 1
+    replicas: 2
   postman:
     replicas: 2
 ```
@@ -106,52 +175,25 @@ The table below describe all the fields of the `MicrocksInstall` CRD, provdiing 
 | `features`    | `repositoryFilter` | **Optional**. Feature allowing to filter API and services on main page. Must be explicitely `enabled`. See [Organizing repository](https://microcks.io/documentation/using/advanced/organizing/#master-level-filter) for more informations |
 | `features`    | `async` | **Optional**. Feature allowing to activate mocking of Async API on a message broker. Must be explicitely `enabled`. See [this sample](https://github.com/microcks/microcks-ansible-operator/blob/master/deploy/crds/openshift-features.yaml#L28) for full informations |
 
-## Installation
+## Sample Custom Resources
 
-> Kubernetes users: please just replace `oc` commands with `kubectl` counterparts.
+The `/deploy/crds` folder contain sample `MicrocksInstall` resource allowing you to check the configuration for different setup options.
 
-### Manual procedure
+* [openshift-minimal.yml](./deploy/crds/openshift-minimal.yml) illustrates a simple CR for starting a Microcks installation on OpenShift with most common options
 
-For development or on bare OpenShift and Kubernetes clusters, without Operator Lifecycle Management (OLM).
+* [minikube-minimal.yml](./deploy/crds/minikube-minimal.yml) illustrates a simple CR for starting a Microcks installation on vanilla Kubernetes with most common options
 
-Start cloning this repos and then, optionnally, create a new project:
+* [openshift-no-mongo.yml](./deploy/crds/openshift-no-mongo.yml) illustrates how to reuse an existing MongoDB database, retrieving the credential for connecting from a pre-existing `Secret`
 
-```
-$ git clone https://github.com/microcks/microcks-ansible-operator.git
-$ cd microcks-ansible-operator/
-$ oc new-project microcks-operator
-```
+* [minikube-custom-tls.yml](./deploy/crds/minikube-custom-tls.yml) illustrates how to reuse existing `Secrets` to retrieve TLS certificates that will be used to secure the exposed `Ingresses`
 
-Then, from this repository root directory, create the specific CRDS and resources needed for Operator:
+* [minikube-annotations.yml](./deploy/crds/minikube-annotations.yml) illustrates how to specify annotations that will be placed on exposed `Ingresses`. Such annotations can - for example - trigger some certificates generation using Cert Manager
 
-```
-$ oc create -f deploy/crds/microcks_v1alpha1_microcksinstall_crd.yaml
-$ oc create -f deploy/service_account.yaml 
-$ oc create -f deploy/role.yaml
-$ oc create -f deploy/role_binding.yaml 
-```
+* [openshift-features.yml](./deploy/crds/openshift-features.yml) illustrates how to enable optional features like repository filtering or asynchronous mocking on an OpenShift cluster
 
-Finally, deploy the operator:
+* [minikube-features.yml](./deploy/crds/minikube-features.yml) illustrates how to enable optional features like repository filtering or asynchronous mocking on a vanilla Kubernete cluster
 
-```
-$ oc create -f deploy/operator.yaml
-```
-
-Wait a minute or two and check everything is running:
-
-```
-$ oc get pods                                                                                                                                 
-NAME                                        READY     STATUS    RESTARTS   AGE
-microcks-ansible-operator-f58b97548-qj26l   1/1       Running   0          3m
-```
-
-Now just create a `MicrocksInstall` CRD!
-
-### Via OLM add-on
-
-Operator Lyfecycle Manager shoud be installed on your cluster firts. Please follow this [guideline](https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/install/install.md) to know how to proceed.
-
-Resources can be found into the `/deploy/olm` directory of this repo. You may want to use the `install.sh` script for creating CSV and subscriptions within your target namespace.
+Obviously, you can combine all of them together to enable any options ;-)
 
 ## Local tests
 

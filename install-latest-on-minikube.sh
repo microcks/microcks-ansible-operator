@@ -16,5 +16,9 @@ helm install strimzi strimzi/strimzi-kafka-operator --namespace microcks
 export KUBE_APPS_URL=$(minikube ip).nip.io
 rm -r deploy/crds/minikube-features-local.yaml
 cp deploy/crds/minikube-features.yaml deploy/crds/minikube-features-local.yaml
-sed -i '' 's=KUBE_APPS_URL='"$KUBE_APPS_URL"'=g' deploy/crds/minikube-features-local.yaml
+if [ "$(uname)" == "Darwin" ]; then
+    sed -i '' 's=KUBE_APPS_URL='"$KUBE_APPS_URL"'=g' deploy/crds/minikube-features-local.yaml     
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    sed -i 's=KUBE_APPS_URL='"$KUBE_APPS_URL"'=g' deploy/crds/minikube-features-local.yaml
+fi
 kubectl create -f deploy/crds/minikube-features-local.yaml -n microcks
