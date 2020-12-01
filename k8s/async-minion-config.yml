@@ -26,18 +26,23 @@ data:
     
     %kube.kafka.bootstrap.servers={{name}}-kafka-kafka-bootstrap:9092
     %kube.mp.messaging.incoming.microcks-services-updates.bootstrap.servers={{name}}-kafka-kafka-bootstrap:9092
-    {%- else %}
+    {% else %}
     
     %kube.kafka.bootstrap.servers={{ features.async.kafka.url }}
     %kube.mp.messaging.incoming.microcks-services-updates.bootstrap.servers={{ features.async.kafka.url }}
     {% endif %}
 
-    {%- if features.async.mqtt.url is defined %}
-
     # Access to MQTT broker.
+    {%- if features.async.mqtt.url is defined %}
+    
     %kube.mqtt.server={{ features.async.mqtt.url }}
     %kube.mqtt.username={{ features.async.mqtt.username }}
     %kube.mqtt.password={{ features.async.mqtt.password }}
+    {% else %}
+
+    %kube.mqtt.server=localhost:1883
+    %kube.mqtt.username=microcks
+    %kube.mqtt.password=microcks
     {% endif %}
 
     # Configure the minion own behavioral properties.
