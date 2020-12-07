@@ -63,6 +63,9 @@ data:
     keycloak.security-constraints[0].securityCollections[0].patterns[2]=/api/jobs
     keycloak.security-constraints[0].securityCollections[0].patterns[3]=/api/jobs/count
 
+    # Keycloak access configuration properties
+    sso.public-url=${KEYCLOAK_PUBLIC_URL:${keycloak.auth-server-url}}
+
     # Async mocking support.
     async-api.enabled={{ features.async.enabled | bool | lower }}
     async-api.default-binding={{features.async.defaultBinding|default(features.async.default_binding)}}
@@ -87,6 +90,7 @@ data:
       <logger name="org.springframework.data.mongodb" level="INFO"/>
       <logger name="org.keycloak" level="INFO"/>
 
+      <logger name="jdk.event.security" level="WARN"/>
       <logger name="javax.activation" level="WARN"/>
       <logger name="javax.mail" level="WARN"/>
       <logger name="javax.xml.bind" level="WARN"/>

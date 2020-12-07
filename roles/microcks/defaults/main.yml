@@ -18,6 +18,8 @@ keycloak:
   persistent: true
   volume_size: 1Gi
   #url: keycloak.192.168.99.100.nip.io
+  #url: http://microcks-keycloak:8080
+  #public_url: https://keycloak-microcks.192.168.64.6.nip.io/auth
   #ingress_annotations:
     #cert-manager.io/issuer: my-cert-issuer
     #kubernetes.io/tls-acme: "true"

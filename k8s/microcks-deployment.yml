@@ -62,8 +62,15 @@ spec:
             value: http://{{name}}-postman-runtime:8080
           - name: TEST_CALLBACK_URL
             value: http://{{name}}:8080
+          {% if keycloak.private_url is defined -%}
+          - name: KEYCLOAK_URL
+            value: {{keycloak.private_url}}
+          - name: KEYCLOAK_PUBLIC_URL
+            value: https://{{keycloak.url|default(keycloak_url)}}/auth
+          {% else -%}
           - name: KEYCLOAK_URL
             value: https://{{keycloak.url|default(keycloak_url)}}/auth
+          {% endif -%}
           - name: ASYNC_MINION_URL
             value: http://{{name}}-async-minion:8080
           - name: KAFKA_BOOTSTRAP_SERVER

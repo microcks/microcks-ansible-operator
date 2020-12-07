@@ -90,6 +90,10 @@ spec:
               fieldPath: metadata.namespace
         - name: PROXY_ADDRESS_FORWARDING
           value: "true"
+        {% if keycloak.private_url is defined -%}
+        - name: KEYCLOAK_FRONTEND_URL
+          value: https://{{keycloak.url|default(keycloak_url)}}/auth
+        {% endif -%}
         volumeMounts:
         - name: "{{name}}-keycloak-config"
           mountPath: "/opt/jboss/keycloak/standalone/configuration/realm"

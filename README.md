@@ -14,6 +14,7 @@ Kubernetes Operator for easy setup and management of Microcks installs (using An
       * [Complete CRD](#complete-crd)
       * [MicrocksInstall details](#microcksinstall-details)
    * [Sample Custom Resources](#sample-custom-resources)
+   * [Build]()
    * [Local tests](#tests)
 <!--te-->
 
@@ -194,6 +195,44 @@ The `/deploy/crds` folder contain sample `MicrocksInstall` resource allowing you
 * [minikube-features.yml](./deploy/crds/minikube-features.yml) illustrates how to enable optional features like repository filtering or asynchronous mocking on a vanilla Kubernete cluster
 
 Obviously, you can combine all of them together to enable any options ;-)
+
+## Build
+
+You can build the Operator locally using `docker build` command from root folder like below:
+
+```sh
+$ docker build -f build/Dockerfile -t quay.io/microcks/microcks-ansible-operator:latest .
+Sending build context to Docker daemon    830kB
+Step 1/11 : FROM quay.io/operator-framework/ansible-operator:v0.16.0
+ ---> 19ba5006a265
+Step 2/11 : USER root
+ ---> Using cache
+ ---> 02226b2f2469
+Step 3/11 : RUN yum clean all && rm -rf /var/cache/yum/* && yum install -y openssl
+ ---> Using cache
+ ---> 66821ee710bf
+Step 4/11 : USER 1001
+ ---> Using cache
+ ---> e834d11a5146
+Step 5/11 : COPY requirements.yml ${HOME}/requirements.yml
+ ---> Using cache
+ ---> a30f7e13eb23
+Step 6/11 : RUN ansible-galaxy collection install -r ${HOME}/requirements.yml     && chmod -R ug+rwx ${HOME}/.ansible
+ ---> Using cache
+ ---> f2da6036c197
+Step 7/11 : COPY k8s/ ${HOME}/k8s/
+ ---> 7751789e30be
+Step 8/11 : COPY roles/ ${HOME}/roles/
+ ---> ae0b2c73e730
+Step 9/11 : COPY watches.yaml ${HOME}/watches.yaml
+ ---> 062c84d985c6
+Step 10/11 : COPY playbook.yml ${HOME}/playbook.yml
+ ---> a8c0505e65b7
+Step 11/11 : COPY ansible.cfg /etc/ansible/ansible.cfg
+ ---> 7de212ab7289
+Successfully built 7de212ab7289
+Successfully tagged quay.io/microcks/microcks-ansible-operator:latest
+```
 
 ## Local tests
 
