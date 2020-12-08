@@ -14,7 +14,7 @@ Kubernetes Operator for easy setup and management of Microcks installs (using An
       * [Complete CRD](#complete-crd)
       * [MicrocksInstall details](#microcksinstall-details)
    * [Sample Custom Resources](#sample-custom-resources)
-   * [Build]()
+   * [Build](#build)
    * [Local tests](#tests)
 <!--te-->
 
@@ -125,6 +125,7 @@ spec:
     persistent: true
     volumeSize: 1Gi
     url: keycloak.192.168.99.100.nip.io
+    privateUrl: http://my-microcksinstall-keycloak.microcks.svc.cluster.local:8080
     ingressSecretRef: my-secret-for-keycloak-ingress
   mongodb:
     install: true
@@ -161,7 +162,8 @@ The table below describe all the fields of the `MicrocksInstall` CRD, provdiing 
 | `keycloak`    | `realm`            | **Optional**. Name of Keycloak realm to use. Should be setup only if `install` is `false` and you want to reuse an existing realm. Default is `microcks`. |
 | `keycloak`    | `persistent`       | **Optional**. Flag for Keycloak persistence. Default is `true`. Set to `false` if you want an ephemeral Keycloak installation. |
 | `keycloak`    | `volumeSize`       | **Optional**. Size of persistent volume claim for Keycloak. Default is `1Gi`. Not used if not persistent install asked. |
-| `keycloak`    | `url`              | **Mandatory on Kube if keycloak.install==false, Optional otherwise**. The URL of Keycloak install if it already exists on the one used for exposing Keycloak `Ingress`. If missing on OpenShift, default URL schema handled by Router is used. | 
+| `keycloak`    | `url`              | **Mandatory on Kube if keycloak.install==false, Optional otherwise**. The URL of Keycloak install - indeed just the hostname + port part - if it already exists on the one used for exposing Keycloak `Ingress`. If missing on OpenShift, default URL schema handled by Router is used. | 
+| `keycloak`    | `privateUrl`       | **Optional**. A private URL - a full URL here - used by the Microcks component to internally join Keycloak. This is also known as `backendUrl` in [Keycloak doc](https://www.keycloak.org/docs/latest/server_installation/#_hostname). When specified, the `keycloak.url` is used as `frontendUrl` in Keycloak terms. | 
 | `keycloak`    | `ingressSecretRef` | **Optional on Kube, not used on OpenShift**. The name of a TLS Secret for securing `Ingress`. If missing on Kubernetes, self-signed certificate is generated. | 
 | `keycloak`    | `ingressAnnotations` | **Optional on Kube, not used on OpenShift for now**. Some custom annotations to add on `Ingress`. If these annotations are triggering a Certificate generation (for example through https://cert-manager.io/). The `generateCert` property should be set to `false`. |
 | `keycloak`    | `generateCert`     | **Optional on Kube, not used on OpenShift**. Whether to generate self-signed certificate or not if no valid `ingressSecretRef` provided. Default is `true` | 
