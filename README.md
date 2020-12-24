@@ -178,6 +178,32 @@ The table below describe all the fields of the `MicrocksInstall` CRD, provdiing 
 | `features`    | `repositoryFilter` | **Optional**. Feature allowing to filter API and services on main page. Must be explicitely `enabled`. See [Organizing repository](https://microcks.io/documentation/using/advanced/organizing/#master-level-filter) for more informations |
 | `features`    | `async` | **Optional**. Feature allowing to activate mocking of Async API on a message broker. Must be explicitely `enabled`. See [this sample](https://github.com/microcks/microcks-ansible-operator/blob/master/deploy/crds/openshift-features.yaml#L28) for full informations |
 
+#### Kafka feature details
+
+Here are below the configuration properties of the Kafka support features:
+ 
+| Section    | Property           | Description   |
+| ------------- | ------------------ | ------------- |
+| `features.async.kafka` | `install`    | **Optional**. Flag for Kafka installation. Default is `true` and required Strinzi Operator to be setup. Set to `false` if you want to reuse an existing Kafka instance. |
+| `features.async.kafka` | `url`        | **Optional**. The URL of Kafka broker if it already exists or the one used for exposing Kafka `Ingress` when we install it. In this later case, it should only be the subdomain part (eg: `apps.example.com`). |
+| `features.async.kafka` | `persistent` | **Optional**. Flag for Kafka persistence. Default is `false`. Set to `true` if you want a persistent Kafka installation. |
+| `features.async.kafka` | `volumeSize` | **Optional**. Size of persistent volume claim for Kafka. Default is `2Gi`. Not used if not persistent install asked. |
+| `features.async.kafka.schemaRegistry` | `url` | **Optional**. The API URL of a Kafka Schema Registry. Used for Avro based serialization |
+| `features.async.kafka.schemaRegistry` | `confluent` | **Optional**. Flag for indicating that registry is a Confluent one. Default to `true` |
+| `features.async.kafka.schemaRegistry` | `username`  | **Optional**. Username for connecting to the specified Schema registry. Default to `` |
+| `features.async.kafka.schemaRegistry` | `credentialsSource`  | **Optional**. Source of the credentials for connecting to the specified Schema registry. Default to `USER_INFO` |
+
+#### MQTT feature details
+
+Here are below the configuration properties of the MQTT support features:
+ 
+| Section    | Property           | Description   |
+| ------------- | ------------------ | ------------- |
+| `features.async.mqtt` | `url`        | **Optional**. The URL of MQTT broker (eg: `my-mqtt-broker.example.com:1883`). Default is undefined which means that feature is disabled. |
+| `features.async.mqtt` | `username`   | **Optional**. The username to use for connecting to secured MQTT broker. Default to `microcks`. |
+| `features.async.mqtt` | `password`   | **Optional**. The password to use for connecting to secured MQTT broker. Default to `microcks`. |
+
+
 ## Sample Custom Resources
 
 The `/deploy/crds` folder contain sample `MicrocksInstall` resource allowing you to check the configuration for different setup options.

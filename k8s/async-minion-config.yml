@@ -32,14 +32,20 @@ data:
     %kube.mp.messaging.incoming.microcks-services-updates.bootstrap.servers={{ features.async.kafka.url }}
     {% endif %}
 
+    {% if features.async.kafka.schema_registry.url is defined -%}
+    # Access to Kafka schema registry.
+    %kube.kafka.schema.registry.url={{ features.async.kafka.schema_registry.url }}
+    %kube.kafka.schema.registry.confluent={{ features.async.kafka.schema_registry.confluent|lower }}
+    %kube.kafka.schema.registry.username={{ features.async.kafka.schema_registry.username|default("") }}
+    %kube.kafka.schema.registry.credentials.source={{ features.async.kafka.schema_registry.credentials_source }}
+    {% endif %}
+
     # Access to MQTT broker.
-    {%- if features.async.mqtt.url is defined %}
-    
+    {% if features.async.mqtt.url is defined -%}
     %kube.mqtt.server={{ features.async.mqtt.url }}
     %kube.mqtt.username={{ features.async.mqtt.username }}
     %kube.mqtt.password={{ features.async.mqtt.password }}
-    {% else %}
-
+    {% else -%}
     %kube.mqtt.server=localhost:1883
     %kube.mqtt.username=microcks
     %kube.mqtt.password=microcks
@@ -47,4 +53,6 @@ data:
 
     # Configure the minion own behavioral properties.
     %kube.minion.supported-bindings=KAFKA{% if features.async.mqtt.url is defined %},MQTT{% endif %}
+
     %kube.minion.restricted-frequencies=30,10
+    %kube.minion.default-avro-encoding={{ features.async.default_avro_encoding }}
