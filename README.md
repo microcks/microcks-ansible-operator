@@ -157,6 +157,7 @@ The table below describe all the fields of the `MicrocksInstall` CRD, provdiing 
 | `microcks`    | `ingressSecretRef` | **Optional on Kube, not used on OpenShift**. The name of a TLS Secret for securing `Ingress`. If missing on Kubernetes, self-signed certificate is generated. | 
 | `microcks`    | `ingressAnnotations` | **Optional on Kube, not used on OpenShift for now**. Some custom annotations to add on `Ingress`. If these annotations are triggering a Certificate generation (for example through https://cert-manager.io/). The `generateCert` property should be set to `false`. |
 | `microcks`    | `generateCert`     | **Optional on Kube, not used on OpenShift**. Whether to generate self-signed certificate or not if no valid `ingressSecretRef` provided. Default is `true` |
+| `microcks`    | `resources`        | **Optional**. Some resources constraints to apply on Microcks pods. This should be expressed using [Kubernetes syntax](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container). |
 | `postman`     | `replicas`         | **Optional**. The number of replicas for the Microcks Postman pod. Default is `2`. |
 | `keycloak`    | `install`          | **Optional**. Flag for Keycloak installation. Default is `true`. Set to `false` if you want to reuse an existing Keycloak instance. |
 | `keycloak`    | `realm`            | **Optional**. Name of Keycloak realm to use. Should be setup only if `install` is `false` and you want to reuse an existing realm. Default is `microcks`. |
