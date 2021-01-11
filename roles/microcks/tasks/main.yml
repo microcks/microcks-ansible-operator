@@ -263,11 +263,13 @@
 # ================================================================
 
 - name: The Kafka CR is present if features.async.enabled == true and features.async.kafka.install == true
+  when: "features.async.enabled == true" 
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'kafka.yml') | from_yaml  }}"
 
 - name: The Kafka Topic is present if features.async.enabled == true and features.async.kafka.install == true
+  when: "features.async.enabled == true" 
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'kafka-topic.yml') | from_yaml  }}"
