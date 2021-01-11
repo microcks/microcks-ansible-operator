@@ -33,6 +33,12 @@ spec:
         container: mongodb
         group: microcks
     spec:
+      {% if 'route.openshift.io' not in api_groups -%}
+      securityContext:
+        runAsUser: 184
+        runAsGroup: 184
+        fsGroup: 184
+      {% endif -%}
       containers:
       - name: mongodb
         image: centos/mongodb-34-centos7:latest
