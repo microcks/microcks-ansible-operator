@@ -122,6 +122,14 @@ data:
               "user"
             ]
           }
+        ],
+        "realm-management": [
+          {
+            "client": "microcks-app-js",
+            "roles": [
+              "manage-users"
+            ]
+          }
         ]
       },
       "applications": [
