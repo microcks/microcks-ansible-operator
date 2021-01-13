@@ -83,7 +83,7 @@ spec:
             {% endif %}
 
         resources:
-          {{ microcks.resources | to_nice_yaml(indent=10) | indent(10) }}
+          {{ microcks.resources | to_nice_yaml(indent=10) | trim | indent(10) }}
         livenessProbe:
           httpGet:
             path: "/api/health"
