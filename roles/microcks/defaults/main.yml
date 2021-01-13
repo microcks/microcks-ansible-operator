@@ -11,7 +11,7 @@ microcks:
     #kubernetes.io/ingress.class: nginx
   generate_cert: true
   resources:
-    #requests:
+    #equests:
       #cpu: 250m
       #memory: 400Mi
     limits:
@@ -54,6 +54,20 @@ features:
       #url: 192.168.99.100.nip.io
       persistent: false
       volume_size: 2Gi
+      resources:
+        #requests:
+          #cpu: 100m
+          #memory: 256Mi
+        limits:
+          #cpu: 500m
+          memory: 800Mi
+      zk_resources:
+        #requests:
+          #cpu: 100m
+          #memory: 256Mi
+        limits:
+          #cpu: 500m
+          memory: 800Mi
       schema_registry:
         #url: https://schema-registry.192.168.99.100.nip.io
         confluent: true
