@@ -5,7 +5,7 @@ metadata:
   namespace: '{{ meta.namespace }}'
   labels:
     app: "{{name}}"
-    container: asybnc-minion
+    container: async-minion
     group: microcks
 data:
   application.properties: |-
@@ -20,6 +20,11 @@ data:
     %kube.io.github.microcks.minion.async.client.MicrocksAPIConnector/mp-rest/url=http://{{name}}:8080
     %kube.microcks.serviceaccount={{ keycloak.serviceAccount|default(keycloak.service_account) }}
     %kube.microcks.serviceaccount.credentials={{ keycloak.serviceAccountCredentials|default(keycloak.service_account_credentials) }}
+
+    {% if keycloak.private_url is defined -%}
+    # Access to Keycloak URL if you override the one coming from Microcks config
+    keycloak.auth.url={{keycloak.private_url}}
+    {% endif %}
 
     # Access to Kafka broker.
     {%- if features.async.kafka.install %}
