@@ -21,6 +21,10 @@ data:
     features.feature.async-api.endpoint-KAFKA={{name}}-kafka-kafka-bootstrap.<apps-subdomain>:443
     {%- elif features.async.kafka.install and 'url' in features.async.kafka %}
     
+    features.feature.async-api.endpoint-KAFKA={{name}}-kafka-kafka-bootstrap.{{features.async.kafka.url}}:443
+
+    {%- elif not features.async.kafka.install and 'url' in features.async.kafka %}
+    
     features.feature.async-api.endpoint-KAFKA={{features.async.kafka.url}}
     {% endif %}
 
