@@ -21,19 +21,19 @@ Kubernetes Operator for easy setup and management of Microcks installs (using An
 ## Installation
 ### Quick start
 
-We provide simple shell scripts for quickly isntalling latest version of Microcks Operator on your OpenShift cluster or local Minikube.
+We provide simple shell scripts for quickly installing latest version of Microcks Operator on your OpenShift cluster or local Minikube.
 
 You can use `install-latest-on-minikube.sh` script to prepare your cluster with Strimzi installation, SSL passthrough configuration for accessing Kafka cluster, Microcks Operator and full Microcks install in a `microcks` namespace.
 
-After having logged in your OpenShift cluster with `oc login`, you can use `install-latest-on-openshift.sh` script for installation of Microckd Operator and full Microcks install in a `microcks` namespace of a prepared cluster (Strimzi operator should have been installed first).
+After having logged in your OpenShift cluster with `oc login`, you can use `install-latest-on-openshift.sh` script for installation of Microcks Operator and full Microcks install in a `microcks` namespace of a prepared cluster (Strimzi operator should have been installed first).
 
 ### Manual procedure
 
 For development or on bare OpenShift and Kubernetes clusters, without Operator Lifecycle Management (OLM).
 
-Start cloning this repos and then, optionnally, create a new project:
+Start cloning this repos and then, optionally, create a new project:
 
-```
+```sh
 $ git clone https://github.com/microcks/microcks-ansible-operator.git
 $ cd microcks-ansible-operator/
 $ kubectl create namespace microcks
@@ -41,7 +41,7 @@ $ kubectl create namespace microcks
 
 Then, from this repository root directory, create the specific CRDS and resources needed for Operator:
 
-```
+```sh
 $ kubectl create -f deploy/crds/microcks_v1alpha1_microcksinstall_crd.yaml
 $ kubectl create -f deploy/service_account.yaml -n microcks 
 $ kubectl create -f deploy/role.yaml -n microcks
@@ -50,13 +50,13 @@ $ kubectl create -f deploy/role_binding.yaml -n microcks
 
 Finally, deploy the operator:
 
-```
+```sh
 $ kubectl create -f deploy/operator.yaml -n microcks
 ```
 
 Wait a minute or two and check everything is running:
 
-```
+```sh
 $ kubectl get pods -n microcks                                  
 NAME                                        READY     STATUS    RESTARTS   AGE
 microcks-ansible-operator-f58b97548-qj26l   1/1       Running   0          3m
@@ -66,20 +66,21 @@ Now just create a `MicrocksInstall` CRD!
 
 ### Via OLM add-on
 
-[Operator Lyfecycle Manager](https://github.com/operator-framework/operator-lifecycle-manager) shoud be installed on your cluster firts. Please follow this [guideline](https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/install/install.md) to know how to proceed.
+[Operator Lyfecycle Manager](https://github.com/operator-framework/operator-lifecycle-manager) shoud be installed on your cluster first. Please follow this [guideline](https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/install/install.md) to know how to proceed.
 
-You can then use the [OperatorHub.io](https://operatorhub.io) catalog of Kubernetes Operators sourced from multiple providers. It offers you an alternative way to install stable versions of Microcks using the Microcks Operator. To install Microcksd from [OperatorHub.io](https://operatorhub.io), locate the *Microcks Operator* and follow the instructions provided.
+You can then use the [OperatorHub.io](https://operatorhub.io) catalog of Kubernetes Operators sourced from multiple providers. It offers you an alternative way to install stable versions of Microcks using the Microcks Operator. To install Microcks from [OperatorHub.io](https://operatorhub.io), locate the *Microcks Operator* and follow the instructions provided.
 
 As an alternative, raw resources can also be found into the `/deploy/olm` directory of this repo. You may want to use the `install.sh` script for creating CSV and subscriptions within your target namespace.
 
 ## Usage
 
 Once operator is up and running into your Kubernetes namespace, you just have to create a `MicrocksInstall` Custom Resource Definition (CRD). This CRD simply describe the properties of the Microcks installation you want to have in your cluster. A `MicrocksInstall`CRD is made of 6 different sections that may be used for describing your setup :
+
 * Global part is mandatory and contain attributes like `name` of your install and `version` of Microcks to use,
 * `microcks` part is optional and contain attributes like the number of `replicas` and the access `url` if you want some customizations, 
 * `postman` part is optional for the number of `replicas`
-* `keycloak` part is optional and allows to specifiy if you want a new install or reuse an existing instance. If not provided, Microcks will install its own Keycloak instance,
-* `mongodb` part is optional and allows to specifiy if you want a new install or reuse an existing instance. If not provided, Microcks will install its own MongoDB instance
+* `keycloak` part is optional and allows to specify if you want a new install or reuse an existing instance. If not provided, Microcks will install its own Keycloak instance,
+* `mongodb` part is optional and allows to specify if you want a new install or reuse an existing instance. If not provided, Microcks will install its own MongoDB instance
 * `features` part is optional and allow to enable and configure opt-in features of Microcks.
 
 ### Minimalist CRD
@@ -148,7 +149,7 @@ spec:
 
 ### MicrocksInstall details
 
-The table below describe all the fields of the `MicrocksInstall` CRD, provdiing informations on what's mandatory and what's optional as well as default values.
+The table below describe all the fields of the `MicrocksInstall` CRD, providing informations on what's mandatory and what's optional as well as default values.
 
 | Section       | Property           | Description   |
 | ------------- | ------------------ | ------------- |
@@ -168,16 +169,16 @@ The table below describe all the fields of the `MicrocksInstall` CRD, provdiing 
 | `keycloak`    | `ingressSecretRef` | **Optional on Kube, not used on OpenShift**. The name of a TLS Secret for securing `Ingress`. If missing on Kubernetes, self-signed certificate is generated. | 
 | `keycloak`    | `ingressAnnotations` | **Optional on Kube, not used on OpenShift for now**. Some custom annotations to add on `Ingress`. If these annotations are triggering a Certificate generation (for example through https://cert-manager.io/). The `generateCert` property should be set to `false`. |
 | `keycloak`    | `generateCert`     | **Optional on Kube, not used on OpenShift**. Whether to generate self-signed certificate or not if no valid `ingressSecretRef` provided. Default is `true` | 
-| `keycloak`    | `replicas`         | **Optional**. The number of replicas for the Keycloak pod if install is requried. Default is `1`. **Operator do not manage any other value for now** |
+| `keycloak`    | `replicas`         | **Optional**. The number of replicas for the Keycloak pod if install is required. Default is `1`. **Operator do not manage any other value for now** |
 | `mongodb`     | `install`          | **Optional**. Flag for MongoDB installation. Default is `true`. Set to `false` if you want to reuse an existing MongoDB instance. |
 | `mongodb`     | `uri`              | **Optional**. MongoDB URI in case you're reusing existing MongoDB instance. Mandatory if `install` is `false` |
 | `mongodb`     | `database`         | **Optional**. MongoDB database name in case you're reusing existing MongoDB instance. Useful if `install` is `false`. Default to `sampledb` |
 | `mongodb`     | `secretRef`        | **Optional**. Reference of a Secret containing credentials for connecting a provided MongoDB instance. Mandatory if `install` is `false` |
 | `mongodb`     | `persistent`       | **Optional**. Flag for MongoDB persistence. Default is `true`. Set to `false` if you want an ephemeral MongoDB installation. |
 | `mongodb`     | `volumeSize`       | **Optional**. Size of persistent volume claim for MongoDB. Default is `2Gi`. Not used if not persistent install asked. |
-| `mongodb`     | `replicas`         | **Optional**. The number of replicas for the MongoDB pod if install is requried. Default is `1`. **Operator do not manage any other value for now** |
-| `features`    | `repositoryFilter` | **Optional**. Feature allowing to filter API and services on main page. Must be explicitely `enabled`. See [Organizing repository](https://microcks.io/documentation/using/advanced/organizing/#master-level-filter) for more informations |
-| `features`    | `async` | **Optional**. Feature allowing to activate mocking of Async API on a message broker. Must be explicitely `enabled`. See [this sample](https://github.com/microcks/microcks-ansible-operator/blob/master/deploy/crds/openshift-features.yaml#L28) for full informations |
+| `mongodb`     | `replicas`         | **Optional**. The number of replicas for the MongoDB pod if install is required. Default is `1`. **Operator do not manage any other value for now** |
+| `features`    | `repositoryFilter` | **Optional**. Feature allowing to filter API and services on main page. Must be explicitly `enabled`. See [Organizing repository](https://microcks.io/documentation/using/advanced/organizing/#master-level-filter) for more informations |
+| `features`    | `async` | **Optional**. Feature allowing to activate mocking of Async API on a message broker. Must be explicitly `enabled`. See [this sample](https://github.com/microcks/microcks-ansible-operator/blob/master/deploy/crds/openshift-features.yaml#L28) for full informations |
 
 #### Kafka feature details
 
@@ -185,12 +186,12 @@ Here are below the configuration properties of the Kafka support features:
  
 | Section    | Property           | Description   |
 | ------------- | ------------------ | ------------- |
-| `features.async.kafka` | `install`    | **Optional**. Flag for Kafka installation. Default is `true` and required Strinzi Operator to be setup. Set to `false` if you want to reuse an existing Kafka instance. |
+| `features.async.kafka` | `install`    | **Optional**. Flag for Kafka installation. Default is `true` and required Strimzi Operator to be setup. Set to `false` if you want to reuse an existing Kafka instance. |
 | `features.async.kafka` | `url`        | **Optional**. The URL of Kafka broker if it already exists or the one used for exposing Kafka `Ingress` when we install it. In this later case, it should only be the subdomain part (eg: `apps.example.com`). |
 | `features.async.kafka` | `persistent` | **Optional**. Flag for Kafka persistence. Default is `false`. Set to `true` if you want a persistent Kafka installation. |
 | `features.async.kafka` | `volumeSize` | **Optional**. Size of persistent volume claim for Kafka. Default is `2Gi`. Not used if not persistent install asked. |
 | `features.async.kafka.schemaRegistry` | `url` | **Optional**. The API URL of a Kafka Schema Registry. Used for Avro based serialization |
-| `features.async.kafka.schemaRegistry` | `confluent` | **Optional**. Flag for indicating that registry is a Confluent one. Default to `true` |
+| `features.async.kafka.schemaRegistry` | `confluent` | **Optional**. Flag for indicating that registry is a Confluent one, or using a Confluent compatibility mode. Default to `true` |
 | `features.async.kafka.schemaRegistry` | `username`  | **Optional**. Username for connecting to the specified Schema registry. Default to `` |
 | `features.async.kafka.schemaRegistry` | `credentialsSource`  | **Optional**. Source of the credentials for connecting to the specified Schema registry. Default to `USER_INFO` |
 
@@ -221,7 +222,7 @@ The `/deploy/crds` folder contain sample `MicrocksInstall` resource allowing you
 
 * [openshift-features.yml](./deploy/crds/openshift-features.yml) illustrates how to enable optional features like repository filtering or asynchronous mocking on an OpenShift cluster
 
-* [minikube-features.yml](./deploy/crds/minikube-features.yml) illustrates how to enable optional features like repository filtering or asynchronous mocking on a vanilla Kubernete cluster
+* [minikube-features.yml](./deploy/crds/minikube-features.yml) illustrates how to enable optional features like repository filtering or asynchronous mocking on a vanilla Kubernetes cluster
 
 Obviously, you can combine all of them together to enable any options ;-)
 
@@ -267,7 +268,7 @@ Successfully tagged quay.io/microcks/microcks-ansible-operator:latest
 
 This Operator has been developed and tested using operator-sdk v0.16.0 and ansible 2.9.1
 
-```
+```sh
 $ operator-sdk version
 operator-sdk version: "v0.16.0", commit: "55f1446c5f472e7d8e308dcdf36d0d7fc44fc4fd", go version: "go1.14 darwin/amd64"
 
@@ -280,9 +281,9 @@ ansible 2.9.1
   python version = 3.7.5 (default, Nov  1 2019, 02:16:32) [Clang 11.0.0 (clang-1100.0.33.8)]
 ```
 
-Ansible-runner module is requried for local testing. You can install and set it up with following commands:
+Ansible-runner module is required for local testing. You can install and set it up with following commands:
 
-```
+```sh
 $ /usr/local/Cellar/ansible/2.9.1/libexec/bin/pip install ansible-runner-http openshift 
 [...]
 $ ln -s /usr/local/Cellar/ansible/2.9.1/libexec/bin/ansible-runner /usr/local/bin/ansible-runner
@@ -293,7 +294,7 @@ $ ansible-runner --version
 
 Once done, local tests are possible using the following command:
 
-```
+```sh
 $ operator-sdk run --local
 INFO[0000] Running the operator locally in namespace microcks. 
 {"level":"info","ts":1585060926.0604842,"logger":"cmd","msg":"Go Version: go1.14"}
