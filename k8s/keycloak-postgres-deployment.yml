@@ -32,6 +32,12 @@ spec:
         container: keycloak-postgresql
         group: microcks
     spec:
+      {% if 'route.openshift.io' not in api_groups -%}
+      securityContext:
+        runAsUser: 26
+        runAsGroup: 26
+        fsGroup: 26
+      {% endif -%}
       terminationGracePeriodSeconds: 60
       containers:
       - name: keycloak-postgresql
