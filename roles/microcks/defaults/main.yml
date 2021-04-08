@@ -17,6 +17,8 @@ microcks:
     limits:
       #cpu: 500m
       memory: 512Mi
+  #log_level: TRACE | DEBUG | INFO | WARN
+  log_level: INFO
 postman:
   replicas: 1
 keycloak:

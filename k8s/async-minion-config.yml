@@ -13,8 +13,8 @@ data:
     %kube.quarkus.http.port=8080
 
     # Configure the log level.
-    %kube.quarkus.log.level=INFO
-    %kube.quarkus.log.console.level=INFO
+    %kube.quarkus.log.level={{ microcks.log_level }}
+    %kube.quarkus.log.console.level={{ microcks.log_level }}
 
     # Access to Microcks API server.
     %kube.io.github.microcks.minion.async.client.MicrocksAPIConnector/mp-rest/url=http://{{name}}:8080
