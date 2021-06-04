@@ -1,0 +1,23 @@
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: "{{name}}-grpc"
+  namespace: '{{ meta.namespace }}'
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+  labels:
+    app: "{{name}}"
+    group: microcks
+spec:
+  tls:
+  - hosts:
+    - "{{microcks.url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-grpc\\2')}}"
+  rules:
+  - host: "{{microcks.url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-grpc\\2')}}"
+    http:
+      paths:
+      - backend:
+          serviceName: "{{name}}-grpc"
+          servicePort: 9090

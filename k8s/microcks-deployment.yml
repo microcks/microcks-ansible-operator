@@ -107,8 +107,13 @@ spec:
         volumeMounts:
           - name: "{{name}}-config"
             mountPath: "/deployments/config"
+          - name: "{{name}}-grpc-certs"  
+            mountPath: "/deployments/config/grpc"
         terminationMessagePath: "/dev/termination-log"
       volumes:
       - name: "{{name}}-config"
         configMap:
           name: "{{name}}-config"
+      - name: "{{name}}-grpc-certs"
+        secret:
+          secretName: "{{name}}-microcks-grpc-secret"

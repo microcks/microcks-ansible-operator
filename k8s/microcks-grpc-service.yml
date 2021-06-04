@@ -1,0 +1,21 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: "{{name}}-grpc"
+  namespace: '{{ meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    container: spring
+    group: microcks
+spec:
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 9090
+      name: spring-grpc
+  type: ClusterIP
+  sessionAffinity: None
+  selector:
+    app: "{{name}}"
+    container: spring
+    group: microcks

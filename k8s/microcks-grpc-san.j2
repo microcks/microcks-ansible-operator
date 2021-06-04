@@ -1,0 +1,4 @@
+[req]
+distinguished_name=req
+[san]
+subjectAltName=DNS:{{microcks_url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-grpc\\2')}},DNS:{{name}}-grpc.{{meta.namespace}}.svc.cluster.local,DNS:localhost

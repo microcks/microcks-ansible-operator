@@ -1,7 +1,7 @@
 ---
 # defaults specification file for microcks installation
 name: microcks
-version: "1.0.0"
+version: "1.2.1"
 microcks: 
   replicas: 1
   #url: microcks.192.168.99.100.nip.io
@@ -11,7 +11,7 @@ microcks:
     #kubernetes.io/ingress.class: nginx
   generate_cert: true
   resources:
-    #equests:
+    #requests:
       #cpu: 250m
       #memory: 400Mi
     limits:

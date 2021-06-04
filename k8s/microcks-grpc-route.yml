@@ -1,0 +1,19 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: "{{name}}-grpc"
+  namespace: '{{ meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    group: microcks
+spec:
+{% if 'url' in microcks %}
+  host: {{ microcks.url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-grpc\\2') }}
+{% endif %}
+  to:
+    name: {{name}}-grpc
+    kind: Service
+  port:
+    targetPort: spring-grpc
+  tls:
+    termination: passthrough

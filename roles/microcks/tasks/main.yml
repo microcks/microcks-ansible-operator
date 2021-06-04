@@ -64,6 +64,12 @@
     state: present
     definition: "{{ lookup('template', 'microcks-route.yml') | from_yaml  }}"
 
+- name: The Microcks GRPC Route is present if OpenShift
+  when: "'route.openshift.io' in api_groups"
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'microcks-grpc-route.yml') | from_yaml  }}"
+
 - name: The Microks Ingress certs key is present if Kubernetes
   when: microcks.ingress_secret_ref is undefined or microcks.ingress_secret_ref|length == 0
   stat: 
@@ -107,6 +113,12 @@
   k8s:
     state: present
     definition: "{{ lookup('template', 'microcks-ingress.yml') | from_yaml  }}"
+
+- name: The Microcks GRPC Ingress is present if Kubernetes
+  when: "'route.openshift.io' not in api_groups"
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'microcks-grpc-ingress.yml') | from_yaml  }}"
 
 - name: Get the existing Microcks Route
   when: "'url' not in microcks and 'route.openshift.io' in api_groups"
@@ -279,6 +291,49 @@
 # Finish with pure Microcks components
 # ================================================================
 
+- name: The Microks GRPC certs key is present
+  when: microcks.grpc_secret_ref is undefined or microcks.grpc_secret_ref|length == 0
+  stat: 
+    path: microcks-grpc.key
+  register: microcks_grpc_certs
+
+- name: The Microcks GRPC SAN config is present
+  template:
+    src: microcks-grpc-san.j2
+    dest: microcks-grpc.cnf
+
+- name: The Microks GRPC certs are generated
+  when: "microcks_grpc_certs.stat is defined and microcks_grpc_certs.stat.exists == False"
+  command: openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout microcks-grpc.key -out microcks-grpc.crt -subj "/CN={{microcks_url}}" -extensions san -config microcks-grpc.cnf
+
+- name: Get an existing Microcks GRPC Secret
+  when: microcks.grpc_secret_ref is undefined or microcks.grpc_secret_ref|length == 0
+  k8s_facts:
+    api_version: v1
+    kind: Secret
+    name: "{{name}}-microcks-grpc-secret"
+    namespace: '{{ meta.namespace }}'
+  register: microcks_grpc_secret
+
+- name: The Microcks GRPC secret is present
+  when: "microcks_grpc_secret.resources is defined and microcks_grpc_secret.resources|length == 0"
+  k8s:
+    state: present
+    force: False
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: "{{name}}-microcks-grpc-secret"
+        namespace: '{{ meta.namespace }}'
+        labels:
+          app: "{{name}}"
+          group: microcks
+      type: Opaque
+      stringData:
+        tls.key: "{{ lookup('file', 'microcks-grpc.key') }}"
+        tls.crt: "{{ lookup('file', 'microcks-grpc.crt') }}"
+
 - name: The Microcks ConfigMap object is present
   k8s:
     state: present
@@ -293,6 +348,11 @@
   k8s:
     state: present
     definition: "{{ lookup('template', 'microcks-service.yml') | from_yaml  }}"
+
+- name: The Microcks GRPC Service is present
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'microcks-grpc-service.yml') | from_yaml  }}"
 
 - name: The Postman-runtime Deployment is present
   k8s:
