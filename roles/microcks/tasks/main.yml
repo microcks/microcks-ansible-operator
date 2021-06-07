@@ -138,6 +138,11 @@
     namespace: '{{ meta.namespace }}'
   register: microcks_ingress
 
+- name: Define microcks_url from CustomResource
+  when: "'url' in microcks"
+  set_fact:
+    microcks_url: "{{ microcks.url }}"
+
 - name: Define microcks_url from default Route or Ingress
   when: "'url' not in microcks"
   set_fact:
