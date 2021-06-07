@@ -88,7 +88,7 @@ data:
       <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
           <charset>utf-8</charset>
-          <Pattern>[%p] %c - %m%n</Pattern>
+          <Pattern>%d{HH:mm:ss.SSS} [%p] %c - %m%n</Pattern>
         </encoder>
       </appender>
 
@@ -135,7 +135,7 @@ data:
         <resetJUL>true</resetJUL>
       </contextListener>
 
-      <root level="${logback.loglevel}">
+      <root level="INFO">
         <appender-ref ref="CONSOLE"/>
       </root>
     </configuration>
