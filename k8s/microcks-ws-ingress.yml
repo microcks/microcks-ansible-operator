@@ -1,0 +1,29 @@
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: "{{name}}-ws"
+  namespace: '{{ meta.namespace }}'
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+    {% if current_cr.spec.features.async.ws.ingressAnnotations is defined -%}
+    {% for key in current_cr.spec.features.async.ws.ingressAnnotations.keys() -%}
+    {{ key }}: {{ current_cr.spec.features.async.ws.ingressAnnotations[key] }}
+    {% endfor %}
+    {% endif %}
+
+  labels:
+    app: "{{name}}"
+    group: microcks
+spec:
+  tls:
+  - hosts:
+    - "{{ microcks.url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-ws\\2') }}"
+    secretName: {{features.async.ws.ingress_secret_ref|default(name ~ "-microcks-ws-ingress-secret")}}
+  rules:
+  - host: "{{ microcks.url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-ws\\2') }}"
+    http:
+      paths:
+      - path: /api/ws
+        backend:
+          serviceName: "{{name}}-async-minion"
+          servicePort: 8080

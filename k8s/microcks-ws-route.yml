@@ -1,0 +1,20 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: "{{name}}-ws"
+  namespace: '{{ meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    group: microcks
+spec:
+{% if 'url' in microcks %}
+  host: {{ microcks.url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-ws\\2') }}
+{% endif %}
+  path: "/api/ws"
+  to:
+    name: {{name}}-async-minion
+    kind: Service
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge

@@ -57,7 +57,7 @@ data:
     {% endif %}
 
     # Configure the minion own behavioral properties.
-    %kube.minion.supported-bindings=KAFKA{% if features.async.mqtt.url is defined %},MQTT{% endif %}
+    %kube.minion.supported-bindings=KAFKA,WS{% if features.async.mqtt.url is defined %},MQTT{% endif %}
 
     %kube.minion.restricted-frequencies=3,10,30
     %kube.minion.default-avro-encoding={{ features.async.default_avro_encoding }}

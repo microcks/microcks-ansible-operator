@@ -54,6 +54,7 @@ features:
     kafka:
       install: true
       #url: 192.168.99.100.nip.io
+      use_strimzi_beta2: false
       persistent: false
       volume_size: 2Gi
       resources:

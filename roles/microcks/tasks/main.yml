@@ -280,13 +280,25 @@
 # ================================================================
 
 - name: The Kafka CR is present if features.async.enabled == true and features.async.kafka.install == true
-  when: "features.async.enabled == true" 
+  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta2 == true"
+  k8s:
+    state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
+    definition: "{{ lookup('template', 'kafka-beta2.yml') | from_yaml  }}"
+
+- name: The Kafka CR is present if features.async.enabled == true and features.async.kafka.install == true
+  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta2 == false"
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'kafka.yml') | from_yaml  }}"
 
 - name: The Kafka Topic is present if features.async.enabled == true and features.async.kafka.install == true
-  when: "features.async.enabled == true" 
+  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta2 == true" 
+  k8s:
+    state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
+    definition: "{{ lookup('template', 'kafka-topic-beta2.yml') | from_yaml  }}"
+
+- name: The Kafka Topic is present if features.async.enabled == true and features.async.kafka.install == true
+  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta2 == false" 
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'kafka-topic.yml') | from_yaml  }}"
@@ -370,16 +382,74 @@
     definition: "{{ lookup('template', 'postman-runtime-service.yml') | from_yaml  }}"
 
 - name: The Async-minion ConfigMap is present if features.async.enabled == true
+  when: "features.async.enabled == True"
   k8s:
     state: "{{ 'present' if features.async.enabled|bool else 'absent' }}"
     definition: "{{ lookup('template', 'async-minion-config.yml') | from_yaml  }}"
 
 - name: The Async-minion Deployment is present if features.async.enabled == true
+  when: "features.async.enabled == True" 
   k8s:
     state: "{{ 'present' if features.async.enabled|bool else 'absent' }}"
     definition: "{{ lookup('template', 'async-minion-deployment.yml') | from_yaml  }}"
 
 - name: The Async-minion Service is present if features.async.enabled == true
+  when: "features.async.enabled == True"
   k8s:
     state: "{{ 'present' if features.async.enabled|bool else 'absent' }}"
     definition: "{{ lookup('template', 'async-minion-service.yml') | from_yaml  }}"
+
+- name: The Microcks WS Route is present if features.async.enabled == true and OpenShift
+  when: "features.async.enabled == True and 'route.openshift.io' in api_groups"
+  k8s:
+    state: "{{ 'present' if features.async.enabled|bool else 'absent' }}"
+    definition: "{{ lookup('template', 'microcks-ws-route.yml') | from_yaml  }}"
+
+- name: The Microks WS Ingress certs key is present if features.async.enabled == true and Kubernetes
+  when: features.async.ws.ingress_secret_ref is undefined or features.async.ws.ingress_secret_ref|length == 0
+  stat: 
+    path: microcks-ws-ingress.key
+  register: microcks_ws_ingress_certs
+
+- name: The Microcks WS Ingress SAN config is present
+  template:
+    src: microcks-ws-san.j2
+    dest: microcks-ws.cnf
+
+- name: The Microks WS Ingress certs are generated if features.async.enabled == true and Kubernetes
+  when: "'route.openshift.io' not in api_groups and features.async.ws.generate_cert == True and microcks_ws_ingress_certs.stat is defined and microcks_ws_ingress_certs.stat.exists == False"
+  command: openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout microcks-ws-ingress.key -out microcks-ws-ingress.crt -subj "/CN={{microcks_url}}" -extensions san -config microcks-ws.cnf
+
+- name: Get an existing Microcks WS Ingress Secret if features.async.enabled == true and Kubernetes
+  when: "(features.async.enabled == True and 'route.openshift.io' not in api_groups) and (features.async.ws.ingress_secret_ref is undefined or features.async.ws.ingress_secret_ref|length == 0)"
+  k8s_facts:
+    api_version: v1
+    kind: Secret
+    name: "{{name}}-microcks-ws-ingress-secret"
+    namespace: '{{ meta.namespace }}'
+  register: microcks_ws_ingress_secret
+
+- name: The Microcks WS Ingress secret is present if Kubernetes and generate_cert
+  when: "'route.openshift.io' not in api_groups and features.async.ws.generate_cert == True and microcks_ws_ingress_secret.resources is defined and microcks_ws_ingress_secret.resources|length == 0"
+  k8s:
+    state: present
+    force: False
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: "{{name}}-microcks-ws-ingress-secret"
+        namespace: '{{ meta.namespace }}'
+        labels:
+          app: "{{name}}"
+          group: microcks
+      type: Opaque
+      stringData:
+        tls.key: "{{ lookup('file', 'microcks-ws-ingress.key') }}"
+        tls.crt: "{{ lookup('file', 'microcks-ws-ingress.crt') }}"
+
+- name: The Microcks WS Ingress is present if features.async.enabled == true and Kubernetes
+  when: "features.async.enabled == True and 'route.openshift.io' not in api_groups"
+  k8s:
+    state: "{{ 'present' if features.async.enabled|bool else 'absent' }}"
+    definition: "{{ lookup('template', 'microcks-ws-ingress.yml') | from_yaml }}"
