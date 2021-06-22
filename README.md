@@ -188,6 +188,7 @@ Here are below the configuration properties of the Kafka support features:
 | Section    | Property           | Description   |
 | ------------- | ------------------ | ------------- |
 | `features.async.kafka` | `install`    | **Optional**. Flag for Kafka installation. Default is `true` and required Strimzi Operator to be setup. Set to `false` if you want to reuse an existing Kafka instance. |
+| `features.async.kafka` | `useStrimziBeta1`  | **Optional**. Since version `1.3.0` we're using Beta2 version of Strimzi. Default is `false`. Set this flag to `true` if you still using older version of Strimzi that provides Beta1 custom resources. |
 | `features.async.kafka` | `url`        | **Optional**. The URL of Kafka broker if it already exists or the one used for exposing Kafka `Ingress` when we install it. In this later case, it should only be the subdomain part (eg: `apps.example.com`). |
 | `features.async.kafka` | `persistent` | **Optional**. Flag for Kafka persistence. Default is `false`. Set to `true` if you want a persistent Kafka installation. |
 | `features.async.kafka` | `volumeSize` | **Optional**. Size of persistent volume claim for Kafka. Default is `2Gi`. Not used if not persistent install asked. |
@@ -205,6 +206,17 @@ Here are below the configuration properties of the MQTT support features:
 | `features.async.mqtt` | `url`        | **Optional**. The URL of MQTT broker (eg: `my-mqtt-broker.example.com:1883`). Default is undefined which means that feature is disabled. |
 | `features.async.mqtt` | `username`   | **Optional**. The username to use for connecting to secured MQTT broker. Default to `microcks`. |
 | `features.async.mqtt` | `password`   | **Optional**. The password to use for connecting to secured MQTT broker. Default to `microcks`. |
+
+
+### WebSocket feature details
+
+Here are below the configuration properties of the WebSocket support feature:
+ 
+| Section       | Property           | Description   |
+| ------------- | ------------------ | ------------- |
+| `features.async.ws` | `ingressSecretRef`    | **Optional**. The name of a TLS Secret for securing WebSocket `Ingress`. If missing, self-signed certificate is generated. |
+| `features.async.ws` | `ingressAnnotations`  | **Optional**. A map of annotations that will be added to the `Ingress` for Microcks WebSocket mocks. If these annotations are triggering a Certificate generation (for example through https://cert-manager.io/). The `generateCert` property should be set to `false`. |
+| `features.async.ws` | `generateCert`        | **Optional**. Whether to generate self-signed certificate or not if no valid `ingressSecretRef` provided. Default is `true` |
 
 
 ## Sample Custom Resources

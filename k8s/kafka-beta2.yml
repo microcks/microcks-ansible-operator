@@ -42,6 +42,7 @@ spec:
           - broker: 0
             host: "{{name}}-kafka-0.{{features.async.kafka.url}}"
         {% endif %}
+        
     replicas: 1
     storage:
       type: ephemeral

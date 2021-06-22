@@ -70,6 +70,11 @@
     state: present
     definition: "{{ lookup('template', 'microcks-grpc-route.yml') | from_yaml  }}"
 
+- name: The Microcks Ingress certs config is present
+  template:
+    src: microcks-ingress-cert-conf.j2
+    dest: microcks-ingress.cnf
+
 - name: The Microks Ingress certs key is present if Kubernetes
   when: microcks.ingress_secret_ref is undefined or microcks.ingress_secret_ref|length == 0
   stat: 
@@ -78,7 +83,7 @@
 
 - name: The Microks Ingress certs are generated if Kubernetes and generate_cert
   when: "'route.openshift.io' not in api_groups and microcks.generate_cert == True and microcks_ingress_certs.stat is defined and microcks_ingress_certs.stat.exists == False"
-  command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout microcks-ingress.key -out microcks-ingress.crt -subj "/CN={{microcks.url}}/O={{microcks.url}}"
+  command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout microcks-ingress.key -out microcks-ingress.crt -subj "/CN={{microcks.url}}" -extensions extensions -config microcks-ingress.cnf
 
 - name: Get an existing Microcks Ingress Secret
   when: microcks.ingress_secret_ref is undefined or microcks.ingress_secret_ref|length == 0
@@ -196,6 +201,11 @@
     state: "{{ 'present' if keycloak.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'keycloak-route.yml') | from_yaml  }}"
 
+- name: The Keycloak Ingress certs config is present
+  template:
+    src: keycloak-ingress-cert-conf.j2
+    dest: keycloak-ingress.cnf
+
 - name: The Keycloak Ingress certs key is present if keycloak.install == true and Kubernetes
   when: keycloak.ingress_secret_ref is undefined or keycloak.ingress_secret_ref|length == 0
   stat: 
@@ -204,7 +214,7 @@
 
 - name: The Keycloak Ingress certs are generated if keycloak.install == true and Kubernetes and generate_cert
   when: keycloak.install == true and 'route.openshift.io' not in api_groups and keycloak.generate_cert == True and keycloak_ingress_certs.stat is defined and keycloak_ingress_certs.stat.exists == False
-  command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout keycloak-ingress.key -out keycloak-ingress.crt -subj "/CN={{keycloak.url}}/O={{keycloak.url}}"
+  command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout keycloak-ingress.key -out keycloak-ingress.crt -subj "/CN={{keycloak.url}}" -extensions extensions -config keycloak-ingress.cnf
 
 - name: Get an existing Keycloak Ingress Secret
   when: keycloak.ingress_secret_ref is undefined or keycloak.ingress_secret_ref|length == 0
@@ -280,25 +290,25 @@
 # ================================================================
 
 - name: The Kafka CR is present if features.async.enabled == true and features.async.kafka.install == true
-  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta2 == true"
+  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == false"
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'kafka-beta2.yml') | from_yaml  }}"
 
 - name: The Kafka CR is present if features.async.enabled == true and features.async.kafka.install == true
-  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta2 == false"
+  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == true"
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'kafka.yml') | from_yaml  }}"
 
 - name: The Kafka Topic is present if features.async.enabled == true and features.async.kafka.install == true
-  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta2 == true" 
+  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == false" 
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'kafka-topic-beta2.yml') | from_yaml  }}"
 
 - name: The Kafka Topic is present if features.async.enabled == true and features.async.kafka.install == true
-  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta2 == false" 
+  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == true" 
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'kafka-topic.yml') | from_yaml  }}"
@@ -411,14 +421,14 @@
     path: microcks-ws-ingress.key
   register: microcks_ws_ingress_certs
 
-- name: The Microcks WS Ingress SAN config is present
+- name: The Microcks WS Ingress certs config is present
   template:
-    src: microcks-ws-san.j2
+    src: microcks-ws-cert-conf.j2
     dest: microcks-ws.cnf
 
 - name: The Microks WS Ingress certs are generated if features.async.enabled == true and Kubernetes
   when: "'route.openshift.io' not in api_groups and features.async.ws.generate_cert == True and microcks_ws_ingress_certs.stat is defined and microcks_ws_ingress_certs.stat.exists == False"
-  command: openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout microcks-ws-ingress.key -out microcks-ws-ingress.crt -subj "/CN={{microcks_url}}" -extensions san -config microcks-ws.cnf
+  command: openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout microcks-ws-ingress.key -out microcks-ws-ingress.crt -subj "/CN={{microcks_url}}" -extensions extensions -config microcks-ws.cnf
 
 - name: Get an existing Microcks WS Ingress Secret if features.async.enabled == true and Kubernetes
   when: "(features.async.enabled == True and 'route.openshift.io' not in api_groups) and (features.async.ws.ingress_secret_ref is undefined or features.async.ws.ingress_secret_ref|length == 0)"
