@@ -1,0 +1,9 @@
+[req]
+distinguished_name=req
+[extensions]
+basicConstraints=critical,CA:FALSE
+keyUsage=critical,digitalSignature,keyEncipherment
+extendedKeyUsage=serverAuth,clientAuth
+subjectAltName=DNS:{{keycloak.url}}
+[san]
+subjectAltName=DNS:{{keycloak.url}}
