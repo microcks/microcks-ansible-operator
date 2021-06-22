@@ -1,4 +1,0 @@
-[req]
-distinguished_name=req
-[san]
-subjectAltName=DNS:{{microcks_url|regex_replace('^([^.-]+)(.*)','\\1-ws\\2')}},DNS:localhost

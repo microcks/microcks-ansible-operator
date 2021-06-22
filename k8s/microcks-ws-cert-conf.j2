@@ -1,0 +1,9 @@
+[req]
+distinguished_name=req
+[extensions]
+basicConstraints=critical,CA:FALSE
+keyUsage=critical,digitalSignature,keyEncipherment
+extendedKeyUsage=serverAuth,clientAuth
+subjectAltName=DNS:{{microcks_url|regex_replace('^([^.-]+)(.*)','\\1-ws\\2')}},DNS:localhost
+[san]
+subjectAltName=DNS:{{microcks_url|regex_replace('^([^.-]+)(.*)','\\1-ws\\2')}},DNS:localhost
