@@ -30,9 +30,7 @@ spec:
         {% if 'url' not in features.async.kafka and 'route.openshift.io' in api_groups %}
 
         type: route
-        {% endif %}
-        
-        {% if 'url' in features.async.kafka and 'route.openshift.io' not in api_groups %}
+        {% else %}
         
         type: ingress
         configuration:

@@ -71,6 +71,7 @@
     definition: "{{ lookup('template', 'microcks-grpc-route.yml') | from_yaml  }}"
 
 - name: The Microcks Ingress certs config is present
+  when: "'route.openshift.io' not in api_groups and microcks.generate_cert == True"
   template:
     src: microcks-ingress-cert-conf.j2
     dest: microcks-ingress.cnf
@@ -202,6 +203,7 @@
     definition: "{{ lookup('template', 'keycloak-route.yml') | from_yaml  }}"
 
 - name: The Keycloak Ingress certs config is present
+  when: "keycloak.install == true and 'route.openshift.io' not in api_groups and microcks.generate_cert == True"
   template:
     src: keycloak-ingress-cert-conf.j2
     dest: keycloak-ingress.cnf
@@ -289,25 +291,25 @@
 # Next deal with optional Kafka broker
 # ================================================================
 
-- name: The Kafka CR is present if features.async.enabled == true and features.async.kafka.install == true
-  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == false"
+- name: The Kafka CR Beta2  is present if features.async.enabled == true and features.async.kafka.install == true
+  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == false and ('route.openshift.io' in api_groups or 'url' in features.async.kafka)"
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'kafka-beta2.yml') | from_yaml  }}"
 
-- name: The Kafka CR is present if features.async.enabled == true and features.async.kafka.install == true
-  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == true"
+- name: The Kafka CR Beta1 is present if features.async.enabled == true and features.async.kafka.install == true
+  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == true and ('route.openshift.io' in api_groups or 'url' in features.async.kafka)"
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'kafka.yml') | from_yaml  }}"
 
-- name: The Kafka Topic is present if features.async.enabled == true and features.async.kafka.install == true
+- name: The Kafka Topic Beta2 is present if features.async.enabled == true and features.async.kafka.install == true
   when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == false" 
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'kafka-topic-beta2.yml') | from_yaml  }}"
 
-- name: The Kafka Topic is present if features.async.enabled == true and features.async.kafka.install == true
+- name: The Kafka Topic Beta1 is present if features.async.enabled == true and features.async.kafka.install == true
   when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == true" 
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"

@@ -16,8 +16,6 @@ data:
 
     features.feature.async-api.enabled={{features.async.enabled | bool | lower}}
     features.feature.async-api.default-binding={{features.async.defaultBinding|default(features.async.default_binding)}}
-    features.feature.async-api.endpoint-WS={{microcks.url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-ws\\2')}}
-
     {%- if features.async.kafka.install and 'url' not in features.async.kafka %}
     
     features.feature.async-api.endpoint-KAFKA={{name}}-kafka-kafka-bootstrap.<apps-subdomain>:443
@@ -34,6 +32,8 @@ data:
 
     features.feature.async-api.endpoint-MQTT={{features.async.mqtt.url}}
     {% endif %}
+    
+    features.feature.async-api.endpoint-WS={{microcks_url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-ws\\2')}}
 
   application.properties: |-
     # Application configuration properties
