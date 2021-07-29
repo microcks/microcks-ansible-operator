@@ -84,7 +84,7 @@
 
 - name: The Microks Ingress certs are generated if Kubernetes and generate_cert
   when: "'route.openshift.io' not in api_groups and microcks.generate_cert == True and microcks_ingress_certs.stat is defined and microcks_ingress_certs.stat.exists == False"
-  command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout microcks-ingress.key -out microcks-ingress.crt -subj "/CN={{microcks.url}}" -extensions extensions -config microcks-ingress.cnf
+  command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout microcks-ingress.key -out microcks-ingress.crt -subj "/CN={{microcks.url | truncate(64, True, '...', 0)}}" -extensions extensions -config microcks-ingress.cnf
 
 - name: Get an existing Microcks Ingress Secret
   when: microcks.ingress_secret_ref is undefined or microcks.ingress_secret_ref|length == 0
@@ -216,7 +216,7 @@
 
 - name: The Keycloak Ingress certs are generated if keycloak.install == true and Kubernetes and generate_cert
   when: keycloak.install == true and 'route.openshift.io' not in api_groups and keycloak.generate_cert == True and keycloak_ingress_certs.stat is defined and keycloak_ingress_certs.stat.exists == False
-  command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout keycloak-ingress.key -out keycloak-ingress.crt -subj "/CN={{keycloak.url}}" -extensions extensions -config keycloak-ingress.cnf
+  command: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout keycloak-ingress.key -out keycloak-ingress.crt -subj "/CN={{keycloak.url | truncate(64, True, '...', 0)}}" -extensions extensions -config keycloak-ingress.cnf
 
 - name: Get an existing Keycloak Ingress Secret
   when: keycloak.ingress_secret_ref is undefined or keycloak.ingress_secret_ref|length == 0
@@ -333,7 +333,7 @@
 
 - name: The Microks GRPC certs are generated
   when: "microcks_grpc_certs.stat is defined and microcks_grpc_certs.stat.exists == False"
-  command: openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout microcks-grpc.key -out microcks-grpc.crt -subj "/CN={{microcks_url}}" -extensions san -config microcks-grpc.cnf
+  command: openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout microcks-grpc.key -out microcks-grpc.crt -subj "/CN={{microcks_url | truncate(64, True, '...', 0)}}" -extensions san -config microcks-grpc.cnf
 
 - name: Get an existing Microcks GRPC Secret
   when: microcks.grpc_secret_ref is undefined or microcks.grpc_secret_ref|length == 0
@@ -430,7 +430,7 @@
 
 - name: The Microks WS Ingress certs are generated if features.async.enabled == true and Kubernetes
   when: "'route.openshift.io' not in api_groups and features.async.ws.generate_cert == True and microcks_ws_ingress_certs.stat is defined and microcks_ws_ingress_certs.stat.exists == False"
-  command: openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout microcks-ws-ingress.key -out microcks-ws-ingress.crt -subj "/CN={{microcks_url}}" -extensions extensions -config microcks-ws.cnf
+  command: openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout microcks-ws-ingress.key -out microcks-ws-ingress.crt -subj "/CN={{microcks_url | truncate(64, True, '...', 0)}}" -extensions extensions -config microcks-ws.cnf
 
 - name: Get an existing Microcks WS Ingress Secret if features.async.enabled == true and Kubernetes
   when: "(features.async.enabled == True and 'route.openshift.io' not in api_groups) and (features.async.ws.ingress_secret_ref is undefined or features.async.ws.ingress_secret_ref|length == 0)"
