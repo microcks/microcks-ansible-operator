@@ -126,7 +126,7 @@ spec:
     persistent: true
     volumeSize: 1Gi
     url: keycloak.192.168.99.100.nip.io
-    privateUrl: http://my-microcksinstall-keycloak.microcks.svc.cluster.local:8080
+    privateUrl: http://my-microcksinstall-keycloak.microcks.svc.cluster.local:8080/auth
     ingressSecretRef: my-secret-for-keycloak-ingress
   mongodb:
     install: true
