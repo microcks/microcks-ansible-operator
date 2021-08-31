@@ -109,6 +109,25 @@ data:
           ]
         }
       },
+      "groups": [
+        {
+          "name": "microcks",
+          "path": "/microcks",
+          "attributes": {},
+          "realmRoles": [],
+          "clientRoles": {},
+          "subGroups": [
+            {
+              "name": "manager",
+              "path": "/microcks/manager",
+              "attributes": {},
+              "realmRoles": [],
+              "clientRoles": {},
+              "subGroups": []
+            }
+          ]
+        }
+      ],
       "defaultRoles": [ ],
       "requiredCredentials": [ "password" ],
       "scopeMappings": [],
@@ -133,6 +152,35 @@ data:
           }
         ]
       },
+      "clients": [
+        {
+          "clientId": "microcks-app-js",
+          "enabled": true,
+          "publicClient": true,
+          "redirectUris": [
+            "https://{{microcks.url|default(microcks_url)}}/*"
+          ],
+          "webOrigins": [
+            "+"
+          ],
+          "fullScopeAllowed": false,
+          "protocolMappers": [
+            {
+              "name": "microcks-group-mapper",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-group-membership-mapper",
+              "consentRequired": false,
+              "config": {
+                "full.path": "true",
+                "id.token.claim": "true",
+                "access.token.claim": "true",
+                "claim.name": "microcks-groups",
+                "userinfo.token.claim": "true"
+              }
+            }
+          ]
+        }
+      ],
       "applications": [
         {
           "name": "microcks-app",
@@ -141,18 +189,6 @@ data:
           "defaultRoles": [
             "user"
           ]
-        },
-        {
-          "name": "microcks-app-js",
-          "enabled": true,
-          "publicClient": true,
-          "webOrigins": [
-            "+"
-          ],
-          "redirectUris": [
-            "https://{{microcks.url|default(microcks_url)}}/*"
-          ],
-          "fullScopeAllowed": false
         },
         {
           "name": "{{keycloak.serviceAccount|default(keycloak.service_account)}}",

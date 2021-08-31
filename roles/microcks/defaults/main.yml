@@ -46,6 +46,9 @@ features:
     label_key: domain
     label_label: Domain
     label_list: domain,status
+  repository_tenancy:
+    enabled: false
+    artifact_import_allowed_roles: admin,manager
   async:
     enabled: false
     default_binding: KAFKA
