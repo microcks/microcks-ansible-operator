@@ -1,5 +1,5 @@
 kind: Ingress
-apiVersion: extensions/v1
+apiVersion: networking.k8s.io/v1
 metadata:
   name: "{{name}}-ws"
   namespace: '{{ meta.namespace }}'
@@ -24,6 +24,9 @@ spec:
     http:
       paths:
       - path: /api/ws
+        pathType: Prefix
         backend:
-          serviceName: "{{name}}-async-minion"
-          servicePort: 8080
+          service:
+            name: "{{name}}-async-minion"
+            port: 
+              number: 8080

@@ -1,5 +1,5 @@
 kind: Ingress
-apiVersion: extensions/v1
+apiVersion: networking.k8s.io/v1
 metadata:
   name: "{{name}}"
   namespace: '{{ meta.namespace }}'
@@ -23,6 +23,10 @@ spec:
   - host: "{{microcks.url}}"
     http:
       paths:
-      - backend:
-          serviceName: "{{name}}"
-          servicePort: 8080
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: "{{name}}"
+            port:
+              number: 8080

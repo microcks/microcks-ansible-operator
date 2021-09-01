@@ -1,5 +1,5 @@
 kind: Ingress
-apiVersion: extensions/v1
+apiVersion: networking.k8s.io/v1
 metadata:
   name: "{{name}}-grpc"
   namespace: '{{ meta.namespace }}'
@@ -18,6 +18,10 @@ spec:
   - host: "{{microcks.url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-grpc\\2')}}"
     http:
       paths:
-      - backend:
-          serviceName: "{{name}}-grpc"
-          servicePort: 9090
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: "{{name}}-grpc"
+            port: 
+              number: 9090

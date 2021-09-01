@@ -1,5 +1,5 @@
 kind: Ingress
-apiVersion: extensions/v1
+apiVersion: networking.k8s.io/v1
 metadata:
   name: "{{name}}-keycloak"
   namespace: '{{ meta.namespace }}'
@@ -23,6 +23,10 @@ spec:
   - host: "{{keycloak.url}}"
     http:
       paths:
-      - backend:
-          serviceName: "{{name}}-keycloak"
-          servicePort: 8080
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: "{{name}}-keycloak"
+            port:
+              number: 8080
