@@ -19,8 +19,10 @@ microcks:
       memory: 512Mi
   #log_level: TRACE | DEBUG | INFO | WARN
   log_level: INFO
+
 postman:
   replicas: 1
+
 keycloak:
   install: true
   realm: microcks
@@ -34,12 +36,28 @@ keycloak:
     #kubernetes.io/tls-acme: "true"
     #kubernetes.io/ingress.class: nginx
   generate_cert: true
+  resources:
+    requests:
+      cpu: 400m
+      memory: 400Mi
+    #limits:
+      #cpu: 500m
+      #memory: 512Mi
   service_account: microcks-serviceaccount
   service_account_credentials: ab54d329-e435-41ae-a900-ec6b3fe15c54
+
 mongodb:
   install: true
   persistent: true
   volume_size: 2Gi
+  resources:
+    #requests:
+      #cpu: 250m
+      #memory: 400Mi
+    limits:
+      #cpu: 500m
+      memory: 512Mi
+
 features:
   repository_filter:
     enabled: false

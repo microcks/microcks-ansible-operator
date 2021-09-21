@@ -94,6 +94,8 @@ spec:
         - name: KEYCLOAK_FRONTEND_URL
           value: https://{{keycloak.url|default(keycloak_url)}}/auth
         {% endif -%}
+        resources:
+          {{keycloak.resources | to_nice_yaml(indent=10) | trim | indent(10) }}
         volumeMounts:
         - name: "{{name}}-keycloak-config"
           mountPath: "/opt/jboss/keycloak/standalone/configuration/realm"

@@ -45,6 +45,8 @@ spec:
         ports:
         - containerPort: 27017
           protocol: TCP
+        resources:
+          {{mongodb.resources | to_nice_yaml(indent=10) | trim | indent(10) }}
         readinessProbe:
           timeoutSeconds: 1
           initialDelaySeconds: 3
