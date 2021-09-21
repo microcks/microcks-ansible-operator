@@ -26,8 +26,7 @@ postman:
 keycloak:
   install: true
   realm: microcks
-  persistent: true
-  volume_size: 1Gi
+  image: jboss/keycloak:14.0.0
   #url: keycloak.192.168.99.100.nip.io
   #url: http://microcks-keycloak:8080
   #public_url: https://keycloak-microcks.192.168.64.6.nip.io/auth
@@ -36,6 +35,7 @@ keycloak:
     #kubernetes.io/tls-acme: "true"
     #kubernetes.io/ingress.class: nginx
   generate_cert: true
+  
   resources:
     requests:
       cpu: 400m
@@ -46,10 +46,15 @@ keycloak:
   service_account: microcks-serviceaccount
   service_account_credentials: ab54d329-e435-41ae-a900-ec6b3fe15c54
 
+  persistent: true
+  volume_size: 1Gi
+  postgresImage: centos/postgresql-95-centos7:latest
+
 mongodb:
   install: true
   persistent: true
   volume_size: 2Gi
+  image: centos/mongodb-34-centos7:latest
   resources:
     #requests:
       #cpu: 250m

@@ -41,7 +41,7 @@ spec:
       {% endif -%}
       containers:
       - name: mongodb
-        image: centos/mongodb-34-centos7:latest
+        image: {{mongodb.image}}
         ports:
         - containerPort: 27017
           protocol: TCP
