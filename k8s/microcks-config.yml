@@ -83,6 +83,24 @@ data:
 
     # Kafka configuration properties
     spring.kafka.producer.bootstrap-servers=${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
+    {% if features.async.kafka.install -%}
+      {% if features.async.kafka.authentication.type == "SSL" -%}
+    spring.kafka.producer.properties.security.protocol=SSL
+    spring.kafka.producer.properties.ssl.truststore.location=/deployments/config/kafka/truststore/{{features.async.kafka.authentication.truststore_secret_ref.store_key}}
+    spring.kafka.producer.properties.ssl.truststore.password=${KAFKA_TRUSTSTORE_PASSWORD}
+    spring.kafka.producer.properties.ssl.truststore.type={{features.async.kafka.authentication.truststore_type }}
+    spring.kafka.producer.properties.ssl.keystore.location=/deployments/config/kafka/keystore/{{ features.async.kafka.authentication.keystore_secret_ref.store_key}}
+    spring.kafka.producer.properties.ssl.keystore.password=${KAFKA_KEYSTORE_PASSWORD}
+    spring.kafka.producer.properties.ssl.keystore.type={{features.async.kafka.authentication.keystore_type}}
+      {% elif features.async.kafka.authentication.type == "SASL_SSL" -%}
+    spring.kafka.producer.properties.security.protocol=SASL_SSL
+    spring.kafka.producer.properties.ssl.truststore.location=/deployments/config/kafka/truststore/{{features.async.kafka.authentication.truststore_secret_ref.store_key}}
+    spring.kafka.producer.properties.ssl.truststore.password=${KAFKA_TRUSTSTORE_PASSWORD}
+    spring.kafka.producer.properties.ssl.truststore.type={{features.async.kafka.authentication.truststore_type}}
+    spring.kafka.producer.properties.sasl.mechanism={{features.async.kafka.authentication.sasl_mechanism}}
+    spring.kafka.producer.properties.sasl.jaas.config={{features.async.kafka.authentication.sasl_jaas_config}}
+      {% endif %}
+    {% endif %}
 
     # Grpc server properties
     grpc.server.certChainFilePath=/deployments/config/grpc/tls.crt

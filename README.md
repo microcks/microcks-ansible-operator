@@ -202,6 +202,13 @@ Here are below the configuration properties of the Kafka support features:
 | `features.async.kafka.schemaRegistry` | `confluent` | **Optional**. Flag for indicating that registry is a Confluent one, or using a Confluent compatibility mode. Default to `true` |
 | `features.async.kafka.schemaRegistry` | `username`  | **Optional**. Username for connecting to the specified Schema registry. Default to `` |
 | `features.async.kafka.schemaRegistry` | `credentialsSource`  | **Optional**. Source of the credentials for connecting to the specified Schema registry. Default to `USER_INFO` |
+| `features.async.kafka.authentication` | `type` | **Optional**. The type of authentication for connecting to a pre-existing Kafka broker. Supports `SSL` or `SASL_SSL`. Default to `none` |
+| `features.async.kafka.authentication` | `truststoreType` | **Optional**. For TLS transport, you'll always need a truststore to hold your cluster certificate. Default to `PKCS12` |
+| `features.async.kafka.authentication` | `truststoreSecretRef` | **Optional**. For TLS transport, the reference of a Secret holding truststore and its password. Set `secret`, `storeKey` and `passwordKey` properties |
+| `features.async.kafka.authentication` | `keystoreType` | **Optional**. In case of `SSL` type, you'll also need a keystore to hold your user private key for mutual TLS authentication. Default to `PKCS12` |
+| `features.async.kafka.authentication` | `keystoreSecretRef` | **Optional**. For mutual TLS authentication, the reference of a Secret holding keystore and its password. Set `secret`, `storeKey` and `passwordKey` properties |
+| `features.async.kafka.authentication` | `saslMechanism` | **Optional**. For SASL authentication, you'll have to specify an additional authentication mechanism such as `SCRAM-SHA-512` |
+| `features.async.kafka.authentication` | `saslJaasConfig` | **Optional**. For SASL authentication, you'll have to specify a JAAS configuration line with login module, username and password. |
 
 #### MQTT feature details
 

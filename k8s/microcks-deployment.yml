@@ -80,7 +80,25 @@ spec:
             {%- else %}
             
             value: "{{features.async.kafka.url}}"
-            {% endif %}
+            {%- endif %}
+          {% if not features.async.kafka.install|bool %}
+            {%- if not features.async.kafka.authentication.type == 'none' %}
+
+          - name: KAFKA_TRUSTSTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: {{features.async.kafka.authentication.truststore_secret_ref.password_key}}
+                name: "{{name}}-kafka-truststore"
+            {%- endif %}
+            {%- if features.async.kafka.authentication.type == 'SSL' %}
+
+          - name: KAFKA_KEYSTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: {{features.async.kafka.authentication.keystore_secret_ref.password_key}}
+                name: "{{name}}-kafka-keystore"
+            {%- endif %}
+          {% endif %}
 
         resources:
           {{ microcks.resources | to_nice_yaml(indent=10) | trim | indent(10) }}
@@ -109,6 +127,16 @@ spec:
             mountPath: "/deployments/config"
           - name: "{{name}}-grpc-certs"  
             mountPath: "/deployments/config/grpc"
+          {% if not features.async.kafka.install|bool -%}
+            {% if not features.async.kafka.authentication.type == 'none' -%}
+          - name: "{{name}}-kafka-truststore"
+            mountPath: "/deployments/config/kafka/truststore"
+            {%- endif %}
+            {% if features.async.kafka.authentication.type == 'SSL' +%}
+          - name: "{{name}}-kafka-keystore"
+            mountPath: "/deployments/config/kafka/keystore"
+            {%- endif %}
+          {% endif +%}
         terminationMessagePath: "/dev/termination-log"
       volumes:
       - name: "{{name}}-config"
@@ -117,3 +145,15 @@ spec:
       - name: "{{name}}-grpc-certs"
         secret:
           secretName: "{{name}}-microcks-grpc-secret"
+      {% if not features.async.kafka.install|bool -%}
+        {% if not features.async.kafka.authentication.type == 'none' -%}
+      - name: "{{name}}-kafka-truststore"
+        secret:
+          secretName: "{{features.async.kafka.authentication.truststore_secret_ref.secret}}"
+        {%- endif %}
+        {% if features.async.kafka.authentication.type == 'SSL' +%}
+      - name: "{{name}}-kafka-keystore"
+        secret:
+          secretName: "{{features.async.kafka.authentication.keystore_secret_ref.secret}}"
+        {%- endif %}
+      {% endif +%}

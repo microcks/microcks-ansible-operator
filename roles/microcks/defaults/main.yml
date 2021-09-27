@@ -103,6 +103,30 @@ features:
         #username: microcks
         credentials_source: USER_INFO
 
+      # If you choose not to install a Kafka broker and reuse on pre-existing,
+      # you may need to set some authentication parameters.
+      authentication:
+        # If not 'none', we support 'SSL' for mutual TLS and 'SASL_SSL' for SASL over TLS.
+        type: none #SSL #SASL_SSL
+        # For TLS transport, you'll always need a truststore to hold your cluster certificate.
+        # You have to setup a truststore type and a secret reference for retrieving content and password.
+        truststore_type: PKCS12
+        truststore_secret_ref:
+          secret: kafka-cluster-ca-cert
+          store_key: ca.p12
+          password_key: ca.password
+        # For mutual TLS authentication, you'll also need a keystore to hold your user private key.
+        # You have to setup a keystore type and a secret reference for retrieving content and password.
+        keystore_type: PKCS12
+        keystore_secret_ref:
+          secret: mtls-user
+          store_key: user.p12
+          password_key: user.password
+        # For SASL authentication, you'll have to specify an additional authentication mechanism
+        # as well as a JAAS configuration line with login module, username and password.
+        #sasl_mechanism: SCRAM-SHA-512
+        #sasl_jaas_config: org.apache.kafka.common.security.scram.ScramLoginModule required username="scram-user" password="tDtDCT3pYKE5";
+
     mqtt:
       #url:
       username: microcks

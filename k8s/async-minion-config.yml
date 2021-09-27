@@ -27,14 +27,44 @@ data:
     {% endif %}
 
     # Access to Kafka broker.
-    {%- if features.async.kafka.install %}
-    
+    {% if features.async.kafka.install -%}
     %kube.kafka.bootstrap.servers={{name}}-kafka-kafka-bootstrap:9092
     %kube.mp.messaging.incoming.microcks-services-updates.bootstrap.servers={{name}}-kafka-kafka-bootstrap:9092
-    {% else %}
-    
+    {% else -%}
     %kube.kafka.bootstrap.servers={{ features.async.kafka.url }}
-    %kube.mp.messaging.incoming.microcks-services-updates.bootstrap.servers={{ features.async.kafka.url }}
+    %kube.mp.messaging.incoming.microcks-services-updates.bootstrap.servers={{features.async.kafka.url}}
+
+    {% if features.async.kafka.authentication.type == "SSL" -%}
+    %kube.kafka.security.protocol=SSL
+    %kube.kafka.ssl.truststore.location=/deployments/config/kafka/truststore/{{features.async.kafka.authentication.truststore_secret_ref.store_key}}
+    %kube.kafka.ssl.truststore.password=${KAFKA_TRUSTSTORE_PASSWORD}
+    %kube.kafka.ssl.truststore.type={{features.async.kafka.authentication.truststore_type}}
+    %kube.kafka.ssl.keystore.location=/deployments/config/kafka/keystore/{{features.async.kafka.authentication.keystore_secret_ref.store_key}}
+    %kube.kafka.ssl.keystore.password=${KAFKA_KEYSTORE_PASSWORD}
+    %kube.kafka.ssl.keystore.type={{features.async.kafka.authentication.keystore_type}}
+
+    %kube.mp.messaging.incoming.microcks-services-updates.security.protocol=SSL
+    %kube.mp.messaging.incoming.microcks-services-updates.ssl.truststore.location=/deployments/config/kafka/truststore/{{features.async.kafka.authentication.truststore_secret_ref.store_key}}
+    %kube.mp.messaging.incoming.microcks-services-updates.ssl.truststore.password=${KAFKA_TRUSTSTORE_PASSWORD}
+    %kube.mp.messaging.incoming.microcks-services-updates.ssl.truststore.type={{features.async.kafka.authentication.truststore_type}}
+    %kube.mp.messaging.incoming.microcks-services-updates.ssl.keystore.location=/deployments/config/kafka/keystore/{{features.async.kafka.authentication.keystore_secret_ref.store_key}}
+    %kube.mp.messaging.incoming.microcks-services-updates.ssl.keystore.password=${KAFKA_KEYSTORE_PASSWORD}
+    %kube.mp.messaging.incoming.microcks-services-updates.ssl.keystore.type={{features.async.kafka.authentication.keystore_type}}  
+    {% elif features.async.kafka.authentication.type == "SASL_SSL" -%}
+    %kube.kafka.security.protocol=SASL_SSL
+    %kube.kafka.ssl.truststore.location=/deployments/config/kafka/truststore/{{features.async.kafka.authentication.truststore_secret_ref.store_key}}
+    %kube.kafka.ssl.truststore.password=${KAFKA_TRUSTSTORE_PASSWORD}
+    %kube.kafka.ssl.truststore.type={{features.async.kafka.authentication.truststore_type}}
+    %kube.kafka.sasl.mechanism={{features.async.kafka.authentication.sasl_mechanism}}
+    %kube.kafka.sasl.jaas.config={{features.async.kafka.authentication.sasl_jaas_config}}
+
+    %kube.mp.messaging.incoming.microcks-services-updates.security.protocol=SASL_SSL
+    %kube.mp.messaging.incoming.microcks-services-updates.ssl.truststore.location=/deployments/config/kafka/truststore/{{features.async.kafka.authentication.truststore_secret_ref.store_key}}
+    %kube.mp.messaging.incoming.microcks-services-updates.ssl.truststore.password=${KAFKA_TRUSTSTORE_PASSWORD}
+    %kube.mp.messaging.incoming.microcks-services-updates.ssl.truststore.type={{features.async.kafka.authentication.truststore_type}}
+    %kube.mp.messaging.incoming.microcks-services-updates.sasl-mechanism={{features.async.kafka.authentication.sasl_mechanism}}
+    %kube.mp.messaging.incoming.microcks-services-updates.sasl-jaas-config={{features.async.kafka.authentication.sasl_jaas_config}}
+    {% endif %}
     {% endif %}
 
     {% if features.async.kafka.schema_registry.url is defined -%}
