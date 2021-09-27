@@ -13,3 +13,6 @@ spec:
   resources:
     requests:
       storage: "{{mongodb.volume_size}}"
+  {% if mongodb.storage_class_name is defined -%}
+  storageClassName: {{ mongodb.storage_class_name }}
+  {% endif %}

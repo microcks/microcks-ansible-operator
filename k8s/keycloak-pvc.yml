@@ -13,3 +13,6 @@ spec:
   resources:
     requests:
       storage: "{{keycloak.volume_size}}"
+  {% if keycloak.storage_class_name is defined -%}
+  storageClassName: {{ keycloak.storage_class_name }}
+  {% endif %}
