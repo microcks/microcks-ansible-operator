@@ -48,12 +48,14 @@ keycloak:
 
   persistent: true
   volume_size: 1Gi
+  #storage_class_name: my-awesome-class
   postgresImage: centos/postgresql-95-centos7:latest
 
 mongodb:
   install: true
   persistent: true
   volume_size: 2Gi
+  #storage_class_name: my-awesome-class
   image: centos/mongodb-34-centos7:latest
   resources:
     #requests:
@@ -71,7 +73,10 @@ features:
     label_list: domain,status
   repository_tenancy:
     enabled: false
-    artifact_import_allowed_roles: admin,manager
+    artifact_import_allowed_roles: admin,manager,manager-any
+  microcks_hub:
+    enabled: false
+    allowed_roles: admin,manager,manager-any
   async:
     enabled: false
     default_binding: KAFKA
