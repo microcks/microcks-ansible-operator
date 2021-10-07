@@ -81,6 +81,7 @@ spec:
             
             value: "{{features.async.kafka.url}}"
             {%- endif %}
+
           {% if not features.async.kafka.install|bool %}
             {%- if not features.async.kafka.authentication.type == 'none' %}
 
@@ -127,16 +128,19 @@ spec:
             mountPath: "/deployments/config"
           - name: "{{name}}-grpc-certs"  
             mountPath: "/deployments/config/grpc"
-          {% if not features.async.kafka.install|bool -%}
-            {% if not features.async.kafka.authentication.type == 'none' -%}
+          {% if not features.async.kafka.install|bool %}
+            {%- if not features.async.kafka.authentication.type == 'none' %}
+
           - name: "{{name}}-kafka-truststore"
             mountPath: "/deployments/config/kafka/truststore"
             {%- endif %}
-            {% if features.async.kafka.authentication.type == 'SSL' +%}
+            {%- if features.async.kafka.authentication.type == 'SSL' %}
+
           - name: "{{name}}-kafka-keystore"
             mountPath: "/deployments/config/kafka/keystore"
             {%- endif %}
-          {% endif +%}
+          {% endif %}
+
         terminationMessagePath: "/dev/termination-log"
       volumes:
       - name: "{{name}}-config"
@@ -146,14 +150,16 @@ spec:
         secret:
           secretName: "{{name}}-microcks-grpc-secret"
       {% if not features.async.kafka.install|bool -%}
-        {% if not features.async.kafka.authentication.type == 'none' -%}
+        {%- if not features.async.kafka.authentication.type == 'none' %}
+
       - name: "{{name}}-kafka-truststore"
         secret:
           secretName: "{{features.async.kafka.authentication.truststore_secret_ref.secret}}"
         {%- endif %}
-        {% if features.async.kafka.authentication.type == 'SSL' +%}
+        {%- if features.async.kafka.authentication.type == 'SSL' %}
+        
       - name: "{{name}}-kafka-keystore"
         secret:
           secretName: "{{features.async.kafka.authentication.keystore_secret_ref.secret}}"
         {%- endif %}
-      {% endif +%}
+      {% endif %}

@@ -12,7 +12,7 @@ data:
     # Optional and additional features configuration
     features.feature.microcks-hub.enabled={{features.microcksHub.enabled|default(features.microcks_hub.enabled) | bool | lower}}
     features.feature.microcks-hub.endpoint=https://hub.microcks.io/api
-    features.feature.microcks-hub.allowed-roles={{features.microcksHub.aallowedRoles|default(features.microcks_hub.allowed_roles)}}
+    features.feature.microcks-hub.allowed-roles={{features.microcksHub.allowedRoles|default(features.microcks_hub.allowed_roles)}}
 
     features.feature.repository-filter.enabled={{features.repositoryFilter.enabled|default(features.repository_filter.enabled) | bool | lower}}
     features.feature.repository-filter.label-key={{features.repositoryFilter.labelKey|default(features.repository_filter.label_key)}}
@@ -87,7 +87,7 @@ data:
 
     # Kafka configuration properties
     spring.kafka.producer.bootstrap-servers=${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
-    {% if features.async.kafka.install -%}
+    {% if not features.async.kafka.install -%}
       {% if features.async.kafka.authentication.type == "SSL" -%}
     spring.kafka.producer.properties.security.protocol=SSL
     spring.kafka.producer.properties.ssl.truststore.location=/deployments/config/kafka/truststore/{{features.async.kafka.authentication.truststore_secret_ref.store_key}}
