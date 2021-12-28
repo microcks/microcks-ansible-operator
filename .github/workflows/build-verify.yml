@@ -16,7 +16,7 @@ jobs:
 
       - name: Package container image for operator
         run: |
-          docker build -f build/Dockerfile -t microcks-ansible-operator:candidate .
+          docker build -f build/Dockerfile -t microcks-ansible-operator .
 
       - name: Install kubectl and Kind Cluster
         run: |
@@ -39,7 +39,7 @@ jobs:
       - name: Tag container image
         if: github.repository_owner == 'microcks'
         run: |
-          docker tag microcks-ansible-operator:candidate quay.io/microcks/microcks-ansible-operator:nightly
+          docker tag microcks-ansible-operator quay.io/microcks/microcks-ansible-operator:nightly
 
       - name: Login and push to Quay.io Registry
         if: github.repository_owner == 'microcks'
