@@ -139,7 +139,7 @@ spec:
       containers:
         - name: microcks-ansible-operator
           image: microcks-ansible-operator
-          imagePullPolicy: ItNotPresent
+          imagePullPolicy: IfNotPresent
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
