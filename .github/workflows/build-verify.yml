@@ -1,0 +1,26 @@
+name: build-verify-package
+on:
+  push:
+    paths-ignore:
+      - '.github/**'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'README*'
+jobs:
+  build-verify-package:
+    runs-on: ubuntu-latest
+    environment: Build
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Package container image for operator
+        if: github.repository_owner == 'microcks'
+        run: |
+          docker build -f build/Dockerfile -t quay.io/microcks/microcks-ansible-operator:nightly .
+
+      - name: Login and push to Quay.io Registry
+        if: github.repository_owner == 'microcks'
+        run: |
+          echo ${{ secrets.QUAY_PASSWORD }} | docker login -u ${{ secrets.QUAY_USERNAME }} --password-stdin quay.io
+          docker push quay.io/microcks/microcks-ansible-operator:nightly
