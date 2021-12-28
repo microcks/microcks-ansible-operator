@@ -1,0 +1,43 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestAssert
+timeout: 90
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: microcks-keycloak-ingress-secret
+  namespace: microcks
+---
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: microcks-keycloak
+  namespace: microcks
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: microcks-keycloak-admin
+  namespace: microcks
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: microcks-keycloak-config
+  namespace: microcks
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: microcks-keycloak
+  namespace: microcks
+status:
+  readyReplicas: 1
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: microcks-keycloak-postgresql
+  namespace: microcks
+status:
+  readyReplicas: 1

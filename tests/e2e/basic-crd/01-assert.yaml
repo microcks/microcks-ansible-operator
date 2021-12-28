@@ -1,0 +1,17 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestAssert
+timeout: 60
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: microcks-mongodb
+  namespace: microcks
+status:
+  readyReplicas: 1
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: microcks-mongodb-connection
+  namespace: microcks

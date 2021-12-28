@@ -1,0 +1,11 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestSuite
+startKIND: true
+#skipDelete: true
+#skipClusterDelete: true
+kindContainers:
+- microcks-ansible-operator:candidate
+manifestDirs:
+- tests/manifests
+testDirs:
+- tests/e2e/

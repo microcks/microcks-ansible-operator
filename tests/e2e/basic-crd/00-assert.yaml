@@ -1,0 +1,11 @@
+apiVersion: kuttl.dev/v1beta1
+kind: TestAssert
+timeout: 30
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: microcks-ansible-operator
+  namespace: microcks
+status:
+  readyReplicas: 1

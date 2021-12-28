@@ -15,9 +15,31 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Package container image for operator
+        run: |
+          docker build -f build/Dockerfile -t microcks-ansible-operator:candidate .
+
+      - name: Install kubectl and Kind Cluster
+        run: |
+          set -x
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl \
+            && sudo mv ./kubectl /usr/local/bin/kubectl \
+            && sudo chmod +x /usr/local/bin/kubectl
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64 \
+            && sudo mv ./kind /usr/local/bin/kind \
+            && sudo chmod +x /usr/local/bin/kind
+            
+      - name: Run e2e tests on operator using Kuttl.dev
+        run: |
+          set -x
+          curl -Lo ./kuttl https://github.com/kudobuilder/kuttl/releases/download/v0.11.1/kubectl-kuttl_0.11.1_linux_x86_64 \
+            && sudo cp kuttl /usr/local/bin/kubectl-kuttl \
+            && sudo chmod +x /usr/local/bin/kubectl-kuttl
+          kubectl kuttl test --config=./tests/kuttl-test.yaml
+
+      - name: Tag container image
         if: github.repository_owner == 'microcks'
         run: |
-          docker build -f build/Dockerfile -t quay.io/microcks/microcks-ansible-operator:nightly .
+          docker tag microcks-ansible-operator:candidate quay.io/microcks/microcks-ansible-operator:nightly
 
       - name: Login and push to Quay.io Registry
         if: github.repository_owner == 'microcks'

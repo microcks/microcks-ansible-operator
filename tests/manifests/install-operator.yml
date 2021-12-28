@@ -1,0 +1,153 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: microcks
+spec:
+  finalizers:
+  - kubernetes
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: microcksinstalls.microcks.github.io
+spec:
+  group: microcks.github.io
+  names:
+    kind: MicrocksInstall
+    listKind: MicrocksInstallList
+    plural: microcksinstalls
+    singular: microcksinstall
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+    subresources:
+      status: {}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: microcks-ansible-operator
+  namespace: microcks
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  - endpoints
+  - persistentvolumeclaims
+  - events
+  - configmaps
+  - secrets
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - daemonsets
+  - replicasets
+  - statefulsets
+  verbs:
+  - '*'
+- apiGroups:
+  - route.openshift.io
+  resources:
+  - routes
+  verbs:
+  - '*'
+- apiGroups:
+  - route.openshift.io
+  resources:
+  - routes/custom-host
+  verbs:
+  - create
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - '*'
+- apiGroups:
+  - monitoring.coreos.com
+  resources:
+  - servicemonitors
+  verbs:
+  - get
+  - create
+- apiGroups:
+  - kafka.strimzi.io
+  resources:
+  - kafkas
+  - kafkatopics
+  verbs:
+  - '*'
+- apiGroups:
+  - microcks.github.io
+  resources:
+  - '*'
+  verbs:
+  - '*'
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: microcks-ansible-operator
+  namespace: microcks
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: microcks-ansible-operator
+  namespace: microcks
+subjects:
+- kind: ServiceAccount
+  name: microcks-ansible-operator
+roleRef:
+  kind: Role
+  name: microcks-ansible-operator
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microcks-ansible-operator
+  namespace: microcks
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: microcks-ansible-operator
+  template:
+    metadata:
+      labels:
+        name: microcks-ansible-operator
+    spec:
+      serviceAccountName: microcks-ansible-operator
+      containers:
+        - name: microcks-ansible-operator
+          image: microcks-ansible-operator:candidate
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "microcks-ansible-operator"
