@@ -1,4 +1,4 @@
-FROM quay.io/operator-framework/ansible-operator:v0.16.0
+FROM quay.io/operator-framework/ansible-operator:v0.19.4
 
 USER root
 RUN yum clean all && rm -rf /var/cache/yum/* && yum install -y openssl
