@@ -2,6 +2,9 @@
 
 Kubernetes Operator for easy setup and management of Microcks installs (using Ansible undercover ;-)
 
+[![Join the chat on Zulip](https://img.shields.io/badge/chat-on_zulip-pink.svg?color=ff69b4&style=for-the-badge&logo=zulip)](https://microcksio.zulipchat.com/)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/microcks/microcks-ansible-operator/build-verify-package?logo=github&style=for-the-badge)](https://github.com/microcks/microcks/actions)
+
 ## Table of contents
 
 <!--ts-->
@@ -15,7 +18,9 @@ Kubernetes Operator for easy setup and management of Microcks installs (using An
       * [MicrocksInstall details](#microcksinstall-details)
    * [Sample Custom Resources](#sample-custom-resources)
    * [Build](#build)
-   * [Local tests](#tests)
+   * [Tests](#tests)
+      * [Local Tests](#local-tests)
+      * [E2E Tests](#e2e-tests)
 <!--te-->
 
 ## Installation
@@ -74,7 +79,7 @@ As an alternative, raw resources can also be found into the `/deploy/olm` direct
 
 ## Usage
 
-Once operator is up and running into your Kubernetes namespace, you just have to create a `MicrocksInstall` Custom Resource Definition (CRD). This CRD simply describe the properties of the Microcks installation you want to have in your cluster. A `MicrocksInstall`CRD is made of 6 different sections that may be used for describing your setup :
+Once operator is up and running into your Kubernetes namespace, you just have to create a `MicrocksInstall` Custom Resource Definition (CRD). This CRD simply describe the properties of the Microcks installation you want to have in your cluster. A `MicrocksInstall` CRD is made of 6 different sections that may be used for describing your setup :
 
 * Global part is mandatory and contain attributes like `name` of your install and `version` of Microcks to use,
 * `microcks` part is optional and contain attributes like the number of `replicas` and the access `url` if you want some customizations, 
@@ -85,7 +90,7 @@ Once operator is up and running into your Kubernetes namespace, you just have to
 
 ### Minimalist CRD
 
-Here's below a minimalistic `MicrocksInstall` CRD that I use on my OpenShift cluster. This let all the defaults applies (see below for details).
+Here's below a minimalistic `MicrocksInstall` CRD that you can use on vanilla Kubernetes cluster with just the information needed to configure `Ingresses`. This let all the defaults applies (see below for details).
 
 ```yaml
 apiVersion: microcks.github.io/v1alpha1
@@ -94,11 +99,11 @@ metadata:
   name: my-microcksinstall
 spec:
   name: my-microcksinstall
-  version: "1.0.0"
+  version: "1.4.1"
   microcks: 
-    replicas: 2
-  postman:
-    replicas: 2
+    url: microcks.192.168.99.100.nip.io
+  keycloak:
+    url: keycloak.192.168.99.100.nip.io
 ```
 
 > This form can only be used on OpenShift as vanilla Kubernetes will need more informations to customize `Ingress` resources.
@@ -114,7 +119,7 @@ metadata:
   name: my-microcksinstall-minikube
 spec:
   name: my-microcksinstall-minikube
-  version: "1.0.0"
+  version: "1.4.1"
   microcks: 
     replicas: 1
     url: microcks.192.168.99.100.nip.io
@@ -206,7 +211,7 @@ Here are below the configuration properties of the Kafka support features:
 | `features.async.kafka.schemaRegistry` | `username`  | **Optional**. Username for connecting to the specified Schema registry. Default to `` |
 | `features.async.kafka.schemaRegistry` | `credentialsSource`  | **Optional**. Source of the credentials for connecting to the specified Schema registry. Default to `USER_INFO` |
 | `features.async.kafka.authentication` | `type` | **Optional**. The type of authentication for connecting to a pre-existing Kafka broker. Supports `SSL` or `SASL_SSL`. Default to `none` |
-| `features.async.kafka.authentication` | `truststoreType` | **Optional**. For TLS transport, you'll always need a truststore to hold your cluster certificate. Default to `PKCS12` |
+| `features.async.kafka.authentication` | `truststoreType` | **Optional**. For TLS transport, you'll probably need a truststore to hold your cluster certificate. Default to `PKCS12` |
 | `features.async.kafka.authentication` | `truststoreSecretRef` | **Optional**. For TLS transport, the reference of a Secret holding truststore and its password. Set `secret`, `storeKey` and `passwordKey` properties |
 | `features.async.kafka.authentication` | `keystoreType` | **Optional**. In case of `SSL` type, you'll also need a keystore to hold your user private key for mutual TLS authentication. Default to `PKCS12` |
 | `features.async.kafka.authentication` | `keystoreSecretRef` | **Optional**. For mutual TLS authentication, the reference of a Secret holding keystore and its password. Set `secret`, `storeKey` and `passwordKey` properties |
@@ -237,21 +242,29 @@ Here are below the configuration properties of the WebSocket support feature:
 
 ## Sample Custom Resources
 
-The `/deploy/crds` folder contain sample `MicrocksInstall` resource allowing you to check the configuration for different setup options.
+The `/deploy/samples` folder contain sample `MicrocksInstall` resource allowing you to check the configuration for different setup options.
 
-* [openshift-minimal.yml](./deploy/crds/openshift-minimal.yml) illustrates a simple CR for starting a Microcks installation on OpenShift with most common options
+* [openshift-minimal.yml](./deploy/samples/openshift-minimal.yml) illustrates a simple CR for starting a Microcks installation on OpenShift with most common options
 
-* [minikube-minimal.yml](./deploy/crds/minikube-minimal.yml) illustrates a simple CR for starting a Microcks installation on vanilla Kubernetes with most common options
+* [minikube-minimal.yml](./deploy/samples/minikube-minimal.yml) illustrates a simple CR for starting a Microcks installation on vanilla Kubernetes with most common options
 
-* [openshift-no-mongo.yml](./deploy/crds/openshift-no-mongo.yml) illustrates how to reuse an existing MongoDB database, retrieving the credential for connecting from a pre-existing `Secret`
+* [openshift-no-mongo.yml](./deploy/samples/openshift-no-mongo.yml) illustrates how to reuse an existing MongoDB database, retrieving the credential for connecting from a pre-existing `Secret`
 
-* [minikube-custom-tls.yml](./deploy/crds/minikube-custom-tls.yml) illustrates how to reuse existing `Secrets` to retrieve TLS certificates that will be used to secure the exposed `Ingresses`
+* [minikube-custom-tls.yml](./deploy/samples/minikube-custom-tls.yml) illustrates how to reuse existing `Secrets` to retrieve TLS certificates that will be used to secure the exposed `Ingresses`
 
-* [minikube-annotations.yml](./deploy/crds/minikube-annotations.yml) illustrates how to specify annotations that will be placed on exposed `Ingresses`. Such annotations can - for example - trigger some certificates generation using Cert Manager
+* [minikube-annotations.yml](./deploy/samples/minikube-annotations.yml) illustrates how to specify annotations that will be placed on exposed `Ingresses`. Such annotations can - for example - trigger some certificates generation using Cert Manager
 
-* [openshift-features.yml](./deploy/crds/openshift-features.yml) illustrates how to enable optional features like repository filtering or asynchronous mocking on an OpenShift cluster
+* [openshift-features.yml](./deploy/samples/openshift-features.yml) illustrates how to enable optional features like repository filtering or asynchronous mocking on an OpenShift cluster
 
-* [minikube-features.yml](./deploy/crds/minikube-features.yml) illustrates how to enable optional features like repository filtering or asynchronous mocking on a vanilla Kubernetes cluster
+* [minikube-features.yml](./deploy/samples/minikube-features.yml) illustrates how to enable optional features like repository filtering or asynchronous mocking on a vanilla Kubernetes cluster
+
+* [openshift-features-mqtt.yml](./deploy/samples/openshift-features-mqtt.yml) illustrates how to connect a MQTT broker to realize asynchronous mocking and testing of MQTT messages
+
+* [openshift-features-ext-sso.yml](./deploy/samples/openshift-features-ext-sso.yml) illustrates how to not deploy Keycloak and reuse an existing instance
+
+* [openshift-features-ext-kafka.yml](./deploy/samples/openshift-features-ext-kafka.yml) illustrates how to not deploy a Kafka broker and reuse an existing instance
+
+* [openshift-features-apicurio-registry.yml](./deploy/samples/openshift-features-apicurio-registry.yml) illustrates how to configure mocking of Apache Kafka using a schema registry
 
 Obviously, you can combine all of them together to enable any options ;-)
 
@@ -293,24 +306,45 @@ Successfully built 7de212ab7289
 Successfully tagged quay.io/microcks/microcks-ansible-operator:latest
 ```
 
-## Local tests
+## Tests
+### Local tests
 
-This Operator has been developed and tested using operator-sdk v0.16.0 and ansible 2.9.1
+This Operator has been developed and tested using operator-sdk `v0.16.0` and ansible 2.11.6
 
 ```sh
 $ operator-sdk version
 operator-sdk version: "v0.16.0", commit: "55f1446c5f472e7d8e308dcdf36d0d7fc44fc4fd", go version: "go1.14 darwin/amd64"
 
 $ ansible --version
-ansible 2.9.1
-  config file = None
+ansible [core 2.11.6] 
+  config file = /Users/lbroudou/Development/github/microcks-ansible-operator/ansible.cfg
   configured module search path = ['/Users/lbroudou/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
-  ansible python module location = /usr/local/Cellar/ansible/2.9.1/libexec/lib/python3.7/site-packages/ansible
+  ansible python module location = /usr/local/Cellar/ansible/4.8.0/libexec/lib/python3.10/site-packages/ansible
+  ansible collection location = /Users/lbroudou/.ansible/collections:/usr/share/ansible/collections
   executable location = /usr/local/bin/ansible
-  python version = 3.7.5 (default, Nov  1 2019, 02:16:32) [Clang 11.0.0 (clang-1100.0.33.8)]
+  python version = 3.10.0 (default, Oct 13 2021, 06:45:00) [Clang 13.0.0 (clang-1300.0.29.3)]
+  jinja version = 3.0.2
+  libyaml = True
+
+$ ansible-playbook --version                                                        ─╯
+ansible-playbook [core 2.11.6] 
+  config file = /Users/lbroudou/Development/github/microcks-ansible-operator/ansible.cfg
+  configured module search path = ['/Users/lbroudou/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/local/Cellar/ansible/4.8.0/libexec/lib/python3.10/site-packages/ansible
+  ansible collection location = /Users/lbroudou/.ansible/collections:/usr/share/ansible/collections
+  executable location = /usr/local/bin/ansible-playbook
+  python version = 3.10.0 (default, Oct 13 2021, 06:45:00) [Clang 13.0.0 (clang-1300.0.29.3)]
+  jinja version = 3.0.2
+  libyaml = True
 ```
 
-Ansible-runner module is required for local testing. You can install and set it up with following commands:
+Ansible-playbook is convenient for testing of Jinja formatting using the `test.yaml` file at the root for this repo. You can quickly check templating results setting the right `vars` and debugging the target `test` var with following command:
+
+```sh
+$ ansible-playbook test.yaml -vvv | sed -e 's/\\n/'$'\\\n/g'
+```
+
+Ansible-runner module is required for local execution, connected to local or remote Kubernetes cluster. You can install and set it up with following commands:
 
 ```sh
 $ /usr/local/Cellar/ansible/2.9.1/libexec/bin/pip install ansible-runner-http openshift 
@@ -356,4 +390,54 @@ task path: /Users/lbroudou/Development/github/microcks-ansible-operator/roles/mi
 
 -------------------------------------------------------------------------------
 [...]
+```
+
+### E2E tests
+
+We're using the [Kuttl](https://kuttl.dev) tooling for automated end-to-end tests of this operator. Using a running Minikube instance locally (or other flavour), you can just launch following command to run e2e tests:
+
+```sh
+$ kubectl kuttl test --start-kind=false --manifest-dir=./tests/manifests ./tests/e2e
+2022/01/01 20:40:19 running without a 'kuttl-test.yaml' configuration
+2022/01/01 20:40:19 kutt-test config testdirs is overridden with args: [ ./tests/e2e ]
+=== RUN   kuttl
+    harness.go:457: starting setup
+    harness.go:248: running tests using configured kubeconfig.
+    harness.go:285: Successful connection to cluster at: https://192.168.64.11:8443
+2022/01/01 20:40:20 Namespace:/microcks created
+2022/01/01 20:40:20 CustomResourceDefinition:/microcksinstalls.microcks.github.io updated
+2022/01/01 20:40:20 Role:microcks/microcks-ansible-operator created
+2022/01/01 20:40:20 ServiceAccount:microcks/microcks-ansible-operator created
+2022/01/01 20:40:20 RoleBinding:microcks/microcks-ansible-operator created
+2022/01/01 20:40:20 Deployment:microcks/microcks-ansible-operator created
+    harness.go:353: running tests
+    harness.go:74: going to run test suite with timeout of 30 seconds for each step
+    harness.go:365: testsuite: ./tests/e2e has 1 tests
+=== RUN   kuttl/harness
+=== RUN   kuttl/harness/basic-crd
+=== PAUSE kuttl/harness/basic-crd
+=== CONT  kuttl/harness/basic-crd
+    logger.go:42: 20:40:20 | basic-crd | Creating namespace: kuttl-test-saved-robin
+    logger.go:42: 20:40:20 | basic-crd/0-basic-crd | starting test step 0-basic-crd
+    logger.go:42: 20:40:20 | basic-crd/0-basic-crd | MicrocksInstall:microcks/microcks created
+    logger.go:42: 20:40:25 | basic-crd/0-basic-crd | test step completed 0-basic-crd
+    logger.go:42: 20:40:25 | basic-crd/1- | starting test step 1-
+    logger.go:42: 20:40:42 | basic-crd/1- | test step completed 1-
+    logger.go:42: 20:40:42 | basic-crd/2- | starting test step 2-
+    logger.go:42: 20:40:42 | basic-crd/2- | test step completed 2-
+    logger.go:42: 20:40:42 | basic-crd/3- | starting test step 3-
+    logger.go:42: 20:41:11 | basic-crd/3- | test step completed 3-
+    logger.go:42: 20:41:11 | basic-crd/4- | starting test step 4-
+    logger.go:42: 20:41:27 | basic-crd/4- | test step completed 4-
+Warning: events.k8s.io/v1beta1 Event is deprecated in v1.22+, unavailable in v1.25+
+    logger.go:42: 20:41:27 | basic-crd | basic-crd events from ns kuttl-test-saved-robin:
+    logger.go:42: 20:41:27 | basic-crd | Deleting namespace: kuttl-test-saved-robin
+=== CONT  kuttl
+    harness.go:399: run tests finished
+    harness.go:508: cleaning up
+    harness.go:563: removing temp folder: ""
+--- PASS: kuttl (68.14s)
+    --- PASS: kuttl/harness (0.00s)
+        --- PASS: kuttl/harness/basic-crd (67.76s)
+PASS
 ```

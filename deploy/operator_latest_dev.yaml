@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microcks-ansible-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: microcks-ansible-operator
+  template:
+    metadata:
+      labels:
+        name: microcks-ansible-operator
+    spec:
+      serviceAccountName: microcks-ansible-operator
+      containers:
+        - name: microcks-ansible-operator
+          image: quay.io/lbroudoux/microcks-ansible-operator:latest
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "microcks-ansible-operator"

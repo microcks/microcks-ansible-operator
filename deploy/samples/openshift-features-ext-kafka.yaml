@@ -1,0 +1,48 @@
+apiVersion: microcks.github.io/v1alpha1
+kind: MicrocksInstall
+metadata:
+  name: microcks
+spec:
+  # Add fields here
+  name: microcks
+  version: "latest"
+  microcks: 
+    replicas: 1
+  postman:
+    replicas: 1
+  keycloak:
+    install: true
+    persistent: true
+    volumeSize: 1Gi
+    replicas: 1
+    serviceAccount: microcks-serviceaccount
+    serviceAccountCredentials: ab54d329-e435-41ae-a900-ec6b3fe15c54
+  mongodb:
+    install: true
+    persistent: true
+    volumeSize: 2Gi
+    replicas: 1
+  features:
+    microcksHub:
+      enabled: true
+    repositoryFilter:
+      enabled: true
+      labelKey: domain
+      labelLabel: Domain
+      labelList: domain,status
+    async:
+      enabled: true
+      defaultBinding: KAFKA
+      defaultFrequency: 3
+      kafka:
+        install: false
+        url: my-cluster-bootstrap.kafka.apps.acme.com
+        authentication:
+          type: SASL_SSL
+          truststoreType: PKCS12
+          truststoreSecretRef:
+            secret: my-cluster-cluster-ca-cert
+            storeKey: ca.p12
+            passwordKey: ca.password
+          saslMechanism: SCRAM-SHA-512
+          saslJaasConfig: org.apache.kafka.common.security.scram.ScramLoginModule required username="my-user" password="tDtDCT3pYKE5";

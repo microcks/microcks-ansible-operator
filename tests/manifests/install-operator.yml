@@ -138,8 +138,8 @@ spec:
       serviceAccountName: microcks-ansible-operator
       containers:
         - name: microcks-ansible-operator
-          image: microcks-ansible-operator
-          imagePullPolicy: IfNotPresent
+          image: quay.io/lbroudoux/microcks-ansible-operator:nightly
+          imagePullPolicy: Always
           env:
             - name: WATCH_NAMESPACE
               valueFrom:

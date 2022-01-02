@@ -8,16 +8,16 @@ spec:
   version: "latest"
   microcks: 
     replicas: 1
-    url: microcks.192.168.64.7.nip.io
+    url: microcks.KUBE_APPS_URL
   postman:
     replicas: 1
   keycloak:
     install: true
-    url: microcks-keycloak.192.168.64.7.nip.io
+    url: microcks-keycloak.KUBE_APPS_URL
     persistent: true
     volumeSize: 1Gi
-    serviceAccount: microcks-serviceaccount
-    serviceAccountCredentials: ab54d329-e435-41ae-a900-ec6b3fe15c54
+    #serviceAccount: microcks-serviceaccount
+    #serviceAccountCredentials: ab54d329-e435-41ae-a900-ec6b3fe15c54
   mongodb:
     install: true
     persistent: true

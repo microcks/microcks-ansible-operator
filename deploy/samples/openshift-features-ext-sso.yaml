@@ -11,10 +11,10 @@ spec:
   postman:
     replicas: 1
   keycloak:
-    install: true
-    persistent: true
-    volumeSize: 1Gi
-    replicas: 1
+    install: false
+    url: keycloak.microcks-labs.apps.cluster-6282.6282.sandbox1686.opentlc.com
+    realm: microcks
+    privateUrl: http://keycloak.microcks-labs.svc.cluster.local:8080/auth
     serviceAccount: microcks-serviceaccount
     serviceAccountCredentials: ab54d329-e435-41ae-a900-ec6b3fe15c54
   mongodb:
@@ -25,12 +25,12 @@ spec:
   features:
     repositoryFilter:
       enabled: true
-      labelKey: app
-      labelLabel: Application
-      labelList: app,status
+      labelKey: domain
+      labelLabel: Domain
+      labelList: domain,status
     async:
       enabled: true
       defaultBinding: KAFKA
-      defaultFrequency: 10
+      defaultFrequency: 3
       kafka:
         install: true

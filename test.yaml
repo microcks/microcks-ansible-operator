@@ -1,26 +1,97 @@
 - hosts: localhost
   gather_facts: no
   vars:
+    name: microcks
+    api_groups:
+      - toto.titi.tata 
+      - route.openshift.io
     keycloak_url: keycloak
+    microcks_url: microcks
     meta:
-      namespace: microcks-operator-test
+      namespace: microcks-dev
+    microcks:
+      url: microcks.192.168.64.7.nip.io
+      ingress_annotations:
+        "cert-manager.io/issuer": self-signed-issuer
+        my-annotations: my-value
+    keycloak:
+      install: true
+      private_url: http://microcks-keycloak.microcks.svc.cluster.local:8080/auth
+      #storage_class_name: my-awesome-class
     mongodb:
       install: false
       #uri: mongodb:27017
       #database: sampledb
-      secret_ref:
-        password_key: database-password
-        secret: microcks-mongodb
-        username_key: database-user
+      #storage_class_name: my-awesome-class
+      #secret_ref:
+        #password_key: database-password
+        #secret: microcks-mongodb
+        #username_key: database-user
+    features:
+      repository_tenancy:
+        enabled: true
+        artifact_import_allowed_roles: toto,tata
+      async:
+        enabled: true
+        kafka:
+          install: false
+          url: 127.0.0.1.nip.io
+          use_strimzi_beta1: false
+          #schema_registry:
+            #url: http://localhost:8888/api
+            #confluent: true
+          authentication:
+            type: SSL #SASL_SSL
+            truststore_type: PKCS12
+            truststore_secret_ref:
+              secret: kafka-cluster-ca-cert
+              store_key: ca.p12
+              password_key: ca.password
+            keystore_type: PKCS12
+            keystore_secret_ref:
+              secret: mtls-user
+              store_key: user.p12
+              password_key: user.password
+            sasl_mechanism: SCRAM-SHA-512
+            sasl_jaas_config: org.apache.kafka.common.security.scram.ScramLoginModule required username="scram-user" password="tDtDCT3pYKE5";
+        mqtt:
+          url: 128.0.0.1.nip.io
+    med_cn: mas-core-microcks.masdeps1-000000.eu-gb.containers.appdomain.cloud
+    long_cn: mas-core-microcksinstall-microcks.masdeps1-6f1620198115433da1cac8216c06779b-0000.eu-gb.containers.appdomain.cloud
   pre_tasks:
+    #- name: Get Cluster information
+    #  community.kubernetes.k8s_cluster_info:
+    #  register: test
+    #- name: Get Strimzi CRD
+    #  k8s_info:
+    #    api_version: apiextensions.k8s.io/v1
+    #    kind: CustomResourceDefinition
+    #    name: kafkas.kafka.strimzi.io
+    #  register: test
     - debug:
         var: test
+      
       vars:
-        test: "{{ lookup('template', './k8s/microcks-deployment.yml') | from_yaml }}"
         #test: "Good"
-        #test: "{{ lookup('template', './k8s/microcks-deployment.yml') | from_yaml  }}"
+        #test: "{{ med_cn | truncate(64, True, '...', 0) }}"
+        #test: "{{ lookup('template', './k8s/microcks-ingress.yml') | from_yaml }}"
+        #test: "{{ lookup('template', './k8s/microcks-deployment.yml') }}"
+        #test: "{{ lookup('template', './k8s/microcks-config.yml') | from_yaml  }}" 
+        #test: "{{ features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == false and ('route.openshift.io' in api_groups or 'url' in features.async.kafka) }}"
+        #test: "{{ lookup('template', './k8s/kafka.yml') | from_yaml }}"
+        #test: "{{ lookup('template', './k8s/kafka-beta2.yml') | from_yaml }}"
+        #test: "{{ lookup('template', './k8s/keycloak-config.yml') | from_yaml  }}" 
+        #test: "{{ lookup('template', './k8s/keycloak-deployment.yml') }}"
+        #test: "{{ lookup('template', './k8s/keycloak-postgres-deployment.yml') }}"
+        #test: "{{ lookup('template', './k8s/keycloak-pvc.yml') }}"
+        #test: "{{ lookup('template', './k8s/mongodb-deployment.yml') }}"
+        #test: "{{ lookup('template', './k8s/mongodb-pvc.yml') }}"
+        test: "{{ lookup('template', './k8s/async-minion-config.yml') }}"
+        #test: "{{ lookup('template', './k8s/async-minion-deployment.yml') }}"
         #test: "{{ lookup('k8s', verify_ssl='no', cluster_info='api_groups') }}"
+        #test: "{{ lookup('community.kubernetes.k8s_cluster_info', validate_certs='no') }}"
         #test: "{{ lookup('k8s', validate_certs='no', cluster_info='api_groups', api_key='eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJtaWNyb2NrcyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJtaWNyb2Nrcy1hbnNpYmxlLW9wZXJhdG9yLXRva2VuLXR6cXZxIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6Im1pY3JvY2tzLWFuc2libGUtb3BlcmF0b3IiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJjMWY4Njc3ZC0xNWJiLTExZWEtYjA0MC0xMjQ1NmRlMzMxNmYiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6bWljcm9ja3M6bWljcm9ja3MtYW5zaWJsZS1vcGVyYXRvciJ9.afi-lm5HRSzQebauUJNxTnZ2DraFV4cwFGuWrzy_umRwtGrkc_cwIKXC37xZ0WD2fPQ2KDH7yFgmtEYwQknvNCgA1dCemLfuXU13BYhh3tmX4b4NMHQdYGhGeARI6ExyVa1KMiJXo9wKqR39I9EhAKIP6daKWLT9l5kSg5OuGNCpLIy2Kjo_WpayVUuACNpbXiTbsvrbxQkI3o-fVHQd3Jkx7ts5BcMRnWVSlpDlTUCUXLcrR7JvdIz377IQyvruUw4dhxxG-EgOiaUEoasq8Ruc5d7zb2Y3uvxLcho9VDcvOyCNYjPgwNe2vdletgLaHSFFYayM4cmzYJ2-R3fWSw') }}"
+        #test: "{{ lookup('template', './k8s/kafka.yml') }}" 
   
     #- fail:
 
