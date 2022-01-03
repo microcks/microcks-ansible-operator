@@ -3,7 +3,7 @@
 Kubernetes Operator for easy setup and management of Microcks installs (using Ansible undercover ;-)
 
 [![Join the chat on Zulip](https://img.shields.io/badge/chat-on_zulip-pink.svg?color=ff69b4&style=for-the-badge&logo=zulip)](https://microcksio.zulipchat.com/)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/microcks/microcks-ansible-operator/build-verify-package?logo=github&style=for-the-badge)](https://github.com/microcks/microcks/actions)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/microcks/microcks-ansible-operator/build-verify-package?logo=github&style=for-the-badge)](https://github.com/microcks/microcks-ansible-operator/actions)
 
 ## Table of contents
 
