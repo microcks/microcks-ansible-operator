@@ -19,6 +19,8 @@ microcks:
       memory: 512Mi
   #log_level: TRACE | DEBUG | INFO | WARN
   log_level: INFO
+  #true | false
+  mock_invocation_stats: true
 
 postman:
   replicas: 1
