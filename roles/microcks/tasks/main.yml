@@ -291,26 +291,26 @@
 # Next deal with optional Kafka broker
 # ================================================================
 
-- name: The Kafka CR Beta2  is present if features.async.enabled == true and features.async.kafka.install == true
-  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == false and ('route.openshift.io' in api_groups or 'url' in features.async.kafka)"
+- name: The Kafka CR Beta2 is present if features.async.enabled == true and features.async.kafka.install == true
+  when: "features.async.enabled == true and features.async.kafka.install == true and ('route.openshift.io' in api_groups or 'url' in features.async.kafka) and features.async.kafka.use_strimzi_beta1 == false"
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'kafka-beta2.yml') | from_yaml  }}"
 
 - name: The Kafka CR Beta1 is present if features.async.enabled == true and features.async.kafka.install == true
-  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == true and ('route.openshift.io' in api_groups or 'url' in features.async.kafka)"
+  when: "features.async.enabled == true and features.async.kafka.install == true and ('route.openshift.io' in api_groups or 'url' in features.async.kafka) and features.async.kafka.use_strimzi_beta1 == true"
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'kafka.yml') | from_yaml  }}"
 
 - name: The Kafka Topic Beta2 is present if features.async.enabled == true and features.async.kafka.install == true
-  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == false" 
+  when: "features.async.enabled == true and features.async.kafka.install == true and ('route.openshift.io' in api_groups or 'url' in features.async.kafka) and features.async.kafka.use_strimzi_beta1 == false" 
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'kafka-topic-beta2.yml') | from_yaml  }}"
 
 - name: The Kafka Topic Beta1 is present if features.async.enabled == true and features.async.kafka.install == true
-  when: "features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == true" 
+  when: "features.async.enabled == true and features.async.kafka.install == true and ('route.openshift.io' in api_groups or 'url' in features.async.kafka) and features.async.kafka.use_strimzi_beta1 == true" 
   k8s:
     state: "{{ 'present' if features.async.enabled|bool and features.async.kafka.install|bool else 'absent' }}"
     definition: "{{ lookup('template', 'kafka-topic.yml') | from_yaml  }}"
