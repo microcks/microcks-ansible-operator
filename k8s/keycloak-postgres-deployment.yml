@@ -41,7 +41,7 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
       - name: keycloak-postgresql
-        image: {{keycloak.postgresImage}}
+        image: {{keycloak.postgres_image}}
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5432

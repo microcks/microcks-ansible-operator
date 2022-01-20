@@ -51,7 +51,7 @@ keycloak:
   persistent: true
   volume_size: 1Gi
   #storage_class_name: my-awesome-class
-  postgresImage: centos/postgresql-95-centos7:latest
+  postgres_image: centos/postgresql-95-centos7:latest
 
 mongodb:
   install: true
