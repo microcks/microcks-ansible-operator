@@ -102,8 +102,19 @@ data:
     %kube.mqtt.password=microcks
     {% endif %}
 
+    # Access to AMQP broker.
+    {% if features.async.amqp.url is defined -%}
+    %kube.amqp.server={{ features.async.amqp.url }}
+    %kube.amqp.username={{ features.async.amqp.username }}
+    %kube.amqp.password={{ features.async.amqp.password }}
+    {% else -%}
+    %kube.amqp.server=localhost:5672
+    %kube.amqp.username=microcks
+    %kube.amqp.password=microcks
+    {% endif %}
+
     # Configure the minion own behavioral properties.
-    %kube.minion.supported-bindings=KAFKA,WS{% if features.async.mqtt.url is defined %},MQTT{% endif %}
+    %kube.minion.supported-bindings=KAFKA,WS{% if features.async.mqtt.url is defined %},MQTT{% endif %}{% if features.async.amqp.url is defined %},AMQP{% endif %}
 
     %kube.minion.restricted-frequencies=3,10,30
     %kube.minion.default-avro-encoding={{ features.async.default_avro_encoding }}

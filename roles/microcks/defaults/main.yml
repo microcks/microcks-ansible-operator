@@ -139,6 +139,11 @@ features:
       username: microcks
       password: microcks
 
+    amqp:
+      #url:
+      username: microcks
+      password: microcks
+
     ws:
       #ingress_annotations:
         #cert-manager.io/issuer: my-cert-issuer

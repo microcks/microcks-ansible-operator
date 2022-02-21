@@ -41,6 +41,11 @@ data:
     features.feature.async-api.endpoint-MQTT={{features.async.mqtt.url}}
     {% endif %}
     
+    {%- if features.async.amqp.url is defined %}
+
+    features.feature.async-api.endpoint-AMQP={{features.async.amqp.url}}
+    {% endif %}
+
     features.feature.async-api.endpoint-WS={{microcks_url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-ws\\2')}}
 
   application.properties: |-
