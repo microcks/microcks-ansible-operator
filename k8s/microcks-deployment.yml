@@ -47,7 +47,7 @@ spec:
           - name: SPRING_PROFILES_ACTIVE
             value: prod
           - name: SPRING_DATA_MONGODB_URI
-            value: mongodb://${SPRING_DATA_MONGODB_USER}:${SPRING_DATA_MONGODB_PASSWORD}@{{mongodb.uri|default(name ~ '-mongodb:27017')}}/${SPRING_DATA_MONGODB_DATABASE}
+            value: mongodb://${SPRING_DATA_MONGODB_USER}:${SPRING_DATA_MONGODB_PASSWORD}@{{mongodb.uri|default(name ~ '-mongodb:27017')}}/${SPRING_DATA_MONGODB_DATABASE}{{mongodb.uri_parameters|default('')}}
           - name: SPRING_DATA_MONGODB_USER
             valueFrom:
               secretKeyRef:

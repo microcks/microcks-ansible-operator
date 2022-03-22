@@ -1,7 +1,7 @@
 ---
 # defaults specification file for microcks installation
 name: microcks
-version: "1.4.1"
+version: "1.5.0"
 microcks: 
   replicas: 1
   #url: microcks.192.168.99.100.nip.io
@@ -30,7 +30,7 @@ keycloak:
   realm: microcks
   image: jboss/keycloak:14.0.0
   #url: keycloak.192.168.99.100.nip.io
-  #url: http://microcks-keycloak:8080
+  #url: microcks-keycloak:8080
   #public_url: https://keycloak-microcks.192.168.64.6.nip.io/auth
   #ingress_annotations:
     #cert-manager.io/issuer: my-cert-issuer
@@ -55,6 +55,9 @@ keycloak:
 
 mongodb:
   install: true
+  #uri: mongodb:27017
+  #uri_parameters: ?ssl=true
+  #database: sampledb
   persistent: true
   volume_size: 2Gi
   #storage_class_name: my-awesome-class
