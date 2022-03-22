@@ -99,7 +99,7 @@ metadata:
   name: my-microcksinstall
 spec:
   name: my-microcksinstall
-  version: "1.4.1"
+  version: "1.5.0"
   microcks: 
     url: microcks.192.168.99.100.nip.io
   keycloak:
@@ -119,7 +119,7 @@ metadata:
   name: my-microcksinstall-minikube
 spec:
   name: my-microcksinstall-minikube
-  version: "1.4.1"
+  version: "1.5.0"
   microcks: 
     replicas: 1
     url: microcks.192.168.99.100.nip.io
@@ -184,6 +184,7 @@ The table below describe all the fields of the `MicrocksInstall` CRD, providing 
 | `mongodb`     | `install`          | **Optional**. Flag for MongoDB installation. Default is `true`. Set to `false` if you want to reuse an existing MongoDB instance. |
 | `mongodb`    | `image`             | **Optional**. The reference of container image used. Operator comes with its default version. |
 | `mongodb`     | `uri`              | **Optional**. MongoDB URI in case you're reusing existing MongoDB instance. Mandatory if `install` is `false` |
+| `mongodb`     | `uriParameters`    | **Optional**. Allows you to add parameters to the MongoDB URI connection string. |
 | `mongodb`     | `database`         | **Optional**. MongoDB database name in case you're reusing existing MongoDB instance. Useful if `install` is `false`. Default to `sampledb` |
 | `mongodb`     | `secretRef`        | **Optional**. Reference of a Secret containing credentials for connecting a provided MongoDB instance. Mandatory if `install` is `false` |
 | `mongodb`     | `persistent`       | **Optional**. Flag for MongoDB persistence. Default is `true`. Set to `false` if you want an ephemeral MongoDB installation. |
