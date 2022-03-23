@@ -3,6 +3,13 @@ apiVersion: route.openshift.io/v1
 metadata:
   name: "{{name}}-keycloak"
   namespace: '{{ meta.namespace }}'
+  annotations:
+    {% if current_cr.spec.keycloak.ingressAnnotations is defined -%}
+    {% for key in current_cr.spec.keycloak.ingressAnnotations.keys() -%}
+    {{ key }}: {{ current_cr.spec.keycloak.ingressAnnotations[key] }}
+    {% endfor %}
+    {% endif %}
+    
   labels:
     app: "{{name}}"
     group: microcks
@@ -16,4 +23,20 @@ spec:
   port:
     targetPort: keycloak
   tls:
-    termination: edge
+    termination: {{ keycloak.openshift.route.type }}
+    {% if keycloak.openshift.route.key is defined -%}
+    key: |-
+      {{ keycloak.openshift.route.key | indent(6) }}
+    {% endif -%}
+    {% if keycloak.openshift.route.certificate is defined -%}
+    certificate: |
+      {{ keycloak.openshift.route.certificate | indent(6) }}
+    {% endif -%}
+    {% if keycloak.openshift.route.ca_certificate is defined -%}
+    caCertificate: |
+      {{ keycloak.openshift.route.ca_certificate | indent(6) }}
+    {% endif -%}
+    {% if keycloak.openshift.route.destination_c_a_certificate is defined -%}
+    destinationCACertificate: |
+      {{ keycloak.openshift.route.destination_c_a_certificate | indent(6) }}
+    {% endif -%}

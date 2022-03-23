@@ -1,0 +1,18 @@
+apiVersion: microcks.github.io/v1alpha1
+kind: MicrocksInstall
+metadata:
+  name: microcks
+spec:
+  name: microcks
+  version: "1.5.0"
+  microcks: 
+    ingressAnnotations:
+      cert-utils-operator.redhat-cop.io/certs-from-secret: microcks-certificate-tls
+  keycloak:
+    install: true
+    persistent: true
+    volumeSize: 1Gi
+  mongodb:
+    install: true
+    persistent: true
+    volumeSize: 2Gi

@@ -3,6 +3,13 @@ apiVersion: route.openshift.io/v1
 metadata:
   name: "{{name}}-ws"
   namespace: '{{ meta.namespace }}'
+  annotations:
+    {% if current_cr.spec.features.async.ws.ingressAnnotations is defined -%}
+    {% for key in current_cr.spec.features.async.ws.ingressAnnotations.keys() -%}
+    {{ key }}: {{ current_cr.spec.features.async.ws.ingressAnnotations[key] }}
+    {% endfor %}
+    {% endif %}
+
   labels:
     app: "{{name}}"
     group: microcks
@@ -17,4 +24,20 @@ spec:
   port:
     targetPort: 8080
   tls:
-    termination: edge
+    termination: {{ features.async.ws.openshift.route.type }}
+    {% if features.async.ws.openshift.route.key is defined -%}
+    key: |-
+      {{ features.async.ws.openshift.route.key | indent(6) }}
+    {% endif -%}
+    {% if features.async.ws.openshift.route.certificate is defined -%}
+    certificate: |-
+      {{ features.async.ws.openshift.route.certificate | indent(6) }}
+    {% endif -%}
+    {% if features.async.ws.openshift.route.ca_certificate is defined -%}
+    caCertificate: |-
+      {{ features.async.ws.openshift.route.ca_certificate | indent(6) }}
+    {% endif -%}
+    {% if features.async.ws.openshift.route.destination_c_a_certificate is defined -%}
+    destinationCACertificate: |-
+      {{ features.async.ws.openshift.route.destination_c_a_certificate | indent(6) }}
+    {% endif -%}

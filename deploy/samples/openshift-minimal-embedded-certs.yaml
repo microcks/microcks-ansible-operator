@@ -1,0 +1,65 @@
+apiVersion: microcks.github.io/v1alpha1
+kind: MicrocksInstall
+metadata:
+  name: microcks
+spec:
+  name: microcks
+  version: "1.5.0"
+  microcks: 
+    openshift:
+      route:
+        key: |
+          -----BEGIN RSA PRIVATE KEY-----
+          MIIEowIBAAKCAQEApzCSpPzDAQGxRdSeITQb8jDlLFwmx3Z1FR77reZLfSSPVA4I
+          TNAl4cUGzyCQOl9H205P1ubpWaO72uxmpdUq81dmciIuYx2gnE+5oNGPGnY2GLVU
+          +6cPVkK65N0DUcj0covli5hhQEtHdlUnh03FRrRCvXN1hbrhkvlyS9Ay0rr5jBN8
+          ZbTzW+UYuItzNFeSYOUMI+LofbxbPoLrLqQHPPHozsoOE2fDDvJfOTwizN0b2OGb
+          qXhOXt/uPqzb2EcK4s2nCShf6E5TVkUuL73zMQW1wrVS056Ed0dgruulHRcXNXEp
+          g81vD9DcQkYTz35CeEQev5XcdZe0ZLsG9yoP9wIDAQABAoIBABC46AH+khaYr713
+          TbWue5kW0OVF9k7/Byjsp2m2XhiPPpK+sI/WReO2DD9NV3+vJgXGaG/rOq3PlauI
+          959gmeIq/MEvsAoT3Yuk4cE3FKQl7LU99dkR1ZPgKsdXX8yfV+vZGEWFIT0ICobI
+          b6K14aR3xTEjyj5s+cD0mD0C/wJarbuw9Yj7ZCiTPRQRxK09fbshP1ymZMVQjq9W
+          2vhdiDUqheF6SGPiGYJjAs0qPwVHOIS1W+r9jQYFVYQJ4D1lqbcL3jm2nAa6yQDN
+          ftgQ42qoYp6DF/2G+2E/YarQaKGgsBrdLwWo+Gx39+AYzBhaZOHXvJDTNRy/zgd3
+          4UKOY8ECgYEAwLMf6AwENRoMi1AOOTKnIIuoT1Zc+kjnkGF1NxYIDOS7lrGNLwNG
+          jSl8s+B6qoXXlqBjPC0EERttddCVyPmMF30qgPb1hqXhLEjXT8us1RlzaxfIGafi
+          TsTd/iN7OBljNdyOIbkQPhYAuqUy7ABYn/5rwCmaoNPJQOdCsYd6BdcCgYEA3hw2
+          +mayxL3TzSHsnnQcgjYhp124fTvtH4l031wJRKMq6kTpEPe9pWp/MPGwoVeINBuj
+          LTW1a48ywIxrf3gPiaZTx7GLyP/srMA9Gpco//XCH0hTfI3XHydZYEWbfDSCBL9u
+          iU04IWpGD7lm4U9/uTI8GQwrCaT5G1+O4OuywuECgYB3O56Hbz//N3IBlXRnkd71
+          dVScWpzHROr7XEIx5pDuoW0tDgmEyGsUF1KQ3looPw6ppe4hIt18VFNDbd/wbfBv
+          7EOrbqN3QBZ2109akXUMmmXfIuTucwHFqWyOvpeUm6jWf/T2CtNxBx5GXseGXaR4
+          wu0bBuMllkXVwgJzZJdtGwKBgEpFjxDepKrre1beIDzAQQQ9y7UmvtmJ33orQdyq
+          7yJ3mZMrJfCZl14oJY4dU94v4gjisQceLaNhCCyhCBVg9XknGF7vfPnisqb1xbkN
+          kRU+fgJt8hT1bVkqlFWAEUVQXaXuyay6GKn72p/JdKClL+Wi6bvKeN3Jv88qfiGy
+          T12hAoGBAJMidU5gZdfpPmF/oXAj/axGuGcBADuIOHT7S1QVYv4EJ52VLHi4M+PJ
+          vh8FmsKxN4xUh85cCPgxmIbffAXyrQIrzoZyO4rG18aixd2cc2RSSnh00oVNV6RP
+          n2kA12eCxHbnKX17lV3qJ+MpFt7T8lYOlrvCJnxFs4UKVoZRdXF8
+          -----END RSA PRIVATE KEY-----
+        certificate: |
+          -----BEGIN CERTIFICATE-----
+          MIIC/DCCAeSgAwIBAgIQLKFbqteW+gOS/+Kp4J4IqTANBgkqhkiG9w0BAQsFADAA
+          MB4XDTIyMDMyMjE2NTMyNFoXDTIyMDYyMDE2NTMyNFowADCCASIwDQYJKoZIhvcN
+          AQEBBQADggEPADCCAQoCggEBAKcwkqT8wwEBsUXUniE0G/Iw5SxcJsd2dRUe+63m
+          S30kj1QOCEzQJeHFBs8gkDpfR9tOT9bm6Vmju9rsZqXVKvNXZnIiLmMdoJxPuaDR
+          jxp2Nhi1VPunD1ZCuuTdA1HI9HKL5YuYYUBLR3ZVJ4dNxUa0Qr1zdYW64ZL5ckvQ
+          MtK6+YwTfGW081vlGLiLczRXkmDlDCPi6H28Wz6C6y6kBzzx6M7KDhNnww7yXzk8
+          IszdG9jhm6l4Tl7f7j6s29hHCuLNpwkoX+hOU1ZFLi+98zEFtcK1UtOehHdHYK7r
+          pR0XFzVxKYPNbw/Q3EJGE89+QnhEHr+V3HWXtGS7BvcqD/cCAwEAAaNyMHAwDgYD
+          VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwUAYDVR0RAQH/BEYwRIJCbWljcm9j
+          a3MtbWljcm9ja3MuYXBwcy5jbHVzdGVyLThwZHd0LjhwZHd0LnNhbmRib3gxNzY0
+          Lm9wZW50bGMuY29tMA0GCSqGSIb3DQEBCwUAA4IBAQBbGbXwxxI93puX1O89t5iv
+          dtFI2bQYM6gIngZAR0/jYmPwmUQZ5Lj2bsEd4QKQWmBCD4BkIR3GuQPei39todqk
+          NupmbUg2KDG5G41B6fm5I8tAKHFeQbkHO1B469kWJoSWez5rATmulE7jmAR8fPRa
+          0SH/DLWUz19tEhhyeXqEoSWmfBHmnBijBXcSMYUympCeh/XFEj4vSR1a5WMvMmNe
+          3iayjB81Dp0w1C4RFohMyu1R/D87OCpl1ifFjO/oTXkCOKpRw2K5KXZTkzislu53
+          7ouXXADnkjA+Yl0sZHBiJdXJuAeNkGeHHUy7wmUNCEqVlYA8SWdbYQLviIsugb4E
+          -----END CERTIFICATE-----
+  keycloak:
+    install: true
+    persistent: true
+    volumeSize: 1Gi
+  mongodb:
+    install: true
+    persistent: true
+    volumeSize: 2Gi

@@ -71,7 +71,7 @@ Now just create a `MicrocksInstall` CRD!
 
 ### Via OLM add-on
 
-[Operator Lyfecycle Manager](https://github.com/operator-framework/operator-lifecycle-manager) shoud be installed on your cluster first. Please follow this [guideline](https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/install/install.md) to know how to proceed.
+[Operator Lyfecycle Manager](https://github.com/operator-framework/operator-lifecycle-manager) should be installed on your cluster first. Please follow this [guideline](https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/install/install.md) to know how to proceed.
 
 You can then use the [OperatorHub.io](https://operatorhub.io) catalog of Kubernetes Operators sourced from multiple providers. It offers you an alternative way to install stable versions of Microcks using the Microcks Operator. To install Microcks from [OperatorHub.io](https://operatorhub.io), locate the *Microcks Operator* and follow the instructions provided.
 
@@ -161,11 +161,12 @@ The table below describe all the fields of the `MicrocksInstall` CRD, providing 
 | `microcks`    | `replicas`         | **Optional**. The number of replicas for the Microcks main pod. Default is `1`. |
 | `microcks`    | `url`              | **Mandatory on Kube, Optional on OpenShift**. The URL to use for exposing `Ingress`. If missing on OpenShift, default URL schema handled by Router is used. | 
 | `microcks`    | `ingressSecretRef` | **Optional on Kube, not used on OpenShift**. The name of a TLS Secret for securing `Ingress`. If missing on Kubernetes, self-signed certificate is generated. | 
-| `microcks`    | `ingressAnnotations` | **Optional on Kube, not used on OpenShift for now**. Some custom annotations to add on `Ingress`. If these annotations are triggering a Certificate generation (for example through https://cert-manager.io/). The `generateCert` property should be set to `false`. |
+| `microcks`    | `ingressAnnotations` | **Optional**. Some custom annotations to add on `Ingress` or OpenShift `Route`. If these annotations are triggering a Certificate generation (for example through https://cert-manager.io/ or https://github.com/redhat-cop/cert-utils-operator), the `generateCert` property should be set to `false` for Kube. |
 | `microcks`    | `generateCert`     | **Optional on Kube, not used on OpenShift**. Whether to generate self-signed certificate or not if no valid `ingressSecretRef` provided. Default is `true` |
 | `microcks`    | `resources`        | **Optional**. Some resources constraints to apply on Microcks pods. This should be expressed using [Kubernetes syntax](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container). |
 | `microcks`    | `logLevel`        | **Optional**. Allows to tune the verbosity level of logs. Default is `INFO` You can use `DEBUG` for more verbosity or `WARN` for less. |
 | `microcks`    | `mockInvocationStats` | **Optional**. Allows to disable invocation stats on mocks. Default is `true` (enabled). |
+| `microcks`    | `openshift`       | **Optional**. Allows to tune some OpenShift specific resources. See [OpenShift specific tuning](#openShift-specific-tuning) below. |
 | `postman`     | `replicas`         | **Optional**. The number of replicas for the Microcks Postman pod. Default is `1`. |
 | `keycloak`    | `install`          | **Optional**. Flag for Keycloak installation. Default is `true`. Set to `false` if you want to reuse an existing Keycloak instance. |
 | `keycloak`    | `image`             | **Optional**. The reference of container image used. Operator comes with its default version. |
@@ -177,10 +178,11 @@ The table below describe all the fields of the `MicrocksInstall` CRD, providing 
 | `keycloak`    | `url`              | **Mandatory on Kube if keycloak.install==false, Optional otherwise**. The URL of Keycloak install - indeed just the hostname + port part - if it already exists on the one used for exposing Keycloak `Ingress`. If missing on OpenShift, default URL schema handled by Router is used. | 
 | `keycloak`    | `privateUrl`       | **Optional**. A private URL - a full URL here - used by the Microcks component to internally join Keycloak. This is also known as `backendUrl` in [Keycloak doc](https://www.keycloak.org/docs/latest/server_installation/#_hostname). When specified, the `keycloak.url` is used as `frontendUrl` in Keycloak terms. | 
 | `keycloak`    | `ingressSecretRef` | **Optional on Kube, not used on OpenShift**. The name of a TLS Secret for securing `Ingress`. If missing on Kubernetes, self-signed certificate is generated. | 
-| `keycloak`    | `ingressAnnotations` | **Optional on Kube, not used on OpenShift for now**. Some custom annotations to add on `Ingress`. If these annotations are triggering a Certificate generation (for example through https://cert-manager.io/). The `generateCert` property should be set to `false`. |
+| `keycloak`    | `ingressAnnotations` | **Optional**. Some custom annotations to add on `Ingress` or OpenShift `Route`. If these annotations are triggering a Certificate generation (for example through https://cert-manager.io/ or https://github.com/redhat-cop/cert-utils-operator), the `generateCert` property should be set to `false` on Kube. |
 | `keycloak`    | `generateCert`     | **Optional on Kube, not used on OpenShift**. Whether to generate self-signed certificate or not if no valid `ingressSecretRef` provided. Default is `true` | 
 | `keycloak`    | `replicas`         | **Optional**. The number of replicas for the Keycloak pod if install is required. Default is `1`. **Operator do not manage any other value for now** |
 | `keycloak`    | `resources`        | **Optional**. Some resources constraints to apply on Keycloak pods. This should be expressed using [Kubernetes syntax](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container). |
+| `keycloak`    | `openshift`       | **Optional**. Allows to tune some OpenShift specific resources. See [OpenShift specific tuning](#openShift-specific-tuning) below. |
 | `mongodb`     | `install`          | **Optional**. Flag for MongoDB installation. Default is `true`. Set to `false` if you want to reuse an existing MongoDB instance. |
 | `mongodb`    | `image`             | **Optional**. The reference of container image used. Operator comes with its default version. |
 | `mongodb`     | `uri`              | **Optional**. MongoDB URI in case you're reusing existing MongoDB instance. Mandatory if `install` is `false` |
@@ -194,8 +196,22 @@ The table below describe all the fields of the `MicrocksInstall` CRD, providing 
 | `mongodb`    | `resources`        | **Optional**. Some resources constraints to apply on MongoDB pods. This should be expressed using [Kubernetes syntax](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container). |
 | `features`    | `repositoryFilter` | **Optional**. Feature allowing to filter API and services on main page. Must be explicitly `enabled`. See [Organizing repository](https://microcks.io/documentation/using/advanced/organizing/#master-level-filter) for more informations |
 | `features`    | `repositoryTenancy` | **Optional**. Feature allowing to segment and delegate API and services management according the `repositoryFilter` master criteria. Must be explicitly `enabled`. See [Organizing repository](https://microcks.io/documentation/using/advanced/organizing/#rbac-security-segmentation) for more informations |
-| `features`    | `microcksHub`      | **Optional**. Feature allowing to directly import mocks coming from `hub.microcks.io` marketplace. Must be explicitly `enabled`. See [Micorkcs Hub](https://microcks.io/documentation/using/advanced/microcks-hub) for more information. |
+| `features`    | `microcksHub`      | **Optional**. Feature allowing to directly import mocks coming from `hub.microcks.io` marketplace. Must be explicitly `enabled`. See [Microcks Hub](https://microcks.io/documentation/using/advanced/microcks-hub) for more information. |
 | `features`    | `async` | **Optional**. Feature allowing to activate mocking of Async API on a message broker. Must be explicitly `enabled`. See [this sample](https://github.com/microcks/microcks-ansible-operator/blob/master/deploy/crds/openshift-features.yaml#L28) for full informations |
+
+#### OpenShift specific tuning
+
+The `openshift` object that you may find within different components properties allow the tuning of some OpenShift specific resources.
+
+Especially, the `route` section in this object allows tuning of OpenShift `Routes` as described in the [API specification](https://docs.openshift.com/container-platform/4.9/rest_api/network_apis/route-route-openshift-io-v1.html#specification) if you don't want to rely on the default TLS settings for the OpenShift router/ingress controller. Check [Secured routes](https://docs.openshift.com/container-platform/4.9/networking/routes/secured-routes.html) for explanations on that topic.
+
+| Section    | Property           | Description   |
+| ------------- | ------------------ | ------------- |
+| `route`    | `type`      | **Optional**. Allows to specify the TLS termination type of the Route. Allowed values are `reencrypt`, `passthrough` and `edge` that is the default. |
+| `route`    | `key`       | **Optional**. Allows to specify the private Key file for TLS. PEM format should be used. |
+| `route`    | `certificate`     | **Optional**. Allows to specify the certificate for TLS. PEM format should be used. |
+| `route`    | `caCertificate`      | **Optional**. Allows to specify the CA certificate for TLS. PEM format should be used. |
+| `route`    | `destinationCACertificate`  | **Optional**. Allows to specify the destination CA certificate for TLS. PEM format should be used. |
 
 #### Kafka feature details
 
@@ -238,8 +254,9 @@ Here are below the configuration properties of the WebSocket support feature:
 | Section       | Property           | Description   |
 | ------------- | ------------------ | ------------- |
 | `features.async.ws` | `ingressSecretRef`    | **Optional**. The name of a TLS Secret for securing WebSocket `Ingress`. If missing, self-signed certificate is generated. |
-| `features.async.ws` | `ingressAnnotations`  | **Optional**. A map of annotations that will be added to the `Ingress` for Microcks WebSocket mocks. If these annotations are triggering a Certificate generation (for example through https://cert-manager.io/). The `generateCert` property should be set to `false`. |
+| `features.async.ws` | `ingressAnnotations`  | **Optional**. A map of annotations that will be added to the `Ingress` or OpenShift `Route`for Microcks WebSocket mocks. If these annotations are triggering a Certificate generation (for example through https://cert-manager.io/ or https://github.com/redhat-cop/cert-utils-operator), the `generateCert` property should be set to `false` on Kube. |
 | `features.async.ws` | `generateCert`        | **Optional**. Whether to generate self-signed certificate or not if no valid `ingressSecretRef` provided. Default is `true` |
+| `features.async.ws` | `openshift`       | **Optional**. Allows to tune some OpenShift specific resources. See [OpenShift specific tuning](#openShift-specific-tuning) above. |
 
 #### AMQP feature details
 

@@ -3,6 +3,13 @@ apiVersion: route.openshift.io/v1
 metadata:
   name: "{{name}}"
   namespace: '{{ meta.namespace }}'
+  annotations:
+    {% if current_cr.spec.microcks.ingressAnnotations is defined -%}
+    {% for key in current_cr.spec.microcks.ingressAnnotations.keys() -%}
+    {{ key }}: {{ current_cr.spec.microcks.ingressAnnotations[key] }}
+    {% endfor %}
+    {% endif %}
+
   labels:
     app: "{{name}}"
     group: microcks
@@ -16,4 +23,20 @@ spec:
   port:
     targetPort: spring
   tls:
-    termination: edge
+    termination: {{ microcks.openshift.route.type }}
+    {% if microcks.openshift.route.key is defined -%}
+    key: |-
+      {{ microcks.openshift.route.key | indent(6) }}
+    {% endif -%}
+    {% if microcks.openshift.route.certificate is defined -%}
+    certificate: |
+      {{ microcks.openshift.route.certificate | indent(6) }}
+    {% endif -%}
+    {% if microcks.openshift.route.ca_certificate is defined -%}
+    caCertificate: |
+      {{ microcks.openshift.route.ca_certificate | indent(6) }}
+    {% endif -%}
+    {% if microcks.openshift.route.destination_c_a_certificate is defined -%}
+    destinationCACertificate: |
+      {{ microcks.openshift.route.destination_c_a_certificate | indent(6) }}
+    {% endif -%}
