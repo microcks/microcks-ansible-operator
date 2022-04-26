@@ -7,6 +7,12 @@ metadata:
     ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    {% if current_cr.spec.microcks.grpcIngressAnnotations is defined -%}
+    {% for key in current_cr.spec.microcks.grpcIngressAnnotations.keys() -%}
+    {{ key }}: {{ current_cr.spec.microcks.grpcIngressAnnotations[key] }}
+    {% endfor %}
+    {% endif %}
+    
   labels:
     app: "{{name}}"
     group: microcks
