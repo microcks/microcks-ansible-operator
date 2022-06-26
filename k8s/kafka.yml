@@ -35,10 +35,10 @@ spec:
     storage:
       type: ephemeral
     resources:
-      {{ features.async.kafka.resources | to_nice_yaml(indent=2) | trim | indent(6) }}
+      {{ features.async.kafka.resources | to_nice_yaml(indent=2) | trim | indent(6) }}
   zookeeper:
     replicas: 1
     storage:
       type: ephemeral
     resources:
-      {{ features.async.kafka.zk_resources | to_nice_yaml(indent=2) | indent(6) }}
+      {{ features.async.kafka.zk_resources | to_nice_yaml(indent=2) | indent(6) }}

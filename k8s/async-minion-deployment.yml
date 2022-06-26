@@ -36,7 +36,7 @@ spec:
     spec:
       containers:
       - name: async-minion
-        image: quay.io/microcks/microcks-async-minion:{{version}}
+        image: "{{registry|default('quay.io')}}/microcks/microcks-async-minion:{{version}}"
         imagePullPolicy: IfNotPresent
         env:
           - name: QUARKUS_PROFILE

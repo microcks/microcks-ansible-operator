@@ -1,7 +1,7 @@
 ---
 # defaults specification file for microcks installation
 name: microcks
-version: "1.5.2"
+version: "1.6.0"
 microcks: 
   replicas: 1
   #url: microcks.192.168.99.100.nip.io
@@ -24,6 +24,11 @@ microcks:
   log_level: INFO
   #true | false
   mock_invocation_stats: true
+  env:
+    - name: SERVICES_UPDATE_INTERVAL
+      value: 0 0 0/2 * * *
+    #- name: MAX_UPLOAD_FILE_SIZE
+    #  value: 5MB
   openshift:
     route:
       enabled: true

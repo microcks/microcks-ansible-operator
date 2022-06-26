@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
       - name: spring
-        image: "quay.io/microcks/microcks:{{version}}"
+        image: "{{registry|default('quay.io')}}/microcks/microcks:{{version}}"
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -103,8 +103,9 @@ spec:
             {%- endif %}
           {% endif %}
 
+          {{ microcks.env | to_nice_yaml(indent=10) | trim | indent(10) }}
         resources:
-          {{ microcks.resources | to_nice_yaml(indent=10) | trim | indent(10) }}
+          {{ microcks.resources | to_nice_yaml(indent=10) | trim | indent(10) }}
         livenessProbe:
           httpGet:
             path: "/api/health"
