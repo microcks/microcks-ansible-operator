@@ -8,7 +8,8 @@ metadata:
     group: microcks
 spec:
 {% if 'url' in microcks %}
-  host: {{ microcks.url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-grpc\\2') }}
+  #host: {{ microcks.url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-grpc\\2') }}
+  host: {{ microcks.url|regex_replace('^([^.-]+)(.*)','\\1-grpc\\2') }}
 {% endif %}
   to:
     name: {{name}}-grpc

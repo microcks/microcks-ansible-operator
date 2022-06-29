@@ -19,9 +19,11 @@ metadata:
 spec:
   tls:
   - hosts:
-    - "{{microcks.url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-grpc\\2')}}"
+    #- "{{microcks.url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-grpc\\2')}}"
+    - "{{microcks.url|regex_replace('^([^.-]+)(.*)','\\1-grpc\\2')}}"
   rules:
-  - host: "{{microcks.url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-grpc\\2')}}"
+  - host: "{{microcks.url|regex_replace('^([^.-]+)(.*)','\\1-grpc\\2')}}"
+    #host: "{{microcks.url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-grpc\\2')}}"
     http:
       paths:
       - path: /
