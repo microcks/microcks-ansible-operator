@@ -183,3 +183,7 @@ data:
         <appender-ref ref="CONSOLE"/>
       </root>
     </configuration>
+  {% if microcks.extra_properties is defined -%}
+  application-extra.yaml: |-
+    {{ microcks.extra_properties | to_nice_yaml(indent=2) | trim | indent(4) }}
+  {% endif %}
