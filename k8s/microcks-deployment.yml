@@ -45,7 +45,8 @@ spec:
           - name: JAVA_MAJOR_VERSION
             value: "11"
           - name: SPRING_PROFILES_ACTIVE
-            value: prod{% if microcks.extra_properties is defined %},extra{% endif +%}
+            value: prod{% if microcks.extra_properties is defined %},extra{% endif %}
+            
           - name: SPRING_DATA_MONGODB_URI
             value: mongodb://${SPRING_DATA_MONGODB_USER}:${SPRING_DATA_MONGODB_PASSWORD}@{{mongodb.uri|default(name ~ '-mongodb:27017')}}/${SPRING_DATA_MONGODB_DATABASE}{{mongodb.uri_parameters|default('')}}
           - name: SPRING_DATA_MONGODB_USER
