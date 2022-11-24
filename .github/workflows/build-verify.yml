@@ -14,9 +14,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Package container image for operator
+      - name: Package container image for operator e2e tests
         run: |
-          docker build -f build/Dockerfile -t microcks-ansible-operator .
+          docker build -f build/Dockerfile -t quay.io/microcks-ansible-operator:e2e-tests .
+          echo ${{ secrets.QUAY_PASSWORD }} | docker login -u ${{ secrets.QUAY_USERNAME }} --password-stdin quay.io
+          docker push quay.io/microcks/microcks-ansible-operator:e2e-tests
 
       - name: Install kubectl and Kind Cluster
         run: |
@@ -48,7 +50,7 @@ jobs:
       - name: Tag container image
         if: github.repository_owner == 'microcks'
         run: |
-          docker tag microcks-ansible-operator quay.io/microcks/microcks-ansible-operator:$IMAGE_TAG
+          docker tag quay.io/microcks/microcks-ansible-operator:e2e-tests quay.io/microcks/microcks-ansible-operator:$IMAGE_TAG
 
       - name: Login and push to Quay.io Registry
         if: github.repository_owner == 'microcks'

@@ -4,7 +4,7 @@ startKIND: true
 #skipDelete: true
 #skipClusterDelete: true
 kindContainers:
-- microcks-ansible-operator:latest
+- quay.io/microcks/microcks-ansible-operator:e2e-tests
 manifestDirs:
 - tests/manifests
 testDirs:
