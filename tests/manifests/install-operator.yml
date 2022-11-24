@@ -138,7 +138,7 @@ spec:
       serviceAccountName: microcks-ansible-operator
       containers:
         - name: microcks-ansible-operator
-          image: microcks-ansible-operator
+          image: microcks-ansible-operator:latest
           #image: quay.io/microcks/microcks-ansible-operator:nightly
           imagePullPolicy: Always
           env:

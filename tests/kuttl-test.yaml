@@ -4,7 +4,7 @@ startKIND: true
 #skipDelete: true
 #skipClusterDelete: true
 kindContainers:
-- microcks-ansible-operator
+- microcks-ansible-operator:latest
 manifestDirs:
 - tests/manifests
 testDirs:
