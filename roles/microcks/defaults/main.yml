@@ -1,7 +1,7 @@
 ---
 # defaults specification file for microcks installation
 name: microcks
-version: "1.6.0"
+version: "1.6.1"
 microcks: 
   replicas: 1
   #url: microcks.192.168.99.100.nip.io
@@ -138,6 +138,7 @@ features:
     kafka:
       install: true
       #url: 192.168.99.100.nip.io
+      ingress_class_name: nginx
       use_strimzi_beta1: false
       persistent: false
       volume_size: 2Gi
@@ -194,6 +195,12 @@ features:
       #url:
       username: microcks
       password: microcks
+
+    googlepubsub:
+      #project:
+      service_account_secret_ref:
+        secret: googlecloud-service-account
+        file_key: googlecloud-service-account.json
 
     ws:
       #ingress_annotations:

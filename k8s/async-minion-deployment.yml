@@ -65,7 +65,7 @@ spec:
           protocol: TCP
         livenessProbe:
           httpGet:
-            path: "/health/live"
+            path: "/q/health/live"
             port: 8080
             scheme: HTTP
           initialDelaySeconds: 5
@@ -75,7 +75,7 @@ spec:
           failureThreshold: 3
         readinessProbe:
           httpGet:
-            path: "/health/ready"
+            path: "/q/health/ready"
             port: 8080
             scheme: HTTP
           initialDelaySeconds: 10
@@ -98,6 +98,13 @@ spec:
             mountPath: "/deployments/config/kafka/keystore"
             {%- endif %}
           {% endif %}
+          {% if features.async.googlepubsub.project is defined %}
+            {%- if features.async.googlepubsub.service_account_secret_ref is defined %}
+
+          - name: "{{name}}-googlepubsub-sa"
+            mountPath: "/deployments/config/googlepubsub/sa"
+            {%- endif %}
+          {% endif %}
 
         terminationMessagePath: "/dev/termination-log"
       volumes:
@@ -116,5 +123,13 @@ spec:
         - name: "{{name}}-kafka-keystore"
           secret:
             secretName: "{{features.async.kafka.authentication.keystore_secret_ref.secret}}"
+          {%- endif %}
+        {% endif %}
+        {% if features.async.googlepubsub.project is defined %}
+          {%- if features.async.googlepubsub.service_account_secret_ref is defined %}
+
+        - name: "{{name}}-googlepubsub-sa"
+          secret:
+            secretName: "{{features.async.googlepubsub.service_account_secret_ref.secret}}"
           {%- endif %}
         {% endif %}

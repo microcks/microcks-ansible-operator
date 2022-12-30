@@ -113,8 +113,21 @@ data:
     %kube.amqp.password=microcks
     {% endif %}
 
+    # Access to GOOGLEPUBSUB broker.
+    {% if features.async.googlepubsub.project is defined -%}
+    %kube.googlepubsub.project={{ features.async.googlepubsub.project }}
+      {%- if features.async.googlepubsub.service_account_secret_ref is defined %}
+
+    %kube.googlepubsubs.ervice-account-location=/deployments/config/googlecloud/sa/{{ features.async.googlepubsub.service_account_secret_ref.file_key }}
+      {% endif %}
+
+    {% else -%}
+    %kube.googlepubsub.project=my-project
+    %kube.googlepubsub.service-account-location=/deployments/config/googlecloud-service-account.json
+    {% endif %}
+
     # Configure the minion own behavioral properties.
-    %kube.minion.supported-bindings=KAFKA,WS{% if features.async.mqtt.url is defined %},MQTT{% endif %}{% if features.async.amqp.url is defined %},AMQP{% endif %}
+    %kube.minion.supported-bindings=KAFKA,WS{% if features.async.mqtt.url is defined %},MQTT{% endif %}{% if features.async.amqp.url is defined %},AMQP{% endif %}{% if features.async.googlepubsub.project is defined %},GOOGLEPUBSUB{% endif %}
 
     %kube.minion.restricted-frequencies=3,10,30
     %kube.minion.default-avro-encoding={{ features.async.default_avro_encoding }}
