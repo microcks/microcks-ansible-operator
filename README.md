@@ -3,7 +3,7 @@
 Kubernetes Operator for easy setup and management of Microcks installs (using Ansible undercover ;-)
 
 [![Join the chat on Zulip](https://img.shields.io/badge/chat-on_zulip-pink.svg?color=ff69b4&style=for-the-badge&logo=zulip)](https://microcksio.zulipchat.com/)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/microcks/microcks-ansible-operator/build-verify-package?logo=github&style=for-the-badge)](https://github.com/microcks/microcks-ansible-operator/actions)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/microcks/microcks-ansible-operator/build-verify.yml?branch=master&logo=github&style=for-the-badge)](https://github.com/microcks/microcks-ansible-operator/actions)
 
 ## Table of contents
 
@@ -226,6 +226,7 @@ Here are below the configuration properties of the Kafka support features:
 | `features.async.kafka` | `install`    | **Optional**. Flag for Kafka installation. Default is `true` and required Strimzi Operator to be setup. Set to `false` if you want to reuse an existing Kafka instance. |
 | `features.async.kafka` | `useStrimziBeta1`  | **Optional**. Since version `1.3.0` we're using Beta2 version of Strimzi. Default is `false`. Set this flag to `true` if you still using older version of Strimzi that provides Beta1 custom resources. |
 | `features.async.kafka` | `url`        | **Optional**. The URL of Kafka broker if it already exists or the one used for exposing Kafka `Ingress` when we install it. In this later case, it should only be the subdomain part (eg: `apps.example.com`). |
+| `features.async.kafka` | `ingressClassName` | **Optional**. The ingress class to use for exposing broker to the outer world when installing it. Default is `nginx`. |
 | `features.async.kafka` | `persistent` | **Optional**. Flag for Kafka persistence. Default is `false`. Set to `true` if you want a persistent Kafka installation. |
 | `features.async.kafka` | `volumeSize` | **Optional**. Size of persistent volume claim for Kafka. Default is `2Gi`. Not used if not persistent install asked. |
 | `features.async.kafka.schemaRegistry` | `url` | **Optional**. The API URL of a Kafka Schema Registry. Used for Avro based serialization |
@@ -250,7 +251,6 @@ Here are below the configuration properties of the MQTT support features:
 | `features.async.mqtt` | `username`   | **Optional**. The username to use for connecting to secured MQTT broker. Default to `microcks`. |
 | `features.async.mqtt` | `password`   | **Optional**. The password to use for connecting to secured MQTT broker. Default to `microcks`. |
 
-
 #### WebSocket feature details
 
 Here are below the configuration properties of the WebSocket support feature:
@@ -272,6 +272,14 @@ Here are below the configuration properties of the AMQP 0.9.1 support features:
 | `features.async.amqp` | `username`   | **Optional**. The username to use for connecting to secured AMQP broker. Default to `microcks`. |
 | `features.async.amqp` | `password`   | **Optional**. The password to use for connecting to secured AMQP broker. Default to `microcks`. |
 
+#### Google PubSub feature details
+
+Here are below the configuration properties of the Google PubSub support feature:
+ 
+| Section    | Property           | Description   |
+| ------------- | ------------------ | ------------- |
+| `features.async.googlepubsub` | `project`        | **Optional**. The GCP project id of PubSub (eg: `my-gcp-project-347219`). Default is undefined which means that feature is disabled. |
+| `features.async.googlepubsub` | `serviceAccountSecretRef`   | **Optional**. The name of a Generic Secret holding Service Account JSON credentiels. Set `secret` and `fileKey` properties. |
 
 ## Sample Custom Resources
 
@@ -299,7 +307,7 @@ The `/deploy/samples` folder contain sample `MicrocksInstall` resource allowing 
 
 * [openshift-features-apicurio-registry.yml](./deploy/samples/openshift-features-apicurio-registry.yml) illustrates how to configure mocking of Apache Kafka using a schema registry
 
-Obviously, you can combine all of them together to enable any options ;-)
+Obviously, you can combine all of them together to enable any options 😉
 
 ## Build
 
@@ -359,7 +367,7 @@ ansible [core 2.11.6]
   jinja version = 3.0.2
   libyaml = True
 
-$ ansible-playbook --version                                                        ─╯
+$ ansible-playbook --version
 ansible-playbook [core 2.11.6] 
   config file = /Users/lbroudou/Development/github/microcks-ansible-operator/ansible.cfg
   configured module search path = ['/Users/lbroudou/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
