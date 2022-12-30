@@ -118,7 +118,7 @@ data:
     %kube.googlepubsub.project={{ features.async.googlepubsub.project }}
       {%- if features.async.googlepubsub.service_account_secret_ref is defined %}
 
-    %kube.googlepubsub.service-account-location=/deployments/config/googlecloud/sa/{{ features.async.googlepubsub.service_account_secret_ref.file_key }}
+    %kube.googlepubsub.service-account-location=/deployments/config/googlepubsub/sa/{{ features.async.googlepubsub.service_account_secret_ref.file_key }}
       {% endif %}
 
     {% else -%}
