@@ -46,6 +46,11 @@ data:
     features.feature.async-api.endpoint-AMQP={{features.async.amqp.url}}
     {% endif %}
 
+    {%- if features.async.nats.url is defined %}
+
+    features.feature.async-api.endpoint-NATS={{features.async.nats.url}}
+    {% endif %}
+
     {%- if features.async.googlepubsub.project is defined %}
 
     features.feature.async-api.endpoint-GOOGLEPUBSUB={{features.async.googlepubsub.project}}

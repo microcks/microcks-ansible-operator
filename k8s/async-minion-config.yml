@@ -113,6 +113,17 @@ data:
     %kube.amqp.password=microcks
     {% endif %}
 
+    # Access to NATS broker.
+    {% if features.async.nats.url is defined -%}
+    %kube.nats.server={{ features.async.nats.url }}
+    %kube.nats.username={{ features.async.nats.username }}
+    %kube.nats.password={{ features.async.nats.password }}
+    {% else -%}
+    %kube.nats.server=localhost:4222
+    %kube.nats.username=microcks
+    %kube.nats.password=microcks
+    {% endif %}
+
     # Access to GOOGLEPUBSUB broker.
     {% if features.async.googlepubsub.project is defined -%}
     %kube.googlepubsub.project={{ features.async.googlepubsub.project }}
