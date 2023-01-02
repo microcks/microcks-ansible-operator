@@ -272,6 +272,16 @@ Here are below the configuration properties of the AMQP 0.9.1 support features:
 | `features.async.amqp` | `username`   | **Optional**. The username to use for connecting to secured AMQP broker. Default to `microcks`. |
 | `features.async.amqp` | `password`   | **Optional**. The password to use for connecting to secured AMQP broker. Default to `microcks`. |
 
+#### NATS feature details
+
+Here are below the configuration properties of the NATS features:
+ 
+| Section    | Property           | Description   |
+| ------------- | ------------------ | ------------- |
+| `features.async.nats` | `url`        | **Optional**. The URL of NATS broker (eg: `my-nats-broker.example.com:4222`). Default is undefined which means that feature is disabled. |
+| `features.async.nats` | `username`   | **Optional**. The username to use for connecting to secured NATS broker. Default to `microcks`. |
+| `features.async.nats` | `password`   | **Optional**. The password to use for connecting to secured NATS broker. Default to `microcks`. |
+
 #### Google PubSub feature details
 
 Here are below the configuration properties of the Google PubSub support feature:
