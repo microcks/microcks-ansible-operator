@@ -56,7 +56,9 @@ postman:
 keycloak:
   install: true
   realm: microcks
-  image: jboss/keycloak:14.0.0
+  image: keycloak/keycloak:20.0.2
+  # Now that we switched to newer version of Keycloak-X, url must include the
+  # '/auth' path if you use an older external Keycloak instance.
   #url: keycloak.192.168.99.100.nip.io
   #url: microcks-keycloak:8080
   #public_url: https://keycloak-microcks.192.168.64.6.nip.io/auth

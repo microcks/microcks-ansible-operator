@@ -45,42 +45,52 @@ spec:
           containerPort: 8778
           protocol: TCP
         args:
-        - "-b $(INTERNAL_POD_IP)"
-        - "-Djgroups.bind_addr=global"
-        - "-Djboss.node.name=$(INTERNAL_POD_IP)"
-        - "-Dkeycloak.import=/opt/jboss/keycloak/standalone/configuration/realm/microcks-realm.json"
+        - 'start'
+        - '--features=token-exchange'
+        - '--db=$(KC_DB)'
+        - '--db-url-host=$(KC_DB_URL_HOST)'
+        - '--db-username=$(KC_DB_USER)'
+        - '--db-password=$(KC_DB_PASSWORD)'
+        {% if keycloak.private_url is defined -%}
+        - '--hostname={{ keycloak.url }}'
+        - '--hostname-strict-backchannel=false'
+        {% else -%}
+        - '--hostname={{ keycloak.url }}'
+        {% endif -%}
+        - '--health-enabled=true'
+        - '--import-realm'
         env:
         - name: INTERNAL_POD_IP
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
-        - name: KEYCLOAK_USER
+        - name: KEYCLOAK_ADMIN
           valueFrom:
             secretKeyRef:
               key: username
               name: "{{name}}-keycloak-admin"
-        - name: KEYCLOAK_PASSWORD
+        - name: KEYCLOAK_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password
               name: "{{name}}-keycloak-admin"
         - name: OPERATING_MODE
           value: clustered
-        - name: DB_VENDOR
-          value: POSTGRES
-        - name: DB_USER
+        - name: KC_DB
+          value: postgres
+        - name: KC_DB_USER
           valueFrom:
             secretKeyRef:
               key: postgresUsername
               name: "{{name}}-keycloak-admin"
-        - name: DB_PASSWORD
+        - name: KC_DB_PASSWORD
           valueFrom:
             secretKeyRef:
               key: postgresPassword
               name: "{{name}}-keycloak-admin"
-        - name: DB_DATABASE
+        - name: KC_DB_URL_DATABASE
           value: root
-        - name: DB_ADDR
+        - name: KC_DB_URL_HOST
           value: "{{name}}-keycloak-postgresql"
         - name: OPENSHIFT_KUBE_PING_LABELS
           value: deploymentconfig=keycloak
@@ -88,17 +98,37 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        - name: PROXY_ADDRESS_FORWARDING
-          value: "true"
+        - name: KC_PROXY
+          value: "edge"
         {% if keycloak.private_url is defined -%}
         - name: KEYCLOAK_FRONTEND_URL
           value: https://{{keycloak.url|default(keycloak_url)}}/auth
         {% endif -%}
         resources:
           {{keycloak.resources | to_nice_yaml(indent=10) | trim | indent(10) }}
+        livenessProbe:
+          httpGet:
+            path: "/health/live"
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          timeoutSeconds: 2
+          periodSeconds: 20
+          successThreshold: 1
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: "/health/ready"
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+          timeoutSeconds: 2
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 5
         volumeMounts:
         - name: "{{name}}-keycloak-config"
-          mountPath: "/opt/jboss/keycloak/standalone/configuration/realm"
+          mountPath: "/opt/keycloak/data/import"
         securityContext:
           privileged: false
       volumes:

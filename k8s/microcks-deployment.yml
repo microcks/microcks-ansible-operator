@@ -69,10 +69,10 @@ spec:
           - name: KEYCLOAK_URL
             value: {{keycloak.private_url}}
           - name: KEYCLOAK_PUBLIC_URL
-            value: https://{{keycloak.url|default(keycloak_url)}}/auth
+            value: https://{{keycloak.url|default(keycloak_url)}}
           {% else -%}
           - name: KEYCLOAK_URL
-            value: https://{{keycloak.url|default(keycloak_url)}}/auth
+            value: https://{{keycloak.url|default(keycloak_url)}}
           {% endif -%}
           - name: ASYNC_MINION_URL
             value: http://{{name}}-async-minion:8080
