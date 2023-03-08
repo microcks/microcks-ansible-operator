@@ -1,7 +1,7 @@
 ---
 # defaults specification file for microcks installation
 name: microcks
-version: next
+version: 1.7.0
 microcks: 
   replicas: 1
   #url: microcks.192.168.99.100.nip.io
