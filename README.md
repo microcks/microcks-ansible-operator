@@ -294,28 +294,27 @@ Here are below the configuration properties of the Google PubSub support feature
 ## Sample Custom Resources
 
 The `/deploy/samples` folder contain sample `MicrocksInstall` resource allowing you to check the configuration for different setup options.
+* [openshift-minimal.yaml](./deploy/samples/openshift-minimal.yaml) illustrates a simple CR for starting a Microcks installation on OpenShift with most common options
 
-* [openshift-minimal.yml](./deploy/samples/openshift-minimal.yml) illustrates a simple CR for starting a Microcks installation on OpenShift with most common options
+* [minikube-minimal.yaml](./deploy/samples/minikube-minimal.yaml) illustrates a simple CR for starting a Microcks installation on vanilla Kubernetes with most common options
 
-* [minikube-minimal.yml](./deploy/samples/minikube-minimal.yml) illustrates a simple CR for starting a Microcks installation on vanilla Kubernetes with most common options
+* [openshift-no-mongo.yaml](./deploy/samples/openshift-no-mongo.yaml) illustrates how to reuse an existing MongoDB database, retrieving the credential for connecting from a pre-existing `Secret`
 
-* [openshift-no-mongo.yml](./deploy/samples/openshift-no-mongo.yml) illustrates how to reuse an existing MongoDB database, retrieving the credential for connecting from a pre-existing `Secret`
+* [minikube-custom-tls.yaml](./deploy/samples/minikube-custom-tls.yaml) illustrates how to reuse existing `Secrets` to retrieve TLS certificates that will be used to secure the exposed `Ingresses`
 
-* [minikube-custom-tls.yml](./deploy/samples/minikube-custom-tls.yml) illustrates how to reuse existing `Secrets` to retrieve TLS certificates that will be used to secure the exposed `Ingresses`
+* [minikube-annotations.yaml](./deploy/samples/minikube-annotations.yaml) illustrates how to specify annotations that will be placed on exposed `Ingresses`. Such annotations can - for example - trigger some certificates generation using Cert Manager
 
-* [minikube-annotations.yml](./deploy/samples/minikube-annotations.yml) illustrates how to specify annotations that will be placed on exposed `Ingresses`. Such annotations can - for example - trigger some certificates generation using Cert Manager
+* [openshift-features.yaml](./deploy/samples/openshift-features.yaml) illustrates how to enable optional features like repository filtering or asynchronous mocking on an OpenShift cluster
 
-* [openshift-features.yml](./deploy/samples/openshift-features.yml) illustrates how to enable optional features like repository filtering or asynchronous mocking on an OpenShift cluster
+* [minikube-features.yaml](./deploy/samples/minikube-features.yaml) illustrates how to enable optional features like repository filtering or asynchronous mocking on a vanilla Kubernetes cluster
 
-* [minikube-features.yml](./deploy/samples/minikube-features.yml) illustrates how to enable optional features like repository filtering or asynchronous mocking on a vanilla Kubernetes cluster
+* [openshift-features-mqtt.yaml](./deploy/samples/openshift-features-mqtt.yaml) illustrates how to connect a MQTT broker to realize asynchronous mocking and testing of MQTT messages
 
-* [openshift-features-mqtt.yml](./deploy/samples/openshift-features-mqtt.yml) illustrates how to connect a MQTT broker to realize asynchronous mocking and testing of MQTT messages
+* [openshift-features-ext-sso.yaml](./deploy/samples/openshift-features-ext-sso.yaml) illustrates how to not deploy Keycloak and reuse an existing instance
 
-* [openshift-features-ext-sso.yml](./deploy/samples/openshift-features-ext-sso.yml) illustrates how to not deploy Keycloak and reuse an existing instance
+* [openshift-features-ext-kafka.yaml](./deploy/samples/openshift-features-ext-kafka.yaml) illustrates how to not deploy a Kafka broker and reuse an existing instance
 
-* [openshift-features-ext-kafka.yml](./deploy/samples/openshift-features-ext-kafka.yml) illustrates how to not deploy a Kafka broker and reuse an existing instance
-
-* [openshift-features-apicurio-registry.yml](./deploy/samples/openshift-features-apicurio-registry.yml) illustrates how to configure mocking of Apache Kafka using a schema registry
+* [openshift-features-apicurio-registry.yaml](./deploy/samples/openshift-features-apicurio-registry.yaml) illustrates how to configure mocking of Apache Kafka using a schema registry
 
 Obviously, you can combine all of them together to enable any options 😉
 
