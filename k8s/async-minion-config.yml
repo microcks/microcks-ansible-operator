@@ -137,8 +137,18 @@ data:
     %kube.googlepubsub.service-account-location=/deployments/config/googlecloud-service-account.json
     {% endif %}
 
+    # Access to Amazon SQS broker.
+    {% if features.async.sqs.region is defined -%}
+    %kube.amazonsqs.project={{ features.async.sqs.region }}
+    %kube.amazonsqs.credentials-profile-name={{ features.async.sqs.credentials_profile }}
+      {%- if features.async.sqs.credentials_secret_ref is defined %}
+
+    %kube.amazonsqs.credentials-profile-location=/deployments/config/amazon-sqs/{{ features.async.sqs.credentials_secret_ref.file_key }}
+      {% endif %}
+    {% endif %}
+
     # Configure the minion own behavioral properties.
-    %kube.minion.supported-bindings=KAFKA,WS{% if features.async.mqtt.url is defined %},MQTT{% endif %}{% if features.async.amqp.url is defined %},AMQP{% endif %}{% if features.async.googlepubsub.project is defined %},GOOGLEPUBSUB{% endif %}
+    %kube.minion.supported-bindings=KAFKA,WS{% if features.async.mqtt.url is defined %},MQTT{% endif %}{% if features.async.amqp.url is defined %},AMQP{% endif %}{% if features.async.googlepubsub.project is defined %},GOOGLEPUBSUB{% endif %}{% if features.async.sqs.region is defined %},SQS{% endif %}
 
     %kube.minion.restricted-frequencies=3,10,30
     %kube.minion.default-avro-encoding={{ features.async.default_avro_encoding }}

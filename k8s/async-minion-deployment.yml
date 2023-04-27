@@ -105,6 +105,13 @@ spec:
             mountPath: "/deployments/config/googlepubsub/sa"
             {%- endif %}
           {% endif %}
+          {% if features.async.sqs.region is defined %}
+            {%- if features.async.sqs.credentials_secret_ref is defined %}
+
+          - name: "{{name}}-amazonsqs-creds"
+            mountPath: "/deployments/config/amazon-sqs"
+            {%- endif %}
+          {% endif %}
 
         terminationMessagePath: "/dev/termination-log"
       volumes:
@@ -131,5 +138,13 @@ spec:
         - name: "{{name}}-googlepubsub-sa"
           secret:
             secretName: "{{features.async.googlepubsub.service_account_secret_ref.secret}}"
+          {%- endif %}
+        {% endif %}
+        {% if features.async.sqs.region is defined %}
+          {%- if features.async.sqs.credentials_secret_ref is defined %}
+
+        - name: "{{name}}-amazonsqs-creds"
+          secret:
+            secretName: "{{features.async.sqs.credentials_secret_ref.secret}}"
           {%- endif %}
         {% endif %}
