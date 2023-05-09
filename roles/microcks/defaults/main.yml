@@ -206,10 +206,17 @@ features:
 
     sqs:
       #region:
+      credentials_type: env-variable
+      #credentials_secret_ref:
+        #secret: aws-credentials
+        #access_key_id_key: access_key_id
+        #secret_access_key_key: secret_access_key
+        #session_token_key: session_token
+      #credentials_type: profile
       credentials_profile: microcks-sqs-admin
-      credentials_secret_ref:
-        secret: aws-credentials
-        file_key: aws.profile
+      #credentials_secret_ref:
+        #secret: aws-credentials
+        #file_key: aws.profile
 
     ws:
       #ingress_annotations:

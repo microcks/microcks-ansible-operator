@@ -140,9 +140,10 @@ data:
     # Access to Amazon SQS broker.
     {% if features.async.sqs.region is defined -%}
     %kube.amazonsqs.project={{ features.async.sqs.region }}
-    %kube.amazonsqs.credentials-profile-name={{ features.async.sqs.credentials_profile }}
-      {%- if features.async.sqs.credentials_secret_ref is defined %}
+    %kube.amazonsqs.credentials-type={{ features.async.sqs.credentials_type }}
+      {%- if features.async.sqs.credentials_type == "profile" and features.async.sqs.credentials_secret_ref is defined %}
 
+    %kube.amazonsqs.credentials-profile-name={{ features.async.sqs.credentials_profile }}
     %kube.amazonsqs.credentials-profile-location=/deployments/config/amazon-sqs/{{ features.async.sqs.credentials_secret_ref.file_key }}
       {% endif %}
     {% endif %}
