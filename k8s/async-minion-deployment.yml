@@ -84,6 +84,31 @@ spec:
               {%- endif %}
             {%- endif %}
           {% endif %}
+          {% if features.async.sns.region is defined %}
+            {%- if features.async.sns.credentials_type == 'env-variable' %}
+              {%- if features.async.sns.credentials_secret_ref is defined %}
+
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{features.async.sns.credentials_secret_ref.secret}}
+                key: {{features.async.sns.credentials_secret_ref.access_key_id_key|default('access_key_id')}}
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{features.async.sns.credentials_secret_ref.secret}}
+                key: {{features.async.sns.credentials_secret_ref.secret_access_key_key|default('secret_access_key')}}
+                  {%- if features.async.sns.credentials_secret_ref.session_token_key is defined %}
+
+          - name: AWS_SESSION_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{features.async.sns.credentials_secret_ref.secret}}
+                key: {{features.async.sns.credentials_secret_ref.session_token_key}}
+                  {%- endif %}
+              {%- endif %}
+            {%- endif %}
+          {% endif %}
 
         ports:
         - containerPort: 8080
@@ -137,6 +162,13 @@ spec:
             mountPath: "/deployments/config/amazon-sqs"
             {%- endif %}
           {% endif %}
+          {% if features.async.sns.region is defined %}
+            {%- if features.async.sns.credentials_secret_ref is defined and features.async.sns.credentials_type == 'profile' %}
+
+          - name: "{{name}}-amazonsns-creds"
+            mountPath: "/deployments/config/amazon-sns"
+            {%- endif %}
+          {% endif %}
 
         terminationMessagePath: "/dev/termination-log"
       volumes:
@@ -171,5 +203,13 @@ spec:
         - name: "{{name}}-amazonsqs-creds"
           secret:
             secretName: "{{features.async.sqs.credentials_secret_ref.secret}}"
+          {%- endif %}
+        {% endif %}
+        {% if features.async.sns.region is defined %}
+          {%- if features.async.sns.credentials_secret_ref is defined and features.async.sns.credentials_type == 'profile' %}
+
+        - name: "{{name}}-amazonsns-creds"
+          secret:
+            secretName: "{{features.async.sns.credentials_secret_ref.secret}}"
           {%- endif %}
         {% endif %}

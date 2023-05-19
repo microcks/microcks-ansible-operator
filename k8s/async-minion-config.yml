@@ -148,8 +148,19 @@ data:
       {% endif %}
     {% endif %}
 
+    # Access to Amazon SNS broker.
+    {% if features.async.sns.region is defined -%}
+    %kube.amazonsns.project={{ features.async.sns.region }}
+    %kube.amazonsns.credentials-type={{ features.async.sns.credentials_type }}
+      {%- if features.async.sns.credentials_type == "profile" and features.async.sns.credentials_secret_ref is defined %}
+
+    %kube.amazonsns.credentials-profile-name={{ features.async.sns.credentials_profile }}
+    %kube.amazonsns.credentials-profile-location=/deployments/config/amazon-sns/{{ features.async.sns.credentials_secret_ref.file_key }}
+      {% endif %}
+    {% endif %}
+
     # Configure the minion own behavioral properties.
-    %kube.minion.supported-bindings=KAFKA,WS{% if features.async.mqtt.url is defined %},MQTT{% endif %}{% if features.async.amqp.url is defined %},AMQP{% endif %}{% if features.async.googlepubsub.project is defined %},GOOGLEPUBSUB{% endif %}{% if features.async.sqs.region is defined %},SQS{% endif %}
+    %kube.minion.supported-bindings=KAFKA,WS{% if features.async.mqtt.url is defined %},MQTT{% endif %}{% if features.async.amqp.url is defined %},AMQP{% endif %}{% if features.async.googlepubsub.project is defined %},GOOGLEPUBSUB{% endif %}{% if features.async.sqs.region is defined %},SQS{% endif %}{% if features.async.sns.region is defined %},SNS{% endif %}
 
     %kube.minion.restricted-frequencies=3,10,30
     %kube.minion.default-avro-encoding={{ features.async.default_avro_encoding }}

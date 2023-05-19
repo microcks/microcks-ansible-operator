@@ -205,7 +205,7 @@ features:
         file_key: googlecloud-service-account.json
 
     sqs:
-      #region:
+      #region: eu-west-3
       credentials_type: env-variable
       #credentials_secret_ref:
         #secret: aws-credentials
@@ -214,6 +214,20 @@ features:
         #session_token_key: session_token
       #credentials_type: profile
       credentials_profile: microcks-sqs-admin
+      #credentials_secret_ref:
+        #secret: aws-credentials
+        #file_key: aws.profile
+
+    sns:
+      #region: eu-west-3
+      credentials_type: env-variable
+      #credentials_secret_ref:
+        #secret: aws-credentials
+        #access_key_id_key: access_key_id
+        #secret_access_key_key: secret_access_key
+        #session_token_key: session_token
+      #credentials_type: profile
+      credentials_profile: microcks-sns-admin
       #credentials_secret_ref:
         #secret: aws-credentials
         #file_key: aws.profile
