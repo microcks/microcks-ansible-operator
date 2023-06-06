@@ -146,6 +146,10 @@ data:
     %kube.amazonsqs.credentials-profile-name={{ features.async.sqs.credentials_profile }}
     %kube.amazonsqs.credentials-profile-location=/deployments/config/amazon-sqs/{{ features.async.sqs.credentials_secret_ref.file_key }}
       {% endif %}
+    
+    {% if features.async.sqs.endpoint_override is defined -%}
+    %kube.amazonsqs.endpoint-override={{ features.async.sqs.endpoint_override }}
+    {% endif %}
     {% endif %}
 
     # Access to Amazon SNS broker.
@@ -157,6 +161,10 @@ data:
     %kube.amazonsns.credentials-profile-name={{ features.async.sns.credentials_profile }}
     %kube.amazonsns.credentials-profile-location=/deployments/config/amazon-sns/{{ features.async.sns.credentials_secret_ref.file_key }}
       {% endif %}
+    
+    {% if features.async.sns.endpoint_override is defined -%}
+    %kube.amazonsns.endpoint-override={{ features.async.sns.endpoint_override }}
+    {% endif %}
     {% endif %}
 
     # Configure the minion own behavioral properties.

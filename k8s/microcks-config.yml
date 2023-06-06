@@ -58,7 +58,12 @@ data:
 
     {%- if features.async.sqs.region is defined %}
 
-    features.feature.async-api.endpoint-SQS={{features.async.sqs.region}}
+    features.feature.async-api.endpoint-SQS={{features.async.sqs.region}}{% if features.async.sqs.endpoint_override is defined %} at {{features.async.sqs.endpoint_override}}{% endif %}
+    {% endif %}
+
+    {%- if features.async.sns.region is defined %}
+
+    features.feature.async-api.endpoint-SNS={{features.async.sns.region}}{% if features.async.sns.endpoint_override is defined %} at {{features.async.sns.endpoint_override}}{% endif %}
     {% endif %}
 
     features.feature.async-api.endpoint-WS={{microcks_url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-ws\\2')}}
