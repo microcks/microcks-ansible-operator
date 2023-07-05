@@ -92,7 +92,7 @@ spec:
             valueFrom:
               secretKeyRef:
                 key: {{features.async.kafka.authentication.truststore_secret_ref.password_key}}
-                name: "{{name}}-kafka-truststore"
+                name: {{features.async.kafka.authentication.truststore_secret_ref.secret|default(name + "-kafka-truststore")}}
             {%- endif %}
             {%- if features.async.kafka.authentication.type == 'SSL' %}
 
@@ -100,7 +100,7 @@ spec:
             valueFrom:
               secretKeyRef:
                 key: {{features.async.kafka.authentication.keystore_secret_ref.password_key}}
-                name: "{{name}}-kafka-keystore"
+                name: {{features.async.kafka.authentication.keystore_secret_ref.secret|default(name + "-kafka-keystore")}}
             {%- endif %}
           {% endif %}
 
