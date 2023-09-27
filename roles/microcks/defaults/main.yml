@@ -111,7 +111,7 @@ mongodb:
   persistent: true
   volume_size: 2Gi
   #storage_class_name: my-awesome-class
-  image: centos/mongodb-34-centos7:latest
+  image: centos/mongodb-36-centos7:latest
   resources:
     #requests:
       #cpu: 250m
