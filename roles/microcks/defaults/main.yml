@@ -61,7 +61,7 @@ keycloak:
   # '/auth' path if you use an older external Keycloak instance.
   #url: keycloak.192.168.99.100.nip.io
   #url: microcks-keycloak:8080
-  #public_url: https://keycloak-microcks.192.168.64.6.nip.io/auth
+  #private_url: http://microcks-keycloak.microcks.svc.cluster.local:8080
   #ingress_annotations:
     #cert-manager.io/issuer: my-cert-issuer
     #kubernetes.io/tls-acme: "true"
