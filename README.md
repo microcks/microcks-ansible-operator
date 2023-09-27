@@ -188,7 +188,7 @@ The table below describe all the fields of the `MicrocksInstall` CRD, providing 
 | `keycloak`    | `resources`        | **Optional**. Some resources constraints to apply on Keycloak pods. This should be expressed using [Kubernetes syntax](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container). |
 | `keycloak`    | `openshift`       | **Optional**. Allows to tune some OpenShift specific resources. See [OpenShift specific tuning](#openShift-specific-tuning) below. |
 | `mongodb`     | `install`          | **Optional**. Flag for MongoDB installation. Default is `true`. Set to `false` if you want to reuse an existing MongoDB instance. |
-| `mongodb`    | `image`             | **Optional**. The reference of container image used. Operator comes with its default version. |
+| `mongodb`     | `image`             | **Optional**. The reference of container image used. Operator comes with its default version. |
 | `mongodb`     | `uri`              | **Optional**. MongoDB URI in case you're reusing existing MongoDB instance. Mandatory if `install` is `false` |
 | `mongodb`     | `uriParameters`    | **Optional**. Allows you to add parameters to the MongoDB URI connection string. |
 | `mongodb`     | `database`         | **Optional**. MongoDB database name in case you're reusing existing MongoDB instance. Useful if `install` is `false`. Default to `sampledb` |
@@ -197,11 +197,12 @@ The table below describe all the fields of the `MicrocksInstall` CRD, providing 
 | `mongodb`     | `volumeSize`       | **Optional**. Size of persistent volume claim for MongoDB. Default is `2Gi`. Not used if not persistent install asked. |
 | `mongodb`     | `storageClassName` | **Optional**. The cluster storage class to use for persistent volume claim. If not specified, we rely on cluster default storage class. |
 | `mongodb`     | `replicas`         | **Optional**. The number of replicas for the MongoDB pod if install is required. Default is `1`. **Operator do not manage any other value for now** |
-| `mongodb`    | `resources`        | **Optional**. Some resources constraints to apply on MongoDB pods. This should be expressed using [Kubernetes syntax](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container). |
+| `mongodb`     | `resources`        | **Optional**. Some resources constraints to apply on MongoDB pods. This should be expressed using [Kubernetes syntax](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container). |
 | `features`    | `repositoryFilter` | **Optional**. Feature allowing to filter API and services on main page. Must be explicitly `enabled`. See [Organizing repository](https://microcks.io/documentation/using/advanced/organizing/#master-level-filter) for more informations |
 | `features`    | `repositoryTenancy` | **Optional**. Feature allowing to segment and delegate API and services management according the `repositoryFilter` master criteria. Must be explicitly `enabled`. See [Organizing repository](https://microcks.io/documentation/using/advanced/organizing/#rbac-security-segmentation) for more informations |
 | `features`    | `microcksHub.enabled`   | **Optional**. Feature allowing to directly import mocks coming from `hub.microcks.io` marketplace. Default is `true`. See [Micorkcs Hub](https://microcks.io/documentation/using/advanced/microcks-hub) for more information.                                                                                         |
 | `features`    | `async` | **Optional**. Feature allowing to activate mocking of Async API on a message broker. Must be explicitly `enabled`. See [this sample](https://github.com/microcks/microcks-ansible-operator/blob/master/deploy/crds/openshift-features.yaml#L28) for full informations |
+| `features`    | `aiCopilot` | **Optional**. Feature allowing to activate AI Copilot. Must be explicitly `enabled`. Default is `false`. |
 
 #### OpenShift specific tuning
 
@@ -216,6 +217,19 @@ Especially, the `route` section in this object allows tuning of OpenShift `Route
 | `route`    | `certificate`     | **Optional**. Allows to specify the certificate for TLS. PEM format should be used. |
 | `route`    | `caCertificate`      | **Optional**. Allows to specify the CA certificate for TLS. PEM format should be used. |
 | `route`    | `destinationCACertificate`  | **Optional**. Allows to specify the destination CA certificate for TLS. PEM format should be used. |
+
+#### AI Copilot feature
+
+Here are below the configuration properties of the AI Copilot feature:
+
+| Section                       | Property           | Description   |
+| ----------------------------- | ------------------ | ------------- |
+| `features.aiCopilot`          | `enabled`          | **Optional**. Flag for enabling the feature. Default is `false`. Set to `true` to activate. |
+| `features.aiCopilot`          | `implementation`   | **Optional**. Allow to choose an AI service implementation. Default is `openai` and its the only supported value at the moment. |
+| `features.aiCopilot.openai`   | `apiKey`           | **Madantory** when enabled. Put here your OpenAI API key. |
+| `features.aiCopilot.openai`   | `timeout`          | **Optional**. Allow the customization of the timeout when requesting OpenAI. Default to `20` seconds. |
+| `features.aiCopilot.openai`   | `model`            | **Optional**. Allow the customization of the OpenAI model to use. Default may vary from one Microcks version to another. |
+| `features.aiCopilot.openai`   | `maxTokens`        | **Optional**. Allow the customization of the maximum number of tokens that may be exchanged by OpenAI services. Default to `2000` tokens? |
 
 #### Kafka feature details
 
