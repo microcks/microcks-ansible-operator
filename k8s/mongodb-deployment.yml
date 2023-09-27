@@ -45,8 +45,26 @@ spec:
         ports:
         - containerPort: 27017
           protocol: TCP
+        env:
+          - name: MONGODB_USER
+            valueFrom:
+              secretKeyRef:
+                key: username
+                name: "{{name}}-mongodb-connection"
+          - name: MONGODB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: "{{name}}-mongodb-connection"
+          - name: MONGODB_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: adminPassword
+                name: "{{name}}-mongodb-connection"
+          - name: MONGODB_DATABASE
+            value: "{{name}}"
         resources:
-          {{mongodb.resources | to_nice_yaml(indent=10) | trim | indent(10) }}
+          {{ mongodb.resources | to_nice_yaml(indent=10) | trim | indent(10) }}
         readinessProbe:
           timeoutSeconds: 1
           initialDelaySeconds: 3
@@ -62,27 +80,6 @@ spec:
           initialDelaySeconds: 30
           tcpSocket:
             port: 27017
-        env:
-        - name: MONGODB_USER
-          valueFrom:
-            secretKeyRef:
-              key: username
-              name: "{{name}}-mongodb-connection"
-        - name: MONGODB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: password
-              name: "{{name}}-mongodb-connection"
-        - name: MONGODB_ADMIN_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: adminPassword
-              name: "{{name}}-mongodb-connection"
-        - name: MONGODB_DATABASE
-          value: "{{name}}"
-        resources:
-          limits:
-            memory: 512Mi
         volumeMounts:
         - name: "{{name}}-mongodb-data"
           mountPath: "/var/lib/mongodb/data"
