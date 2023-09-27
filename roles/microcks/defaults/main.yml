@@ -259,3 +259,12 @@ features:
             #-----BEGIN CERTIFICATE-----
             #[...]
             #-----END CERTIFICATE-----<
+    
+  ai_copilot:
+    enabled: false
+    implementation: openai
+    openai:
+      api_key: sk-my-openai-api-token
+      timeout: 20
+      model: gpt-3.5-turbo
+      max_tokens: 2000

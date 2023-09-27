@@ -68,6 +68,8 @@ data:
 
     features.feature.async-api.endpoint-WS={{microcks_url|regex_replace('^('~(name|regex_escape())~')(.*)','\\1-ws\\2')}}
 
+    features.feature.ai-copilot.enabled={{features.ai_copilot.enabled  | bool | lower}}
+
   application.properties: |-
     # Application configuration properties
     tests-callback.url=http://{{name}}:8080
@@ -147,6 +149,17 @@ data:
     # Grpc server properties
     grpc.server.certChainFilePath=/deployments/config/grpc/tls.crt
     grpc.server.privateKeyFilePath=/deployments/config/grpc/tls.key
+
+    # AI Copilot configuration properties
+    ai-copilot.enabled={{features.ai_copilot.enabled | bool | lower}}
+    ai-copilot.implementation={{features.ai_copilot.implementation}}
+    {% if features.ai_copilot.enabled|bool and features.ai_copilot.implementation == "openai" -%}
+    ai-copilot.openai.api-key={{features.ai_copilot.openai.api_key}}
+    ai-copilot.openai.timeout={{features.ai_copilot.openai.timeout}}
+    ai-copilot.openai.model={{features.ai_copilot.openai.model}}
+    ai-copilot.openai.maxTokens={{features.ai_copilot.openai.max_tokens}}
+    {% endif %}
+
   logback.xml: |-
     <?xml version="1.0" encoding="UTF-8"?>
 
