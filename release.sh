@@ -23,7 +23,7 @@ if [[ $# -eq 2 ]]; then
   if [ -d "deploy/olm/$1/" ]; then
     # Add OLM resources to git
     git add deploy/olm/$1/
-    git commit -m '#"$2" Release operator for "$1"' deploy/olm/$1/
+    git commit -m '#'"$2"' Release operator for '"$1"'' deploy/olm/$1/
     git push origin master
     chmod u+x build-all-in-one.sh
     ./build-all-in-one.sh $1
@@ -35,7 +35,7 @@ if [[ $# -eq 2 ]]; then
 
     # Add and commit before cleaning up things.
     git add ./static/operator/operator-$1.yaml
-    git commit -m 'microcks/microcks-ansible-operator#"$2" chore: Release operator for "$1"' ./static/operator/operator-$1.yaml
+    git commit -m 'microcks/microcks-ansible-operator#'"$2"' chore: Release operator for '"$1"'' ./static/operator/operator-$1.yaml
     git push origin master
 
     # Get back to root.
