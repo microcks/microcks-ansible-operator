@@ -110,6 +110,10 @@ spec:
             {%- endif %}
           {% endif %}
 
+          {% if features.async.env is defined -%}
+          {{ features.async.env | to_nice_yaml(indent=10) | trim | indent(10) }}
+          {% endif %}
+
         ports:
         - containerPort: 8080
           protocol: TCP
