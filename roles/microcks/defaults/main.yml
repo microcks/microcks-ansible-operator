@@ -187,6 +187,9 @@ features:
         # as well as a JAAS configuration line with login module, username and password.
         #sasl_mechanism: SCRAM-SHA-512
         #sasl_jaas_config: org.apache.kafka.common.security.scram.ScramLoginModule required username="scram-user" password="tDtDCT3pYKE5";
+        #sasl_mechanism: OAUTHBEARER
+        #sasl_jaas_config: org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required kid="ABCDefgh11Pi7jKLMNOpq-R0s3TuVWxyzAbcDEFgHI0" login.id="kafka_producer_prem";
+        #sasl_login_callback_handler_class: org.acme.lib.CustomAuthenticateCallbackHandler
 
     mqtt:
       #url:
