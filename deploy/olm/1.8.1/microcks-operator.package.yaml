@@ -3,4 +3,4 @@ channels:
 - name: alpha
   currentCSV: microcks-operator.v0.3.0
 - name: stable
-  currentCSV: microcks-operator.v1.8.0
+  currentCSV: microcks-operator.v1.8.1
