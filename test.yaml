@@ -14,15 +14,24 @@
       ingress_annotations:
         "cert-manager.io/issuer": self-signed-issuer
         my-annotations: my-value
+      #custom_secret_ref:
+        #secret: my-custom-secret
     keycloak:
       install: true
-      private_url: http://microcks-keycloak.microcks.svc.cluster.local:8080/auth
+      private_url: http://microcks-keycloak.microcks.svc.cluster.local:8080
       #storage_class_name: my-awesome-class
     mongodb:
       install: false
       #uri: mongodb:27017
       #database: sampledb
       #storage_class_name: my-awesome-class
+      resources:
+        requests:
+          cpu: 250m
+          memory: 400Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
       #secret_ref:
         #password_key: database-password
         #secret: microcks-mongodb
@@ -33,6 +42,11 @@
         artifact_import_allowed_roles: toto,tata
       async:
         enabled: true
+        #env:
+        #  - name: OAUTH_CLIENT_ID
+        #    value: kafka-oauth-client
+        #  - name: OAUTH_CLIENT_SECRET
+        #    value: kafka-oauth-client-secret
         kafka:
           install: false
           url: 127.0.0.1.nip.io
@@ -41,7 +55,7 @@
             #url: http://localhost:8888/api
             #confluent: true
           authentication:
-            type: SSL #SASL_SSL
+            type: SASL_SSL #SSL #SASL_SSL
             truststore_type: PKCS12
             truststore_secret_ref:
               secret: kafka-cluster-ca-cert
@@ -52,12 +66,55 @@
               secret: mtls-user
               store_key: user.p12
               password_key: user.password
-            sasl_mechanism: SCRAM-SHA-512
-            sasl_jaas_config: org.apache.kafka.common.security.scram.ScramLoginModule required username="scram-user" password="tDtDCT3pYKE5";
+            #sasl_mechanism: SCRAM-SHA-512
+            #sasl_jaas_config: org.apache.kafka.common.security.scram.ScramLoginModule required username="scram-user" password="tDtDCT3pYKE5";
+            sasl_mechanism: OAUTHBEARER
+            sasl_jaas_config: org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required kid="ABCDefgh11Pi7jKLMNOpq-R0s3TuVWxyzAbcDEFgHI0" login.id="kafka_producer_prem";
+            sasl_login_callback_handler_class: org.acme.lib.CustomAuthenticateCallbackHandler
         mqtt:
           url: 128.0.0.1.nip.io
+        sqs:
+          region: eu-west-3
+          credentials_type: env-variable
+          credentials_secret_ref:
+            secret: aws-credentials
+            access_key_id_key: toto
+            #secret_access_key_key: tata
+            #session_token_key: session_token
+          #credentials_type: profile
+          #credentials_secret_ref:
+            #secret: aws-credentials
+            #file_key: aws.profile
+          endpoint_override: http://localhost:4566
+        sns:
+          region: eu-west-3
+          credentials_type: env-variable
+          #credentials_secret_ref:
+            #secret: aws-credentials
+            #access_key_id_key: toto
+            #session_token_key: session_token
+          #credentials_type: profile
+          #credentials_secret_ref:
+            #secret: aws-credentials
+            #file_key: aws.profile
+      ai_copilot:
+        enabled: true
+        implementation: openai
+        openai:
+          api_key: sk-my-openai-api-token
+          timeout: 20
+          model: gpt-3.5-turbo
+          max_tokens: 2000
     med_cn: mas-core-microcks.masdeps1-000000.eu-gb.containers.appdomain.cloud
     long_cn: mas-core-microcksinstall-microcks.masdeps1-6f1620198115433da1cac8216c06779b-0000.eu-gb.containers.appdomain.cloud
+    current_cr:
+      spec: 
+        microcks:
+          grpcIngressAnnotations:
+            kubernetes.io/ingress.class: nginx
+            toto: titi
+            foo: bar
+            hello: world
   pre_tasks:
     #- name: Get Cluster information
     #  community.kubernetes.k8s_cluster_info:
@@ -75,7 +132,8 @@
         #test: "Good"
         #test: "{{ med_cn | truncate(64, True, '...', 0) }}"
         #test: "{{ lookup('template', './k8s/microcks-ingress.yml') | from_yaml }}"
-        #test: "{{ lookup('template', './k8s/microcks-deployment.yml') }}"
+        #test: "{{ lookup('template', './k8s/microcks-grpc-ingress.yml') }}"
+        test: "{{ lookup('template', './k8s/microcks-deployment.yml') }}"
         #test: "{{ lookup('template', './k8s/microcks-config.yml') | from_yaml  }}" 
         #test: "{{ features.async.enabled == true and features.async.kafka.use_strimzi_beta1 == false and ('route.openshift.io' in api_groups or 'url' in features.async.kafka) }}"
         #test: "{{ lookup('template', './k8s/kafka.yml') | from_yaml }}"
@@ -86,7 +144,7 @@
         #test: "{{ lookup('template', './k8s/keycloak-pvc.yml') }}"
         #test: "{{ lookup('template', './k8s/mongodb-deployment.yml') }}"
         #test: "{{ lookup('template', './k8s/mongodb-pvc.yml') }}"
-        test: "{{ lookup('template', './k8s/async-minion-config.yml') }}"
+        #test: "{{ lookup('template', './k8s/async-minion-config.yml') }}"
         #test: "{{ lookup('template', './k8s/async-minion-deployment.yml') }}"
         #test: "{{ lookup('k8s', verify_ssl='no', cluster_info='api_groups') }}"
         #test: "{{ lookup('community.kubernetes.k8s_cluster_info', validate_certs='no') }}"

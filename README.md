@@ -170,6 +170,7 @@ The table below describe all the fields of the `MicrocksInstall` CRD, providing 
 | `microcks`    | `resources`        | **Optional**. Some resources constraints to apply on Microcks container. This should be expressed using [Kubernetes syntax](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container). |
 | `microcks`    | `env`              | **Optional**. Some environment variables to add on Microcks container. This should be expressed using [Kubernetes syntax](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/#define-an-environment-variable-for-a-container). |
 | `microcks`    | `extraProperties`  | **Optional**. Additional application properties loaded into an `extra` Spring profile. Should follow Sring Boot YAML properties definitions. |
+| `microcks`    | `customSecretRef`  | **Optional**. Permit to use a secret (for exemple a keystore). Default is `false` (disabled). |
 | `microcks`    | `logLevel`        | **Optional**. Allows to tune the verbosity level of logs. Default is `INFO` You can use `DEBUG` for more verbosity or `WARN` for less. |
 | `microcks`    | `mockInvocationStats` | **Optional**. Allows to disable invocation stats on mocks. Default is `true` (enabled). |
 | `microcks`    | `openshift`       | **Optional**. Allows to tune some OpenShift specific resources. See [OpenShift specific tuning](#openShift-specific-tuning) below. |

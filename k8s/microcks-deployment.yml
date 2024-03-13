@@ -155,6 +155,12 @@ spec:
             {%- endif %}
           {% endif %}
 
+          {% if microcks.custom_secret_ref is defined %}
+
+          - name: "{{ microcks.custom_secret_ref.secret }}"
+            mountPath: "/deployments/config/custom/secret"
+          {% endif %}
+
         terminationMessagePath: "/dev/termination-log"
       volumes:
       - name: "{{name}}-config"
@@ -176,4 +182,11 @@ spec:
         secret:
           secretName: "{{features.async.kafka.authentication.keystore_secret_ref.secret}}"
         {%- endif %}
+      {% endif %}
+
+      {% if microcks.custom_secret_ref is defined %}
+
+      - name: "{{ microcks.custom_secret_ref.secret }}"
+        secret:
+          secretName: "{{ microcks.custom_secret_ref.secret }}"
       {% endif %}
