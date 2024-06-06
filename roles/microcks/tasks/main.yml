@@ -41,6 +41,12 @@
     force: False
     definition: "{{ lookup('template', 'mongodb-pvc.yml') | from_yaml  }}"
 
+- name: The MongoDB ConfigMap is present if mongodb.install == true
+  when: mongodb.install|bool
+  k8s:
+    state: "{{ 'present' if mongodb.install|bool else 'absent' }}"
+    definition: "{{ lookup('template', 'mongodb-config.yml') | from_yaml  }}"
+
 - name: The MongoDB Deployment is present if mongodb.install == true
   when: mongodb.install|bool
   k8s:

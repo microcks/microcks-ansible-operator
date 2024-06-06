@@ -1,0 +1,15 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: "{{name}}-mongodb-init"
+  namespace: '{{ meta.namespace }}'
+  labels:
+    app: "{{name}}"
+    container: mongodb
+    group: microcks
+data:
+  create-user.sh: |-
+    #!/bin/bash
+    echo "Started Adding the Users..."
+    mongo admin --eval "db.getSiblingDB('${MONGO_INITDB_DATABASE}').createUser({user: '${MONGODB_USER}', pwd: '${MONGODB_PASSWORD}', roles: [{role: 'readWrite', db: '${MONGO_INITDB_DATABASE}'}]})"
+    echo "End Adding the User Roles."

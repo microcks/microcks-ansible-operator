@@ -1,7 +1,7 @@
 ---
 # defaults specification file for microcks installation
 name: microcks
-version: 1.7.0
+version: 1.9.1
 microcks: 
   replicas: 1
   #url: microcks.192.168.99.100.nip.io
@@ -56,7 +56,7 @@ postman:
 keycloak:
   install: true
   realm: microcks
-  image: keycloak/keycloak:22.0.3
+  image: keycloak/keycloak:24.0.4
   # Now that we switched to newer version of Keycloak-X, url must include the
   # '/auth' path if you use an older external Keycloak instance.
   #url: keycloak.192.168.99.100.nip.io
@@ -81,7 +81,7 @@ keycloak:
   persistent: true
   volume_size: 1Gi
   #storage_class_name: my-awesome-class
-  postgres_image: centos/postgresql-95-centos7:latest
+  postgres_image: library/postgres:16.3-alpine
   openshift:
     route:
       enabled: true
@@ -111,7 +111,7 @@ mongodb:
   persistent: true
   volume_size: 2Gi
   #storage_class_name: my-awesome-class
-  image: centos/mongodb-36-centos7:latest
+  image: library/mongo:4.4.29
   resources:
     #requests:
       #cpu: 250m
