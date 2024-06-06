@@ -5,7 +5,7 @@ metadata:
 spec:
   # Add fields here
   name: microcks
-  version: "1.0.0"
+  version: "1.9.0"
   microcks: 
     replicas: 1
     url: microcks-op.192.168.64.6.nip.io
@@ -17,6 +17,7 @@ spec:
     persistent: true
     volumeSize: 1Gi
     url: keycloak-op.192.168.64.6.nip.io
+    privateUrl: http://microcks-keycloak.microcks.svc.cluster.local:8080
     ingressSecretRef: my-secret-for-keycloak-ingress
   mongodb:
     install: true

@@ -20,6 +20,7 @@ spec:
     persistent: true
     volumeSize: 1Gi
     url: keycloak-microcks.192.168.64.7.nip.io
+    privateUrl: http://microcks-keycloak.microcks.svc.cluster.local:8080
     ingressAnnotations:
       cert-manager.io/cluster-issuer: self-signed-issuer
       my-annotation: my-value

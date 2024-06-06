@@ -5,7 +5,7 @@ Kubernetes Operator for easy setup and management of Microcks installs (using An
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/microcks/microcks-ansible-operator/build-verify.yml?branch=master&logo=github&style=for-the-badge)](https://github.com/microcks/microcks-ansible-operator/actions)
 [![Container](https://img.shields.io/badge/dynamic/json?color=blueviolet&logo=docker&style=for-the-badge&label=Quay.io&query=tags[0].name&url=https://quay.io/api/v1/repository/microcks/microcks-ansible-operator/tag/?limit=10&page=1&onlyActiveTags=true)](https://quay.io/repository/microcks/microcks?tab=tags)
 [![License](https://img.shields.io/github/license/microcks/microcks?style=for-the-badge&logo=apache)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Project Chat](https://img.shields.io/badge/chat-on_zulip-pink.svg?color=ff69b4&style=for-the-badge&logo=zulip)](https://microcksio.zulipchat.com/)
+[![Project Chat](https://img.shields.io/badge/discord-microcks-pink.svg?color=7289da&style=for-the-badge&logo=discord)](https://microcks.io/discord-invite/)
 
 ## Table of contents
 
@@ -101,11 +101,12 @@ metadata:
   name: my-microcksinstall
 spec:
   name: my-microcksinstall
-  version: "1.8.0"
+  version: "1.9.1"
   microcks: 
     url: microcks.192.168.99.100.nip.io
   keycloak:
     url: keycloak.192.168.99.100.nip.io
+    privateUrl: http://my-microcksinstall-keycloak.microcks.svc.cluster.local:8080
 ```
 
 > This form can only be used on OpenShift as vanilla Kubernetes will need more informations to customize `Ingress` resources.
@@ -121,7 +122,7 @@ metadata:
   name: my-microcksinstall-minikube
 spec:
   name: my-microcksinstall-minikube
-  version: "1.8.0"
+  version: "1.9.1"
   microcks: 
     replicas: 1
     url: microcks.192.168.99.100.nip.io
@@ -133,7 +134,7 @@ spec:
     persistent: true
     volumeSize: 1Gi
     url: keycloak.192.168.99.100.nip.io
-    privateUrl: http://my-microcksinstall-keycloak.microcks.svc.cluster.local:8080/auth
+    privateUrl: http://my-microcksinstall-keycloak.microcks.svc.cluster.local:8080
     ingressSecretRef: my-secret-for-keycloak-ingress
   mongodb:
     install: true
@@ -183,7 +184,7 @@ The table below describe all the fields of the `MicrocksInstall` CRD, providing 
 | `keycloak`    | `storageClassName` | **Optional**. The cluster storage class to use for persistent volume claim. If not specified, we rely on cluster default storage class. |
 | `keycloak`    | `postgresImage`    | **Optional**. The reference of container image used. Operator comes with its default version. |
 | `keycloak`    | `url`              | **Mandatory on Kube if keycloak.install==false, Optional otherwise**. The URL of Keycloak install - indeed just the hostname + port part - if it already exists on the one used for exposing Keycloak `Ingress`. If missing on OpenShift, default URL schema handled by Router is used. | 
-| `keycloak`    | `privateUrl`       | **Optional**. A private URL - a full URL here - used by the Microcks component to internally join Keycloak. This is also known as `backendUrl` in [Keycloak doc](https://www.keycloak.org/docs/latest/server_installation/#_hostname). When specified, the `keycloak.url` is used as `frontendUrl` in Keycloak terms. | 
+| `keycloak`    | `privateUrl`       | **Optional but recommended**. A private URL - a full URL here - used by the Microcks component to internally join Keycloak. This is also known as `backendUrl` in [Keycloak doc](https://www.keycloak.org/docs/latest/server_installation/#_hostname). When specified, the `keycloak.url` is used as `frontendUrl` in Keycloak terms. | 
 | `keycloak`    | `ingressSecretRef` | **Optional on Kube, not used on OpenShift**. The name of a TLS Secret for securing `Ingress`. If missing on Kubernetes, self-signed certificate is generated. | 
 | `keycloak`    | `ingressAnnotations` | **Optional**. Some custom annotations to add on `Ingress` or OpenShift `Route`. If these annotations are triggering a Certificate generation (for example through https://cert-manager.io/ or https://github.com/redhat-cop/cert-utils-operator), the `generateCert` property should be set to `false` on Kube. |
 | `keycloak`    | `generateCert`     | **Optional on Kube, not used on OpenShift**. Whether to generate self-signed certificate or not if no valid `ingressSecretRef` provided. Default is `true` | 

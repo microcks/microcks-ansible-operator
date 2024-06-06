@@ -14,6 +14,7 @@ spec:
   keycloak:
     install: true
     url: microcks-keycloak.KUBE_APPS_URL
+    privateUrl: http://microcks-keycloak.microcks.svc.cluster.local:8080
     persistent: true
     volumeSize: 1Gi
     #serviceAccount: microcks-serviceaccount
