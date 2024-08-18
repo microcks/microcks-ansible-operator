@@ -68,9 +68,12 @@ spec:
               name: "{{name}}-keycloak-admin"
         - name: POSTGRES_DB
           value: root
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
         volumeMounts:
           - name: "{{name}}-keycloak-postgresql-data"
             mountPath: "/var/lib/pgsql/data"
+            subPath: pgdata
       volumes:
       - name: "{{name}}-keycloak-postgresql-data"
         {% if keycloak.persistent %}persistentVolumeClaim:
