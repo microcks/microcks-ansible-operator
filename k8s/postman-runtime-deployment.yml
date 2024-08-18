@@ -32,9 +32,10 @@ spec:
     spec:
       containers:
       - name: postman-runtime
-        image: "{{registry|default('quay.io')}}/microcks/microcks-postman-runtime:latest"
+        image: "{{registry|default('quay.io')}}/microcks/microcks-postman-runtime:0.5.0"
         ports:
-        - containerPort: 3000
+        - name: http
+          containerPort: 3000
           protocol: TCP
         env:
         - name: LOG_LEVEL

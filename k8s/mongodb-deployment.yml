@@ -44,7 +44,8 @@ spec:
         image: {{mongodb.image}}
         args: ["--dbpath","/var/lib/mongodb/data"]
         ports:
-        - containerPort: 27017
+        - name: mongodb
+          containerPort: 27017
           protocol: TCP
         env:
           - name: MONGODB_USER

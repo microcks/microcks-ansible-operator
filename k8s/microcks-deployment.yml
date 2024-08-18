@@ -37,7 +37,11 @@ spec:
         image: "{{registry|default('quay.io')}}/microcks/microcks:{{version}}"
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 8080
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        - name: grpc
+          containerPort: 9090
           protocol: TCP
         env:
           - name: JAVA_OPTIONS

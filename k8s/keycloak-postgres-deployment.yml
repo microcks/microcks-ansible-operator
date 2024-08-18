@@ -39,7 +39,8 @@ spec:
         args: ["-c", "max_connections=100", "-c", "shared_buffers=12MB"]
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 5432
+        - name: postgres
+          containerPort: 5432
           protocol: TCP
         readinessProbe:
           timeoutSeconds: 1
