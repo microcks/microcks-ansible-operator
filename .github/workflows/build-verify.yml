@@ -6,6 +6,7 @@ on:
       - '.gitignore'
       - 'LICENSE'
       - 'README*'
+      - 'CODE_OF_CONDUCT*'
 jobs:
   build-verify-package:
     runs-on: ubuntu-latest
