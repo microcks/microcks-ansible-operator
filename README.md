@@ -3,7 +3,8 @@
 Kubernetes Operator for easy setup and management of Microcks installs (using Ansible undercover 😉)
 
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/microcks/microcks-ansible-operator/build-verify.yml?branch=master&logo=github&style=for-the-badge)](https://github.com/microcks/microcks-ansible-operator/actions)
-[![Container](https://img.shields.io/badge/dynamic/json?color=blueviolet&logo=docker&style=for-the-badge&label=Quay.io&query=tags[0].name&url=https://quay.io/api/v1/repository/microcks/microcks-ansible-operator/tag/?limit=10&page=1&onlyActiveTags=true)](https://quay.io/repository/microcks/microcks?tab=tags)
+[![Container](https://img.shields.io/badge/dynamic/json?color=blueviolet&logo=docker&style=for-the-badge&label=Quay.io&query=tags[0][![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmicrocks%2Fmicrocks-ansible-operator.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmicrocks%2Fmicrocks-ansible-operator?ref=badge_shield)
+.name&url=https://quay.io/api/v1/repository/microcks/microcks-ansible-operator/tag/?limit=10&page=1&onlyActiveTags=true)](https://quay.io/repository/microcks/microcks?tab=tags)
 [![License](https://img.shields.io/github/license/microcks/microcks?style=for-the-badge&logo=apache)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Project Chat](https://img.shields.io/badge/discord-microcks-pink.svg?color=7289da&style=for-the-badge&logo=discord)](https://microcks.io/discord-invite/)
 
@@ -539,3 +540,6 @@ Warning: events.k8s.io/v1beta1 Event is deprecated in v1.22+, unavailable in v1.
         --- PASS: kuttl/harness/basic-crd (67.76s)
 PASS
 ```
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmicrocks%2Fmicrocks-ansible-operator.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmicrocks%2Fmicrocks-ansible-operator?ref=badge_large)
