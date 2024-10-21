@@ -11,8 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     environment: Build
     steps:
+      - name: Get current date
+        id: date
+        #run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H:%M:%S')"
+        run: echo "date=$(date +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Package container image for operator e2e tests
         run: |
@@ -71,4 +76,6 @@ jobs:
             --provenance=false \
             --build-arg TAG=$IMAGE_TAG \
             --file build/Dockerfile \
+            --label "org.opencontainers.image.revision=${GITHUB_SHA}" \
+            --label "org.opencontainers.image.created=${{ steps.date.outputs.date }}" \
             --tag=quay.io/microcks/microcks-ansible-operator:$IMAGE_TAG .
