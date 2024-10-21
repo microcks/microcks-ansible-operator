@@ -5,7 +5,7 @@ on:
       #- '.github/**'
       - '.gitignore'
       - 'LICENSE'
-      - 'README*'
+      - '*.md'
 jobs:
   build-verify-package:
     runs-on: ubuntu-latest
