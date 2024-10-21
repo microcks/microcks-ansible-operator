@@ -1,0 +1,56 @@
+header:
+  schema-version: 1.0.0
+  last-updated: '2024-10-21'
+  last-reviewed: '2024-10-21'
+  expiration-date: '2025-10-21T01:00:00.000Z'
+  project-url: https://github.com/microcks/microcks-ansible-operator
+  project-release: '1.10.0'
+  changelog: https://github.com/microcks/microcks-ansible-operator/blob/master/CHANGELOG.md
+  license: https://github.com/microcks/microcks-ansible-operator/blob/master/LICENSE
+project-lifecycle:
+  status: active
+  roadmap: https://github.com/microcks/microcks-ansible-operator/blob/master/ROADMAP.md
+  bug-fixes-only: false
+  core-maintainers:
+    - github:lbroudoux
+    - github:yada
+contribution-policy:
+  accepts-pull-requests: true
+  accepts-automated-pull-requests: true
+  code-of-conduct: https://github.com/microcks/.github/blob/master/CODE_OF_CONDUCT.md
+  contributing-policy: https://github.com/microcks/.github/blob/master/CONTRIBUTING.md
+documentation:
+  - https://microcks.io
+distribution-points:
+  - https://microcks.io
+  - https://github.com/microcks/microcks-ansible-operator
+  - https://quay.io/microcks
+security-artifacts:
+  threat-model:
+    threat-model-created: false
+security-testing:
+  - tool-type: sca
+    tool-name: Dependabot
+    tool-version: latest
+    integration:
+      ad-hoc: true
+      ci: false
+      before-release: false
+    comment: |
+      Dependabot is enabled for this repo on a weekly scheduled basis.
+security-contacts:
+  - type: email
+    value: security@microcks.io
+vulnerability-reporting:
+  accepts-vulnerability-reports: true
+  security-policy: https://github.com/microcks/microcks-ansible-operator/security/policy
+  email-contact: security@microcks.io
+  comment: |
+    To report a security issue for one of the libraries owned by the Microcks community, write an email with a detailed description of the issue to security@microcks.io.
+dependencies:
+  third-party-packages: true
+  dependencies-lists:
+    - https://github.com/microcks/microcks-ansible-operator/network/dependencies
+    - https://app.fossa.com/projects/git%2Bgithub.com%2Fmicrocks%2Fmicrocks-ansible-operator/refs/branch/master/68db2c3bfc91474a5e64c504bd31b0baf439e53c/browse/dependencies
+  env-dependencies-policy:
+    policy-url: https://github.com/microcks/microcks-ansible-operator/blob/master/DEPENDENCY_POLICY.md
