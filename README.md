@@ -1,5 +1,8 @@
 # microcks-ansible-operator
 
+> [!CAUTION]
+> This project is now decomissioned in favor of the [new Microcks Operator](https://github.com/microcks/microcks-operator) that is now available. This Ansible Operator will support Microcks up to the version `1.10.1`. As a consequence, we recommend not to change the Microcks version in your existing `MicrocksInstall` Custom-Resource and pin it to `1.10.1` if you temporarily want to stick with this operator.
+
 Kubernetes Operator for easy setup and management of Microcks installs (using Ansible undercover 😉)
 
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/microcks/microcks-ansible-operator/build-verify.yml?branch=master&logo=github&style=for-the-badge)](https://github.com/microcks/microcks-ansible-operator/actions)
@@ -13,7 +16,6 @@ Kubernetes Operator for easy setup and management of Microcks installs (using An
 
 Latest released version is `1.10.0-fix-1`.
 
-Current development is stopped. Please check new [Microcks Operator](https://github.com/microcks/microcks-operator) that is the successor of this project.
 
 #### Fossa license and security scans
 
